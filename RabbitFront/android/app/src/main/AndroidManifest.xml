@@ -2,8 +2,7 @@
   package="com.rabbitfront">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-
+ F
     <application
       android:name=".MainApplication"
       android:label="@string/app_name"
@@ -11,6 +10,9 @@
       android:roundIcon="@mipmap/ic_launcher_round"
       android:allowBackup="false"
       android:theme="@style/AppTheme">
+      <meta-data
+        android:name="com.google.android.geo.API_KEY"
+        android:value="AIzaSyDU4UUrM7H_FVNaVw4gwR4vXDQJ9W9WJ2o"/>
       <activity
         android:name=".MainActivity"
         android:label="@string/app_name"
