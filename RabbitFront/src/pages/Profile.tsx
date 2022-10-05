@@ -4,9 +4,9 @@ import {useCallback, useState} from 'react';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {LoggedInParamList} from '../../App';
 
-type SearchScreenProps = NativeStackScreenProps<LoggedInParamList, 'Data'>;
+type CameraScreenProps = NativeStackScreenProps<LoggedInParamList, 'Camera'>;
 
-function Data({navigation}: SearchScreenProps) {
+function Camera({navigation}: CameraScreenProps) {
   const onClick = useCallback(() => {
     navigation.navigate('Navi');
   }, [navigation]);
@@ -14,10 +14,10 @@ function Data({navigation}: SearchScreenProps) {
   return (
     <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
       <TouchableHighlight onPress={onClick}>
-        <Text>Data Screen</Text>
+        <Text>Profile Screen</Text>
       </TouchableHighlight>
     </View>
   );
 }
 
-export default Data;
+export default Camera;

@@ -8,6 +8,7 @@ import {
   StyleSheet,
   Linking,
 } from 'react-native';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {useCallback, useState} from 'react';
 import Geolocation from '@react-native-community/geolocation';
 import MapView, {
@@ -16,11 +17,13 @@ import MapView, {
   Marker,
 } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
-import {HomeScreenProps} from '../../App';
+import {LoggedInParamList} from '../../App';
 import {useEffect} from 'react';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 
-function NaviScreen({navigation}: HomeScreenProps) {
+type NaviScreenProps = NativeStackScreenProps<LoggedInParamList, 'Navi'>;
+
+function Navi({navigation}: NaviScreenProps) {
   const [latitude, setLatitude] = useState(Number);
   const [longitude, setLogitude] = useState(Number);
 
@@ -194,4 +197,4 @@ function NaviScreen({navigation}: HomeScreenProps) {
   );
 }
 
-export default NaviScreen;
+export default Navi;

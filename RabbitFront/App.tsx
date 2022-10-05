@@ -15,6 +15,10 @@ import {
 } from 'react-native';
 import {useCallback, useState} from 'react';
 import Navi from './src/pages/Navi';
+import Search from './src/pages/Search';
+import Camera from './src/pages/Camera';
+import Data from './src/pages/DataAnalysis';
+import Profile from './src/pages/Profile';
 
 export type LoggedInParamList = {
   Navi: undefined;
@@ -31,29 +35,6 @@ export type RootStackParamList = {
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
-
-export type HomeScreenProps = NativeStackScreenProps<
-  RootStackParamList,
-  'Navi'
->;
-export type DetailsScreenProps = NativeStackScreenProps<
-  ParamListBase,
-  'Details'
->;
-
-function DetailsScreen({navigation}: DetailsScreenProps) {
-  const onClick = useCallback(() => {
-    navigation.navigate('Home');
-  }, [navigation]);
-
-  return (
-    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-      <TouchableHighlight onPress={onClick}>
-        <Text>Details Screen</Text>
-      </TouchableHighlight>
-    </View>
-  );
-}
 
 function App() {
   return (
@@ -75,10 +56,55 @@ function App() {
           }}
         />
         <Tab.Screen
-          name="Details"
-          component={DetailsScreen}
+          name="Search"
+          component={Search}
           options={{
-            title: 'page',
+            title: 'Search',
+            headerStyle: {
+              backgroundColor: '#f4511e',
+            },
+            headerTintColor: '#fff',
+            headerTitleStyle: {
+              fontSize: 25,
+              fontWeight: 'bold',
+            },
+          }}
+        />
+        <Tab.Screen
+          name="Data"
+          component={Data}
+          options={{
+            title: 'Data',
+            headerStyle: {
+              backgroundColor: '#f4511e',
+            },
+            headerTintColor: '#fff',
+            headerTitleStyle: {
+              fontSize: 25,
+              fontWeight: 'bold',
+            },
+          }}
+        />
+        <Tab.Screen
+          name="Camera"
+          component={Camera}
+          options={{
+            title: 'Camera',
+            headerStyle: {
+              backgroundColor: '#f4511e',
+            },
+            headerTintColor: '#fff',
+            headerTitleStyle: {
+              fontSize: 25,
+              fontWeight: 'bold',
+            },
+          }}
+        />
+        <Tab.Screen
+          name="Profile"
+          component={Profile}
+          options={{
+            title: 'Profile',
             headerStyle: {
               backgroundColor: '#f4511e',
             },
