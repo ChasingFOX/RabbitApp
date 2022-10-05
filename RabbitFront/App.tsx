@@ -4,29 +4,42 @@ import {
   createNativeStackNavigator,
   NativeStackScreenProps,
 } from '@react-navigation/native-stack';
-import {Text, TouchableHighlight, View} from 'react-native';
-import {useCallback} from 'react';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {
+  Text,
+  TouchableHighlight,
+  View,
+  TouchableOpacity,
+  Platform,
+  StyleSheet,
+} from 'react-native';
+import {useCallback, useState} from 'react';
+import Navi from './src/pages/Navi';
 
-type RootStackParamList = {
-  Home: undefined;
-  Details: undefined;
+export type LoggedInParamList = {
+  Navi: undefined;
+  Search: undefined;
+  Data: undefined;
+  Profile: undefined;
+  Camera: {currentLocation: string};
 };
-type HomeScreenProps = NativeStackScreenProps<RootStackParamList, 'Home'>;
-type DetailsScreenProps = NativeStackScreenProps<ParamListBase, 'Details'>;
 
-function HomeScreen({navigation}: HomeScreenProps) {
-  const onClick = useCallback(() => {
-    navigation.navigate('Details');
-  }, [navigation]);
+export type RootStackParamList = {
+  SignIn: undefined;
+  SignUp: undefined;
+};
 
-  return (
-    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-      <TouchableHighlight onPress={onClick}>
-        <Text>Home Screen</Text>
-      </TouchableHighlight>
-    </View>
-  );
-}
+const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator();
+
+export type HomeScreenProps = NativeStackScreenProps<
+  RootStackParamList,
+  'Navi'
+>;
+export type DetailsScreenProps = NativeStackScreenProps<
+  ParamListBase,
+  'Details'
+>;
 
 function DetailsScreen({navigation}: DetailsScreenProps) {
   const onClick = useCallback(() => {
@@ -42,20 +55,41 @@ function DetailsScreen({navigation}: DetailsScreenProps) {
   );
 }
 
-const Stack = createNativeStackNavigator();
 function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home">
-        <Stack.Screen
-          name="Home"
-          component={HomeScreen}
-          options={{title: 'Overview'}}
+      <Tab.Navigator>
+        <Tab.Screen
+          name="Navi"
+          component={Navi}
+          options={{
+            title: 'Rabbit',
+            headerStyle: {
+              backgroundColor: '#f4511e',
+            },
+            headerTintColor: '#fff',
+            headerTitleStyle: {
+              fontSize: 25,
+              fontWeight: 'bold',
+            },
+          }}
         />
-        <Stack.Screen name="Details">
-          {props => <DetailsScreen {...props} />}
-        </Stack.Screen>
-      </Stack.Navigator>
+        <Tab.Screen
+          name="Details"
+          component={DetailsScreen}
+          options={{
+            title: 'page',
+            headerStyle: {
+              backgroundColor: '#f4511e',
+            },
+            headerTintColor: '#fff',
+            headerTitleStyle: {
+              fontSize: 25,
+              fontWeight: 'bold',
+            },
+          }}
+        />
+      </Tab.Navigator>
     </NavigationContainer>
   );
 }
