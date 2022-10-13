@@ -19,6 +19,8 @@ import Search from './src/pages/Search';
 import Camera from './src/pages/Camera';
 import Data from './src/pages/DataAnalysis';
 import Profile from './src/pages/Profile';
+import Config from 'react-native-config';
+import axios, {AxiosError} from 'axios';
 
 export type LoggedInParamList = {
   Navi: undefined;
