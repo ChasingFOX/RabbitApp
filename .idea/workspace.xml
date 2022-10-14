@@ -5,15 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a57a80a6-8f6f-44f0-8498-cc772d586338" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/RabbitFront/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/RabbitFront/App.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RabbitFront/android/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/RabbitFront/android/app/src/main/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RabbitFront/ios/Podfile" beforeDir="false" afterPath="$PROJECT_DIR$/RabbitFront/ios/Podfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RabbitFront/ios/Podfile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/RabbitFront/ios/Podfile.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RabbitFront/ios/RabbitFront.xcodeproj/project.pbxproj" beforeDir="false" afterPath="$PROJECT_DIR$/RabbitFront/ios/RabbitFront.xcodeproj/project.pbxproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RabbitFront/ios/RabbitFront/AppDelegate.mm" beforeDir="false" afterPath="$PROJECT_DIR$/RabbitFront/ios/RabbitFront/AppDelegate.mm" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RabbitFront/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/RabbitFront/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RabbitFront/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/RabbitFront/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RabbitFront/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/RabbitFront/tsconfig.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RabbitFront/src/pages/Profile" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RabbitFront/src/pages/Profile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/RabbitFront/src/pages/Profile.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
