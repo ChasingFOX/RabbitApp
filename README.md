@@ -5,7 +5,7 @@ Navigation Algorithm & Service that guides you to avoid dangerous area
 
 ## Team ChasingFox
 
-| ![](https://github.com/chersiakingdom.png) | ![](https://github.com/21700340JuwonBaek.png) | ![](https://github.com/zihooy.png) | ![](https://github.com/YesHyeon.png) | ![](https://github.com/heewoneha.png) | ![](https://github.com/heewoneha.png) |
+| ![](https://github.com/chersiakingdom.png) | ![](https://github.com/21700340JuwonBaek.png) | ![](https://github.com/zihooy.png) | ![](https://github.com/YesHyeon.png) | ![](https://github.com/heewoneha.png) | ![](https://github.com/bruiz114.png) |
 | :--------------------------------------: | :--------------------------------------: | :--------------------------------------: | :-----------------------------------: | :------------------------------------: | :------------------------------------: |
 |             **Daye Kim**              |             **Juwon Baek**              |             **Jihu Yang**              |            **Roh Hyun**            |            **Heewon Jung**             |            **Bryanna Ruiz**             |
 |             **Kyunghee University**              |             **Handong Global University**              |             **Handong Global University**              |            **Kyunghee University**            |            **Chungbuk University**             |            **Purdue University**             |
