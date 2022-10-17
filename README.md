@@ -22,6 +22,8 @@ Public safety is one of the most significant concerns in the United States since
 (2) Based on the result from (1), it is possible to explain the weight in the shortest-path algorithm, which was used to calculate the riskiness and safety score of the edge.
 
 ## Overview
+<img align="center" width="500" alt="image" src="https://user-images.githubusercontent.com/101122651/196250447-9df4550a-6066-4f6e-8414-6f93e017a336.png">
+
 
 ## Tech Stack
 | Division        | Stack                                                                                                                                                                                                                                                                                           | 
@@ -31,6 +33,3 @@ Public safety is one of the most significant concerns in the United States since
 | Code Management | <img src="https://img.shields.io/badge/git-F05032?style=for-the-badge&logo=git&logoColor=black"> <img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white"> |
 | Formatting      | <img src="https://img.shields.io/badge/prettier-F7B93E?style=for-the-badge&logo=prettier&logoColor=black">                                 |
 | DB              | <img src="https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=black"> |
-
-## Environment Settings
-
