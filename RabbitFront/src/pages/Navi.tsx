@@ -45,11 +45,15 @@ function Navi({navigation}: NaviScreenProps) {
     {enableHighAccuracy: true, timeout: 50000, maximumAge: 10000},
   );
 
-  const origin = {latitude: latitude, longitude: longitude};
-  const destination = {
-    latitude: 40.473360126380996,
-    longitude: -86.94642755184898,
-  };
+  const [coordinates, setCoordinates] = useState([
+    {latitude: latitude, longitude: longitude},
+  ]);
+
+  // const origin = {latitude: latitude, longitude: longitude};
+  // const destination = {
+  //   latitude: 40.473360126380996,
+  //   longitude: -86.94642755184898,
+  // };
 
   //   setInterval(() => {
   //     Geolocation.getCurrentPosition(
@@ -93,54 +97,32 @@ function Navi({navigation}: NaviScreenProps) {
     },
   });
 
-  const [coordinates, setCoordinates] = useState([
-    {
-      latitude: 40.423999345292046,
-      longitude: -86.91371893175639,
-    },
-    {
-      latitude: 40.42119341508705,
-      longitude: -86.91781885879092,
-    },
-    {
-      latitude: 40.42119341508705,
-      longitude: -86.91781885879092,
-    },
-    {
-      latitude: 40.42732532443506,
-      longitude: -86.92463136381483,
-    },
-    {
-      latitude: 40.43249524031551,
-      longitude: -86.9269298077754,
-    },
-    {
-      latitude: 40.446337675508566,
-      longitude: -86.92821177376851,
-    },
-    {
-      latitude: 40.45851363603605,
-      longitude: -86.93213657343334,
-    },
-  ]);
+  // useEffect(() => {
+  //   setLatitude();
+  // }, [coordinates]);
 
   return (
     <View style={{flex: 1, justifyContent: 'center'}}>
       <MapView
         style={styles.map}
-        provider={
-          Platform.OS === 'android' ? PROVIDER_GOOGLE : PROVIDER_DEFAULT
-        } // remove if not using Google Maps
-        region={{
+        provider={PROVIDER_GOOGLE} // remove if not using Google Maps
+        initialRegion={{
           latitude: latitude,
           longitude: longitude,
           latitudeDelta: 0.0001,
           longitudeDelta: 0.003,
         }}
+        region={{
+          latitude: coordinates[0]['latitude'],
+          longitude: coordinates[0]['longitude'],
+          latitudeDelta: 0.0001,
+          longitudeDelta: 0.003,
+        }}
+        onRegionChangeComplete={() => {}}
         showsUserLocation={true}>
-        {coordinates.map((coordinates, index) => (
-          <Marker key={`coordinate_${index}`} coordinate={coordinates} />
-        ))}
+        {/* {coordinates.map((coordinates, index) => ( */}
+        <Marker coordinate={coordinates[0]} />
+        {/* ))} */}
         {/* <MapViewDirections
           origin={origin}
           waypoints={coordinates}
@@ -159,8 +141,25 @@ function Navi({navigation}: NaviScreenProps) {
         placeholder="Search"
         onPress={(data, details = null) => {
           // 'details' is provided when fetchDetails = true
-          console.log(data, details);
+
+          console.log('dgl-lat', details?.geometry?.location.lat);
+          console.log('dgl-lng', details?.geometry?.location.lng);
+          const a = [
+            {
+              latitude: details?.geometry?.location.lat,
+              longitude: details?.geometry?.location.lng,
+            },
+          ];
+
+          setCoordinates(a);
+          setLatitude(Number(details?.geometry?.location.lat));
+          setLogitude(Number(details?.geometry?.location.lng));
+
+          console.log('coordinates', typeof coordinates[0]['latitude']);
+
           console.log('dd', JSON.stringify(details?.geometry?.location));
+
+          console.log('latitude', typeof latitude);
         }}
         query={{
           key: 'AIzaSyB_nbHi0KEhdlrM8ioBv_GpYCeVH2p1-08',

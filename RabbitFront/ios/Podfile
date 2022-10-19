@@ -11,6 +11,7 @@ target 'RabbitFront' do
   pod 'react-native-google-maps', :path => rn_maps_path
   pod 'GoogleMaps'
   pod 'Google-Maps-iOS-Utils'
+  pod 'react-native-config', :path => '../node_modules/react-native-config/react-native-config.podspec'
   # pod 'react-native-google-maps', :path => rn_maps_path
   
   config = use_native_modules!
