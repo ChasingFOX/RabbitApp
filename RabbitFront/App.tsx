@@ -12,6 +12,8 @@ import {
   TouchableOpacity,
   Platform,
   StyleSheet,
+  Image,
+  ColorPropType,
 } from 'react-native';
 import {useCallback, useState} from 'react';
 import Navi from './src/pages/Navi';
@@ -46,7 +48,25 @@ function App() {
           name="Navi"
           component={Navi}
           options={{
+            tabBarActiveTintColor: 'red',
             title: 'Rabbit',
+            tabBarIcon: ({focused}) => {
+              if (focused === false) {
+                return (
+                  <Image
+                    style={{width: 24, height: 24, tintColor: 'black'}}
+                    source={require('./src/assets/navigation.png')}
+                  />
+                );
+              } else if (focused === true) {
+                return (
+                  <Image
+                    style={{width: 24, height: 24, tintColor: 'red'}}
+                    source={require('./src/assets/navigation.png')}
+                  />
+                );
+              }
+            },
             headerStyle: {
               backgroundColor: '#f4511e',
             },
@@ -62,6 +82,23 @@ function App() {
           component={Search}
           options={{
             title: 'Search',
+            tabBarIcon: ({focused}) => {
+              if (focused === false) {
+                return (
+                  <Image
+                    style={{width: 24, height: 24, tintColor: 'black'}}
+                    source={require('./src/assets/search.png')}
+                  />
+                );
+              } else if (focused === true) {
+                return (
+                  <Image
+                    style={{width: 24, height: 24, tintColor: 'red'}}
+                    source={require('./src/assets/search.png')}
+                  />
+                );
+              }
+            },
             headerStyle: {
               backgroundColor: '#f4511e',
             },
@@ -77,6 +114,23 @@ function App() {
           component={Data}
           options={{
             title: 'Data',
+            tabBarIcon: ({focused}) => {
+              if (focused === false) {
+                return (
+                  <Image
+                    style={{width: 24, height: 24, tintColor: 'black'}}
+                    source={require('./src/assets/dataBar.png')}
+                  />
+                );
+              } else if (focused === true) {
+                return (
+                  <Image
+                    style={{width: 24, height: 24, tintColor: 'red'}}
+                    source={require('./src/assets/dataBar.png')}
+                  />
+                );
+              }
+            },
             headerStyle: {
               backgroundColor: '#f4511e',
             },
@@ -92,6 +146,23 @@ function App() {
           component={Camera}
           options={{
             title: 'Camera',
+            tabBarIcon: ({focused}) => {
+              if (focused === false) {
+                return (
+                  <Image
+                    style={{width: 24, height: 24, tintColor: 'black'}}
+                    source={require('./src/assets/camera.png')}
+                  />
+                );
+              } else if (focused === true) {
+                return (
+                  <Image
+                    style={{width: 24, height: 24, tintColor: 'red'}}
+                    source={require('./src/assets/camera.png')}
+                  />
+                );
+              }
+            },
             headerStyle: {
               backgroundColor: '#f4511e',
             },
@@ -101,12 +172,33 @@ function App() {
               fontWeight: 'bold',
             },
           }}
+          tabBarOptions={{
+            activeTintColor: 'tomato', // 탭 활성
+            inactiveTintColor: 'gray', // 탭 비활성
+          }}
         />
         <Tab.Screen
           name="Profile"
           component={Profile}
           options={{
             title: 'Profile',
+            tabBarIcon: ({focused}) => {
+              if (focused === false) {
+                return (
+                  <Image
+                    style={{width: 24, height: 24, tintColor: 'black'}}
+                    source={require('./src/assets/profile.png')}
+                  />
+                );
+              } else if (focused === true) {
+                return (
+                  <Image
+                    style={{width: 24, height: 24, tintColor: 'red'}}
+                    source={require('./src/assets/profile.png')}
+                  />
+                );
+              }
+            },
             headerStyle: {
               backgroundColor: '#f4511e',
             },
