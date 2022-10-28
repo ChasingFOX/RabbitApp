@@ -1,10 +1,19 @@
 require_relative '../node_modules/react-native/scripts/react_native_pods'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
-platform :ios, '11.0'
+# React Native Maps dependencies
+
+platform :ios, '13.0'
 install! 'cocoapods', :deterministic_uuids => false
 
 target 'RabbitFront' do
+  rn_maps_path = '../node_modules/react-native-maps'
+  pod 'react-native-google-maps', :path => rn_maps_path
+  pod 'GoogleMaps'
+  pod 'Google-Maps-iOS-Utils'
+  pod 'react-native-config', :path => '../node_modules/react-native-config/react-native-config.podspec'
+  # pod 'react-native-google-maps', :path => rn_maps_path
+  
   config = use_native_modules!
 
   # Flags change depending on the env values.
@@ -18,7 +27,6 @@ target 'RabbitFront' do
     # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
-
   target 'RabbitFrontTests' do
     inherit! :complete
     # Pods for testing
@@ -28,10 +36,10 @@ target 'RabbitFront' do
   #
   # Note that if you have use_frameworks! enabled, Flipper will not work and
   # you should disable the next line.
-  use_flipper!()
+  # use_flipper!()
 
-  post_install do |installer|
-    react_native_post_install(installer)
-    __apply_Xcode_12_5_M1_post_install_workaround(installer)
-  end
+  # post_install do |installer|
+  #   react_native_post_install(installer)
+  #   __apply_Xcode_12_5_M1_post_install_workaround(installer)
+  # end
 end
