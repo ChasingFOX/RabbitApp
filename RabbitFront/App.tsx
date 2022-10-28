@@ -1,3 +1,5 @@
+// React Native Entry Point Code
+
 import * as React from 'react';
 import {NavigationContainer, ParamListBase} from '@react-navigation/native';
 import {
