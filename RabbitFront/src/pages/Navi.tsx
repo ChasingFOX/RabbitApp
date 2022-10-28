@@ -15,7 +15,6 @@ import MapView, {
   PROVIDER_GOOGLE,
   PROVIDER_DEFAULT,
   Marker,
-  Polyline,
   Polygon,
 } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
@@ -122,10 +121,6 @@ function Navi({navigation}: NaviScreenProps) {
     },
   });
 
-  // useEffect(() => {
-  //   setLatitude();
-  // }, [coordinates]);
-
   const [polygonCoordinates, setPolygonCoordinates] = useState([
     [
       {
@@ -175,7 +170,7 @@ function Navi({navigation}: NaviScreenProps) {
         style={styles.map}
         provider={
           Platform.OS === 'android' ? PROVIDER_GOOGLE : PROVIDER_DEFAULT
-        } // remove if not using Google Maps
+        }
         // remove if not using Google Maps
         // initialRegion={{
         //   latitude: latitude,
@@ -197,7 +192,8 @@ function Navi({navigation}: NaviScreenProps) {
         }}
         onRegionChangeComplete={() => {}}
         showsUserLocation={true}>
-        {/* {directionCoordinates.map((directionCoordinates, index) => (
+        {/* Googlemap Marker 
+        {directionCoordinates.map((directionCoordinates, index) => (
           <Marker
             key={`coordinate_${index}`}
             coordinate={directionCoordinates}
@@ -209,7 +205,7 @@ function Navi({navigation}: NaviScreenProps) {
             coordinate={destinationCoordinates}
           />
         ))}
-        {/* 
+        {/*  Googlemap Direction
         {coordinates.map((coordinates, index) => (
           <Marker key={`coordinate_${index}`} coordinate={coordinates} />
         ))} */}
@@ -223,7 +219,7 @@ function Navi({navigation}: NaviScreenProps) {
           strokeColor="rgb(255,0,0)"
           precision="low"
           timePrecision="none"
-        />
+        /> */}
         <MapViewDirections
           origin={origin}
           destination={destination}
@@ -237,7 +233,7 @@ function Navi({navigation}: NaviScreenProps) {
             console.log(`Distance: ${result.distance} km`);
             console.log(`Duration: ${result.duration} min.`);
           }}
-        /> */}
+        />
 
         <Polygon
           coordinates={polygonCoordinates[0]}
