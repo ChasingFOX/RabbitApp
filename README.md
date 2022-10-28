@@ -37,3 +37,26 @@ Public safety is one of the most significant concerns in the United States since
 | Code Management | <img src="https://img.shields.io/badge/git-F05032?style=for-the-badge&logo=git&logoColor=black"> <img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white">                                                                                                                                     |
 | Formatting      | <img src="https://img.shields.io/badge/prettier-F7B93E?style=for-the-badge&logo=prettier&logoColor=black">                                                                                                                                                                                                                                  |
 | DB              | <img src="https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=black">                                                                                                                                                                                                                                        |
+
+## Environment
+
+Front-end
+```
+Xcode: 13.3.1
+react-native-cli: 7.0.4
+type-script: 6.10.4
+react-native: 0.68.2
+Home brew: 3.6.1
+nvm: 0.39.1
+node: 16.10.0
+watchman: 2022.09.12
+cocoapods: 1.11.3
+JDK(Java): 11
+ffi
+```
+Back-end
+```
+Java: 1.8.0
+Tomcat: 9.0
+Spring boot: 2.7.3
+```
