@@ -186,7 +186,7 @@ function Navi({navigation}: NaviScreenProps) {
             coordinate={destinationCoordinates}
           />
         ))}
-        <MapViewDirections
+        {/* <MapViewDirections
           origin={origin}
           destination={destination}
           apikey={'AIzaSyB_nbHi0KEhdlrM8ioBv_GpYCeVH2p1-08'}
@@ -199,7 +199,7 @@ function Navi({navigation}: NaviScreenProps) {
             console.log(`Distance: ${result.distance} km`);
             console.log(`Duration: ${result.duration} min.`);
           }}
-        />
+        /> */}
 
         {/* Code to make polygon area */}
         <Polygon
