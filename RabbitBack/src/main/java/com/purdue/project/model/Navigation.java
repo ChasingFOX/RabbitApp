@@ -27,7 +27,11 @@ public class Navigation {
     @Override
     public String toString() {
         return "Navigation{" +
-                "type=" + type +
+                "id=" + id +
+                ", type=" + type +
+                ", user_id=" + user_id +
+                ", orig_id=" + orig_id +
+                ", dest_id=" + dest_id +
                 ", orig=" + orig +
                 ", dest=" + dest +
                 '}';

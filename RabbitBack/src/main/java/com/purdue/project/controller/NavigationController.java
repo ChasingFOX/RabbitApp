@@ -3,7 +3,6 @@ package com.purdue.project.controller;
 import com.purdue.project.dao.NaviDAO;
 import com.purdue.project.dao.LocationDAO;
 import com.purdue.project.model.Navigation;
-import com.purdue.project.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
