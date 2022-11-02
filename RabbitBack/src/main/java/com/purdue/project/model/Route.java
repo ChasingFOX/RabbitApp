@@ -4,8 +4,12 @@ import java.sql.Time;
 import java.util.ArrayList;
 import lombok.Getter;
 import lombok.Setter;
+
+import javax.persistence.Table;
+
 @Getter
 @Setter
+@Table(name="route")
 public class Route {
     private Time time;
     private String length;
