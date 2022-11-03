@@ -23,6 +23,8 @@ import Search from './src/pages/Search';
 import Camera from './src/pages/Camera';
 import Data from './src/pages/DataAnalysis';
 import Profile from './src/pages/Profile';
+import SignUp from './src/pages/SignUp';
+import SignIn from './src/pages/SignIn';
 import ProfileSetting from './src/pages/ProfileSetting';
 import Config from 'react-native-config';
 import axios, {AxiosError} from 'axios';
@@ -51,8 +53,13 @@ function App() {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen
+          name="SignIn"
+          component={SignIn}
+          options={{title: 'SIGN IN'}}
+        />
+        <Stack.Screen
           name="SignUp"
-          component={ProfileSetting}
+          component={SignUp}
           options={{title: 'SIGN UP'}}
         />
       </Stack.Navigator>
