@@ -1,5 +1,5 @@
 // SignIn Screen Code
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useRef, useState} from 'react';
 import {
   View,
   Text,
@@ -20,7 +20,13 @@ function SignIn({navigation}: SignInScreenProps) {
   const [passWord, setPassWord] = useState('');
 
   const onSubmit = useCallback(() => {
-    Alert.alert('Alert', 'Login Su ccess');
+    if (!email || !email.trim()) {
+      return Alert.alert('Alert', 'Please Check your Email again');
+    }
+    if (!passWord || !passWord.trim()) {
+      return Alert.alert('Alert', 'Please Check your Password again');
+    }
+    Alert.alert('Login succeeded');
   }, []);
 
   const onSignUp = useCallback(() => {
@@ -35,6 +41,9 @@ function SignIn({navigation}: SignInScreenProps) {
     setPassWord(text);
   }, []);
 
+  const emailRef = useRef<TextInput | null>(null);
+  const passwordRef = useRef<TextInput | null>(null);
+
   const canGoNext = email && passWord;
 
   return (
@@ -45,15 +54,34 @@ function SignIn({navigation}: SignInScreenProps) {
       <View style={style.textInputZone}>
         <View>
           <TextInput
+            value={email}
             style={style.textInput}
             onChangeText={onChangeEmail}
-            placeholder="Email"></TextInput>
+            placeholder="Email"
+            importantForAutofill="yes"
+            autoComplete="email"
+            textContentType="emailAddress"
+            keyboardType="email-address"
+            returnKeyType="next"
+            blurOnSubmit={false}
+            clearButtonMode={'while-editing'}
+            onSubmitEditing={() => {
+              passwordRef.current?.focus();
+            }}
+            ref={emailRef}></TextInput>
         </View>
         <View>
           <TextInput
+            value={passWord}
             style={style.textInput}
             placeholder="PassWord"
             onChangeText={onChangePassword}
+            autoComplete="password"
+            textContentType="password"
+            secureTextEntry
+            clearButtonMode={'while-editing'}
+            ref={passwordRef}
+            onSubmitEditing={onSubmit}
           />
         </View>
       </View>
