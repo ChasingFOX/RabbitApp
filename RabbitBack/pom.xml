@@ -11,6 +11,7 @@
 	<groupId>com.purdue.project</groupId>
 	<artifactId>RabbitBack</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<packaging>war</packaging>
 	<name>RabbitBack</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
@@ -20,7 +21,7 @@
 		<dependency>
 			<groupId>com.googlecode.json-simple</groupId>
 			<artifactId>json-simple</artifactId>
-			<version>1.1</version>
+			<version>1.1.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -50,6 +51,15 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>6.1.4.Final</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.tomcat</groupId>
+			<artifactId>tomcat-jdbc</artifactId>
 		</dependency>
 	</dependencies>
 
