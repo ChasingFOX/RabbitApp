@@ -23,10 +23,14 @@ import Search from './src/pages/Search';
 import Camera from './src/pages/Camera';
 import Data from './src/pages/DataAnalysis';
 import Profile from './src/pages/Profile';
+import SignUp from './src/pages/SignUp';
+import SignIn from './src/pages/SignIn';
+import ProfileSetting from './src/pages/ProfileSetting';
 import Config from 'react-native-config';
 import axios, {AxiosError} from 'axios';
 
 export type LoggedInParamList = {
+  ProfileSetting: undefined;
   Navi: undefined;
   Search: undefined;
   Data: undefined;
@@ -43,7 +47,24 @@ const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
 function App() {
-  return (
+  const [signedUp, setSignedUp] = useState(false);
+
+  return signedUp == false ? (
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen
+          name="SignIn"
+          component={SignIn}
+          options={{title: 'SIGN IN'}}
+        />
+        <Stack.Screen
+          name="SignUp"
+          component={SignUp}
+          options={{title: 'SIGN UP'}}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
+  ) : (
     <NavigationContainer>
       <Tab.Navigator>
         <Tab.Screen

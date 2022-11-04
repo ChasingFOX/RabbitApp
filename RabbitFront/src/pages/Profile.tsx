@@ -14,7 +14,7 @@ import {Dimensions} from 'react-native';
 
 type CameraScreenProps = NativeStackScreenProps<LoggedInParamList, 'Camera'>;
 
-function Camera({navigation}: CameraScreenProps) {
+function Profile({navigation}: CameraScreenProps) {
   const windowWidth = Dimensions.get('window').width;
   const windowHeight = Dimensions.get('window').height;
   const onClick = useCallback(() => {
@@ -141,4 +141,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Camera;
+export default Profile;
