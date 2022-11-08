@@ -43,7 +43,13 @@ function ProfileSetting({navigation}: ProfileSettingScreenProps) {
   };
 
   return (
-    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+    <View
+      style={{
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'white',
+      }}>
       <View style={styles.container}>
         <Image
           source={require('../assets/logo.png')}

@@ -113,8 +113,9 @@ function SignIn({navigation}: SignInScreenProps) {
 
 const style = StyleSheet.create({
   container: {
-    height: '90%',
+    height: '100%',
     display: 'flex',
+    backgroundColor: 'white',
     flexDirection: 'column',
     justifyContent: 'center',
   },
