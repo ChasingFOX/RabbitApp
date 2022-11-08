@@ -12,7 +12,8 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {RootStackParamList} from '../../App';
+import {RootStackParamList} from '../../AppInner';
+import axios, {AxiosError} from 'axios';
 
 type SignInScreenProps = NativeStackScreenProps<RootStackParamList, 'SignIn'>;
 
@@ -67,7 +68,7 @@ function SignIn({navigation}: SignInScreenProps) {
     [isClicked],
   );
 
-  const onSubmit = useCallback(() => {
+  const onSubmit = useCallback(async () => {
     if (!email || !email.trim()) {
       return Alert.alert('Alert', 'Please Check your Email again');
     }
@@ -88,8 +89,21 @@ function SignIn({navigation}: SignInScreenProps) {
       );
     }
 
+    try {
+      {
+        const response = await axios.post('/user', {
+          email,
+          passWord,
+          isClicked,
+        });
+        console.log(response);
+      }
+    } catch (error) {
+    } finally {
+    }
+
     Alert.alert('Login succeeded');
-  }, []);
+  }, [email, passWord, isClicked]);
 
   const onChangeEmail = useCallback(text => {
     setEmail(text);
