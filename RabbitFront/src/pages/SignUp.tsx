@@ -10,31 +10,33 @@ import {
   StyleSheet,
   Image,
   TouchableWithoutFeedback,
+  ActivityIndicator,
 } from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../AppInner';
 import axios, {AxiosError} from 'axios';
+import Config from 'react-native-config';
 
 type SignInScreenProps = NativeStackScreenProps<RootStackParamList, 'SignIn'>;
 
 function SignIn({navigation}: SignInScreenProps) {
   const [email, setEmail] = useState('');
   const [passWord, setPassWord] = useState('');
-  const [assualt, setAssault] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const [crimetype, setCrimeType] = useState([
-    {id: 1, type: 'Assualt', selected: false},
-    {id: 2, type: 'Battery', selected: false},
-    {id: 3, type: 'Homicide', selected: false},
-    {id: 4, type: 'Human Tracking', selected: false},
-    {id: 5, type: 'Kidnapping', selected: true},
-    {id: 6, type: 'Narcotics', selected: false},
-    {id: 7, type: 'Public Indecency', selected: false},
-    {id: 8, type: 'Robbery', selected: false},
-    {id: 9, type: 'Sexual', selected: false},
-    {id: 10, type: 'Stalking', selected: false},
-    {id: 11, type: 'Weapon', selected: false},
-  ]);
+  const crimetype = [
+    {id: 1, type: 'Assualt'},
+    {id: 2, type: 'Battery'},
+    {id: 3, type: 'Homicide'},
+    {id: 4, type: 'Human Tracking'},
+    {id: 5, type: 'Kidnapping'},
+    {id: 6, type: 'Narcotics'},
+    {id: 7, type: 'Public Indecency'},
+    {id: 8, type: 'Robbery'},
+    {id: 9, type: 'Sexual'},
+    {id: 10, type: 'Stalking'},
+    {id: 11, type: 'Weapon'},
+  ];
   const [isClicked, setIsClicked] = useState([
     false,
     false,
@@ -69,6 +71,10 @@ function SignIn({navigation}: SignInScreenProps) {
   );
 
   const onSubmit = useCallback(async () => {
+    if (loading) {
+      return;
+    }
+
     if (!email || !email.trim()) {
       return Alert.alert('Alert', 'Please Check your Email again');
     }
@@ -89,21 +95,31 @@ function SignIn({navigation}: SignInScreenProps) {
       );
     }
 
+    console.log(Config.API_URL);
+
     try {
       {
-        const response = await axios.post('/user', {
+        setLoading(true);
+        const response = await axios.post(`${Config.API_URL}/user`, {
           email,
           passWord,
           isClicked,
         });
         console.log(response);
+        Alert.alert('알림', '회원가입에 성공하였습니다.');
       }
     } catch (error) {
+      const errorResponse = (error as AxiosError).response;
+      setLoading(false);
+      console.log(errorResponse);
+      if (errorResponse) {
+        Alert.alert('알림', errorResponse.data.message);
+      }
     } finally {
     }
 
     Alert.alert('Login succeeded');
-  }, [email, passWord, isClicked]);
+  }, [loading, email, passWord, isClicked]);
 
   const onChangeEmail = useCallback(text => {
     setEmail(text);
@@ -202,8 +218,12 @@ function SignIn({navigation}: SignInScreenProps) {
               ? style.loginButton
               : StyleSheet.compose(style.loginButton, style.loginButtonActive)
           }
-          disabled={!canGoNext}>
-          <Text style={style.loginButtonText}>Sign Up</Text>
+          disabled={!canGoNext || loading}>
+          {loading ? (
+            <ActivityIndicator color="white" />
+          ) : (
+            <Text style={style.loginButtonText}>Sign Up</Text>
+          )}
         </Pressable>
       </View>
     </View>
