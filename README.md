@@ -62,8 +62,8 @@ Spring boot: 2.7.3
 ```
 
 ```
-Python: 3.8.13
+Python: 3.8.10
 Flask: 2.2.2
 Werkzeug 2.2.2
-conda 4.10.1
+apache2: 2.4.41(Ubuntu)
 ```
