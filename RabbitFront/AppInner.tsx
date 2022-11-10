@@ -27,6 +27,7 @@ import ProfileSetting from './src/pages/ProfileSetting';
 import Config from 'react-native-config';
 import axios, {AxiosError} from 'axios';
 import {useSelector} from 'react-redux';
+import {RootState} from './src/store/reducer';
 
 export type LoggedInParamList = {
   ProfileSetting: undefined;
@@ -46,9 +47,9 @@ const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
 function AppInner() {
-  const [signedUp, setSignedUp] = useState(true);
+  const isLoggedIn = useSelector((state: RootState) => !!state.user.email);
 
-  return signedUp ? (
+  return isLoggedIn ? (
     <Stack.Navigator>
       <Stack.Screen
         name="SignIn"

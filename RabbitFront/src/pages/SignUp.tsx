@@ -11,6 +11,7 @@ import {
   Image,
   TouchableWithoutFeedback,
   ActivityIndicator,
+  ScrollView,
 } from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../AppInner';
@@ -22,6 +23,7 @@ type SignInScreenProps = NativeStackScreenProps<RootStackParamList, 'SignIn'>;
 function SignIn({navigation}: SignInScreenProps) {
   const [email, setEmail] = useState('');
   const [passWord, setPassWord] = useState('');
+  const [nickName, setNickName] = useState('');
   const [loading, setLoading] = useState(false);
 
   const crimetype = [
@@ -100,13 +102,14 @@ function SignIn({navigation}: SignInScreenProps) {
     try {
       {
         setLoading(true);
-        const response = await axios.post(`${Config.API_URL}/user`, {
-          email,
-          passWord,
-          isClicked,
+        const response = await axios.post(`${Config.API_URL}/api/user`, {
+          name: email,
+          // passWord,
+          // isClicked,
         });
         console.log(response);
         Alert.alert('알림', '회원가입에 성공하였습니다.');
+        navigation.goBack();
       }
     } catch (error) {
       const errorResponse = (error as AxiosError).response;
@@ -116,6 +119,7 @@ function SignIn({navigation}: SignInScreenProps) {
         Alert.alert('알림', errorResponse.data.message);
       }
     } finally {
+      setLoading(false);
     }
 
     Alert.alert('Login succeeded');
@@ -129,104 +133,124 @@ function SignIn({navigation}: SignInScreenProps) {
     setPassWord(text);
   }, []);
 
+  const onChangeNickName = useCallback(text => {
+    setNickName(text);
+  }, []);
+
   const emailRef = useRef<TextInput | null>(null);
   const passwordRef = useRef<TextInput | null>(null);
 
   const canGoNext = email && passWord && isTrueNumber.length <= 6;
 
   return (
-    <View style={style.container}>
-      <View style={style.logoZone}>
-        <Image source={require('../assets/logo.png')} style={style.logo} />
-      </View>
-      <View style={style.textInputZone}>
-        <View>
-          <Text style={style.profileHead}>| Email</Text>
-          <TextInput
-            value={email}
-            style={style.textInput}
-            onChangeText={onChangeEmail}
-            placeholder="Email"
-            importantForAutofill="yes"
-            autoComplete="email"
-            textContentType="emailAddress"
-            keyboardType="email-address"
-            returnKeyType="next"
-            blurOnSubmit={false}
-            clearButtonMode={'while-editing'}
-            onSubmitEditing={() => {
-              passwordRef.current?.focus();
-            }}
-            ref={emailRef}></TextInput>
+    <ScrollView>
+      <View style={style.container}>
+        <View style={style.logoZone}>
+          <Image source={require('../assets/logo.png')} style={style.logo} />
         </View>
-        <View>
-          <Text style={style.profileHead}>| Password</Text>
-          <TextInput
-            value={passWord}
-            style={style.textInput}
-            placeholder="PassWord"
-            onChangeText={onChangePassword}
-            autoComplete="password"
-            textContentType="password"
-            secureTextEntry
-            clearButtonMode={'while-editing'}
-            ref={passwordRef}
-            onSubmitEditing={onSubmit}
-          />
-        </View>
-        <Text style={style.profileHead}>
-          | Dangers you want to avoid (Maximum 6)
-        </Text>
-        <View style={style.profileContainer}>
-          {crimetype.map((item, index) => {
-            return (
-              <View key={item.id} style={style.crimeButtonContainer}>
-                <View
-                  style={
-                    isClicked[index]
-                      ? StyleSheet.compose(
-                          style.crimeButton,
-                          style.crimeButtonActive,
-                        )
-                      : style.crimeButton
-                  }>
-                  <Text
-                    onPress={() => {
-                      ButtonClick(index);
-                    }}
+        <View style={style.textInputZone}>
+          <View>
+            <Text style={style.profileHead}>| Email</Text>
+            <TextInput
+              value={email}
+              style={style.textInput}
+              onChangeText={onChangeEmail}
+              placeholder="Email"
+              importantForAutofill="yes"
+              autoComplete="email"
+              textContentType="emailAddress"
+              keyboardType="email-address"
+              returnKeyType="next"
+              blurOnSubmit={false}
+              clearButtonMode={'while-editing'}
+              onSubmitEditing={() => {
+                passwordRef.current?.focus();
+              }}
+              ref={emailRef}></TextInput>
+          </View>
+          <View>
+            <Text style={style.profileHead}>| Password</Text>
+            <TextInput
+              value={passWord}
+              style={style.textInput}
+              placeholder="PassWord"
+              onChangeText={onChangePassword}
+              autoComplete="password"
+              textContentType="password"
+              secureTextEntry
+              clearButtonMode={'while-editing'}
+              ref={passwordRef}
+              onSubmitEditing={onSubmit}
+            />
+          </View>
+          <View>
+            <Text style={style.profileHead}>| NickName</Text>
+            <TextInput
+              value={nickName}
+              style={style.textInput}
+              onChangeText={onChangeNickName}
+              placeholder="NickName"
+              importantForAutofill="yes"
+              autoComplete="name"
+              textContentType="name"
+              returnKeyType="done"
+              blurOnSubmit={false}
+              clearButtonMode={'while-editing'}></TextInput>
+          </View>
+          <Text style={style.profileHead}>
+            | Dangers you want to avoid (Maximum 6)
+          </Text>
+          <View style={style.profileContainer}>
+            {crimetype.map((item, index) => {
+              return (
+                <View key={item.id} style={style.crimeButtonContainer}>
+                  <View
                     style={
                       isClicked[index]
                         ? StyleSheet.compose(
-                            style.crimeButtonText,
-                            style.crimeButtonTextActive,
+                            style.crimeButton,
+                            style.crimeButtonActive,
                           )
-                        : style.crimeButtonText
+                        : style.crimeButton
                     }>
-                    {item.type}
-                  </Text>
+                    <Text
+                      onPress={() => {
+                        ButtonClick(index);
+                      }}
+                      style={
+                        isClicked[index]
+                          ? StyleSheet.compose(
+                              style.crimeButtonText,
+                              style.crimeButtonTextActive,
+                            )
+                          : style.crimeButtonText
+                      }>
+                      {item.type}
+                    </Text>
+                  </View>
                 </View>
-              </View>
-            );
-          })}
+              );
+            })}
+          </View>
+        </View>
+        <View style={style.buttonZone}>
+          <Pressable
+            onPress={onSubmit}
+            style={
+              !canGoNext
+                ? style.loginButton
+                : StyleSheet.compose(style.loginButton, style.loginButtonActive)
+            }
+            disabled={!canGoNext || loading}>
+            {loading ? (
+              <ActivityIndicator color="white" />
+            ) : (
+              <Text style={style.loginButtonText}>Sign Up</Text>
+            )}
+          </Pressable>
         </View>
       </View>
-      <View style={style.buttonZone}>
-        <Pressable
-          onPress={onSubmit}
-          style={
-            !canGoNext
-              ? style.loginButton
-              : StyleSheet.compose(style.loginButton, style.loginButtonActive)
-          }
-          disabled={!canGoNext || loading}>
-          {loading ? (
-            <ActivityIndicator color="white" />
-          ) : (
-            <Text style={style.loginButtonText}>Sign Up</Text>
-          )}
-        </Pressable>
-      </View>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -243,6 +267,7 @@ const style = StyleSheet.create({
     alignItems: 'center',
   },
   logo: {
+    marginTop: 30,
     width: 180,
     height: 100,
   },
