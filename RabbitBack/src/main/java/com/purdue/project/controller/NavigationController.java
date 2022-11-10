@@ -32,7 +32,7 @@ public class NavigationController {
         return naviDAO.save(navigation);
     }
 
-    @GetMapping("/navi/read/{id}")
+    @GetMapping("/navi/read/")
     public List<Navigation> readAll() {
 //        naviDAO.findall().filter
         return naviDAO.findAll();
