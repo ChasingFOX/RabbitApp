@@ -1,3 +1,5 @@
+// Search Tab Code
+
 import * as React from 'react';
 import {
   Text,
@@ -20,7 +22,7 @@ import {
   createNativeStackNavigator,
   NativeStackScreenProps,
 } from '@react-navigation/native-stack';
-import {LoggedInParamList} from '../../App';
+import {LoggedInParamList} from '../../AppInner';
 import {useEffect} from 'react';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 

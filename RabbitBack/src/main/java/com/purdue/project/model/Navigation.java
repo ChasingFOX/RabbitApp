@@ -13,22 +13,14 @@ public class Navigation {
 
     @Column
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Integer id;
+    @Column
     private Integer type;
+    @Column
     private Integer orig_id;
+    @Column
     private Integer dest_id;
-    @Transient
-    private Location orig;
-    @Transient
-    private Location dest;
 
-    @Override
-    public String toString() {
-        return "Navigation{" +
-                "type=" + type +
-                ", orig=" + orig +
-                ", dest=" + dest +
-                '}';
-    }
+
 }

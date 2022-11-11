@@ -3,7 +3,6 @@ package com.purdue.project.controller;
 import com.purdue.project.dao.NaviDAO;
 import com.purdue.project.dao.LocationDAO;
 import com.purdue.project.model.Navigation;
-import com.purdue.project.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +16,7 @@ public class NavigationController {
     NaviDAO naviDAO;
     @Autowired
     LocationDAO locationDAO;
+
     @ResponseBody
     @RequestMapping(value = "/navi/create", method = RequestMethod.POST)
     public Navigation create(@RequestBody Navigation navigationObj) {
