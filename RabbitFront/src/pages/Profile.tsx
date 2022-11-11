@@ -11,6 +11,9 @@ import {useCallback, useState} from 'react';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {ProfilePageParamList} from './ProfilePage';
 import {Dimensions} from 'react-native';
+import axios, {AxiosError, AxiosResponse} from 'axios';
+import Config from 'react-native-config';
+import EncryptedStorage from 'react-native-encrypted-storage';
 
 type ProfileMainParamList = NativeStackScreenProps<
   ProfilePageParamList,
@@ -20,8 +23,10 @@ type ProfileMainParamList = NativeStackScreenProps<
 function Profile({navigation}: ProfileMainParamList) {
   const windowWidth = Dimensions.get('window').width;
   const windowHeight = Dimensions.get('window').height;
-  const onEdit = useCallback(() => {
+  const onEdit = useCallback(async () => {
     navigation.navigate('ProfileEdit');
+    const userId = await EncryptedStorage.getItem('id');
+    console.log(userId);
   }, [navigation]);
   const crimetype = [
     {id: 1, type: 'Assualt'},
@@ -50,6 +55,49 @@ function Profile({navigation}: ProfileMainParamList) {
     false,
   ]);
 
+  const [nickName, setNickName] = useState<String>('ㅇㅇ');
+  const [email, setEmail] = useState<String>();
+  const [crime, setCrime] = useState<String>();
+
+  const getUserInfo = useCallback(async () => {
+    const userId = await EncryptedStorage.getItem('id');
+    try {
+      {
+        const response = await axios.get(
+          `${Config.API_URL}/api/user/${userId}`,
+        );
+        setEmail(response.data.email);
+        setNickName(response.data.nickname);
+        setCrime(response.data.crime);
+      }
+    } catch (error) {
+      const errorResponse = (error as AxiosError).response;
+      console.log('error', errorResponse);
+      if (errorResponse) {
+      }
+    } finally {
+      const arrayCrime = Array(crime);
+      arrayCrime.map((item, index) => {
+        isClicked[Number(item)] = true;
+      });
+    }
+  }, [email, nickName, crime]);
+
+  // const getCrimeClicked = useCallback(() => {
+  //   console.log(arrayCrime);
+
+  //   // arrayCrime.map((item, index) => {
+  //   //   setIsClicked(prev =>
+  //   //     prev.map((element, index) => {
+  //   //       return index === Number(item ? !element : element;
+  //   //     }),
+  //   //   );
+  //   // });
+  // }, [isClicked]);
+
+  getUserInfo();
+  // getCrimeClicked();
+
   return (
     <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
       <View style={styles.container}>
@@ -59,13 +107,13 @@ function Profile({navigation}: ProfileMainParamList) {
             source={require('../assets/foxProfile.png')}
             style={styles.profileIcon}
           />
-          <Text style={styles.accountText}>Hyun2</Text>
+          <Text style={styles.accountText}>{nickName}</Text>
           <View style={styles.emailPart}>
             <Image
               source={require('../assets/email.png')}
               style={styles.emailIcon}
             />
-            <Text style={styles.emailText}>abc@purdue.edu</Text>
+            <Text style={styles.emailText}>{email}</Text>
           </View>
         </View>
         <Text style={styles.profileHead}>| Dangers you want to avoid</Text>
@@ -83,9 +131,6 @@ function Profile({navigation}: ProfileMainParamList) {
                       : styles.crimeButton
                   }>
                   <Text
-                    onPress={() => {
-                      // ButtonClick(index);
-                    }}
                     style={
                       isClicked[index]
                         ? StyleSheet.compose(
