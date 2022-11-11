@@ -1,24 +1,31 @@
 package com.purdue.project.model;
 import lombok.*;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 
-import javax.persistence.Embeddable;
+import javax.persistence.*;
 
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Embeddable
+@Entity
+@Table(name="location")
 public class Location {
-    private float lat = 0;
-    private float lon = 0;
-
+    @Column
+    @Id
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    private Integer id;
+    @Column
+    private float lat;
+    @Column
+    private float lon;
     @Override
     public String toString() {
         return "Location{" +
-                "lat=" + lat +
+                "id=" + id +
+                ", lat=" + lat +
                 ", lon=" + lon +
                 '}';
     }
+
 }
