@@ -30,7 +30,7 @@ public class Route {
     @Column
     private Integer type;
     @Column
-    @ElementCollection
+    @Transient
     private ArrayList<Location> waypoint = new ArrayList<Location>();
 
     @Override
