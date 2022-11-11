@@ -1,11 +1,9 @@
-import {combineReducers} from '@reduxjs/toolkit';
-import orderSlice from '../slices/order';
-import userSlice from '../slices/user';
+import {combineReducers} from 'redux';
 
-// 전체상태 -> useSelector로 선택가능한
+import userSlice from '../slices/userSlice';
+
 const rootReducer = combineReducers({
   user: userSlice.reducer,
-  order: orderSlice.reducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

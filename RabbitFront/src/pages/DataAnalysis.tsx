@@ -4,7 +4,7 @@ import * as React from 'react';
 import {Text, TouchableHighlight, View} from 'react-native';
 import {useCallback, useState} from 'react';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {LoggedInParamList} from '../../App';
+import {LoggedInParamList} from '../../AppInner';
 import Config from 'react-native-config';
 import axios, {AxiosError} from 'axios';
 
