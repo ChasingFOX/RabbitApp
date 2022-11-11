@@ -16,7 +16,6 @@ public class Navigation {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Integer id;
     private Integer type;
-    private Integer user_id;
     private Integer orig_id;
     private Integer dest_id;
     @Transient

@@ -10,6 +10,7 @@
 	</parent>
 	<groupId>com.purdue.project</groupId>
 	<artifactId>RabbitBack</artifactId>
+	<packaging>war</packaging>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>RabbitBack</name>
 	<description>Demo project for Spring Boot</description>
