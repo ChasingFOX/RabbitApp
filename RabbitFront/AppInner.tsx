@@ -23,7 +23,8 @@ import Data from './src/pages/DataAnalysis';
 import Profile from './src/pages/Profile';
 import SignUp from './src/pages/SignUp';
 import SignIn from './src/pages/SignIn';
-import ProfileSetting from './src/pages/ProfileSetting';
+import ProfileEdit from './src/pages/ProfileEdit';
+import ProfilePage from './src/pages/ProfilePage';
 import Config from 'react-native-config';
 import axios, {AxiosError} from 'axios';
 import {useSelector} from 'react-redux';
@@ -199,7 +200,7 @@ function AppInner() {
       />
       <Tab.Screen
         name="Profile"
-        component={Profile}
+        component={ProfilePage}
         options={{
           title: 'Profile',
           tabBarIcon: ({focused}) => {

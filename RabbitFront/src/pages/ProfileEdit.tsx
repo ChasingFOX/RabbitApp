@@ -11,15 +11,16 @@ import {
 } from 'react-native';
 import {useCallback, useState} from 'react';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {RootStackParamList} from '../../App';
+import {RootStackParamList} from '../../AppInner';
 import {Dimensions} from 'react-native';
+import {ProfilePageParamList} from './ProfilePage';
 
-type ProfileSettingScreenProps = NativeStackScreenProps<
-  RootStackParamList,
-  'SignUp'
+type ProfileEditScreenProps = NativeStackScreenProps<
+  ProfilePageParamList,
+  'ProfileEdit'
 >;
 
-function ProfileSetting({navigation}: ProfileSettingScreenProps) {
+function ProfileEdit({navigation}: ProfileEditScreenProps) {
   const windowWidth = Dimensions.get('window').width;
   const windowHeight = Dimensions.get('window').height;
 
@@ -27,34 +28,52 @@ function ProfileSetting({navigation}: ProfileSettingScreenProps) {
 
   const gender = ['M', 'W'];
   const btn = [true, false];
-  const crimeType = [
-    'ARSON',
-    'ASSAULT',
-    'BATTERY',
-    'BURGLARY',
-    'DAMAGE',
-    'SexCrime',
-  ];
 
-  const ButtonClick = () => {
-    setBtnActive(prev => {
-      return !prev;
-    });
-  };
+  const onSubmit = useCallback(() => {
+    navigation.goBack();
+  }, [navigation]);
+
+  const crimetype = [
+    {id: 1, type: 'Assualt'},
+    {id: 2, type: 'Battery'},
+    {id: 3, type: 'Homicide'},
+    {id: 4, type: 'Human Tracking'},
+    {id: 5, type: 'Kidnapping'},
+    {id: 6, type: 'Narcotics'},
+    {id: 7, type: 'Public Indecency'},
+    {id: 8, type: 'Robbery'},
+    {id: 9, type: 'Sexual'},
+    {id: 10, type: 'Stalking'},
+    {id: 11, type: 'Weapon'},
+  ];
+  const [isClicked, setIsClicked] = useState([
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+  ]);
+
+  const ButtonClick = useCallback(
+    (idx: Number) => {
+      setIsClicked(prev =>
+        prev.map((element, index) => {
+          return index === idx ? !element : element;
+        }),
+      );
+    },
+    [isClicked],
+  );
 
   return (
-    <View
-      style={{
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: 'white',
-      }}>
+    <ScrollView>
       <View style={styles.container}>
-        <Image
-          source={require('../assets/logo.png')}
-          style={styles.headerIcon}
-        />
         <Text style={styles.profileHead}>| Nickname</Text>
         <TextInput
           style={styles.input}
@@ -65,96 +84,57 @@ function ProfileSetting({navigation}: ProfileSettingScreenProps) {
           keyboardType="email-address"
           blurOnSubmit={false}
         />
-        <Text style={styles.profileHead}>| Birth</Text>
-        <TextInput
-          style={styles.input}
-          placeholder=""
-          autoComplete="email"
-          textContentType="emailAddress"
-          returnKeyType="next"
-          keyboardType="email-address"
-          blurOnSubmit={false}
-        />
-        <Text style={styles.profileHead}>| Gender</Text>
-        <View style={styles.buttonZone}>
-          {gender.map((item, index) => {
-            return (
-              <Pressable>
-                <View
-                  style={
-                    btnActive == btn[index]
-                      ? styles.optionButton
-                      : StyleSheet.compose(
-                          styles.optionButton,
-                          styles.optionButtonActive,
-                        )
-                  }>
-                  <Text
-                    onPress={ButtonClick}
-                    style={
-                      btnActive == btn[index]
-                        ? styles.loginButtonText
-                        : StyleSheet.compose(
-                            styles.loginButtonText,
-                            styles.loginButtonTextActive,
-                          )
-                    }>
-                    {item}
-                  </Text>
-                </View>
-              </Pressable>
-            );
-          })}
-        </View>
+
         <Text style={styles.profileHead}>| Dangers you want to avoid</Text>
-        <View style={styles.profileContainer}>
-          {crimeType.map((item, index) => {
+
+        <View style={styles.crimeContainer}>
+          {crimetype.map((item, index) => {
             return (
-              <View style={styles.crimeButtonContainer}>
+              <View key={item.id}>
                 <View
                   style={
-                    btnActive == btn[index]
-                      ? styles.crimeButton
-                      : StyleSheet.compose(
+                    isClicked[index]
+                      ? StyleSheet.compose(
                           styles.crimeButton,
                           styles.crimeButtonActive,
                         )
+                      : styles.crimeButton
                   }>
                   <Text
-                    onPress={ButtonClick}
+                    onPress={() => {
+                      ButtonClick(index);
+                    }}
                     style={
-                      btnActive == btn[index]
-                        ? styles.crimeButtonText
-                        : StyleSheet.compose(
+                      isClicked[index]
+                        ? StyleSheet.compose(
                             styles.crimeButtonText,
                             styles.crimeButtonTextActive,
                           )
+                        : styles.crimeButtonText
                     }>
-                    {item}
+                    {item.type}
                   </Text>
                 </View>
               </View>
             );
           })}
         </View>
-        <Text style={styles.profileHead}>| Dangers you want to avoid</Text>
-        <View style={styles.profileContainer}></View>
-        <Text style={styles.profileHead}>| Account</Text>
-        <View style={styles.profileContainer}></View>
+        <View style={styles.editButton}>
+          <Text style={styles.editButtonText} onPress={onSubmit}>
+            Submit
+          </Text>
+        </View>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  headerIcon: {
-    width: 200,
-    height: 110,
-  },
   container: {
-    height: '80%',
+    height: '100%',
     width: '95%',
     display: 'flex',
+    paddingVertical: 50,
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
@@ -176,6 +156,25 @@ const styles = StyleSheet.create({
     shadowColor: 'black',
     shadowOffset: {width: 2, height: 7},
     shadowOpacity: 0.3,
+  },
+  crimeContainer: {
+    width: '90%',
+    height: 250,
+    display: 'flex',
+    backgroundColor: 'white',
+    margin: 10,
+    marginBottom: 20,
+    borderRadius: 10,
+    borderWidth: 1,
+    paddingVertical: 15,
+    borderColor: 'grey',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: 'black',
+    shadowOffset: {width: 2, height: 7},
+    shadowOpacity: 0.3,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
   },
   profileHead: {
     width: '90%',
@@ -275,6 +274,27 @@ const styles = StyleSheet.create({
   crimeButtonTextActive: {
     color: 'white',
   },
+  editButton: {
+    backgroundColor: '#f4511e',
+    width: 150,
+    paddingHorizontal: 4,
+    paddingVertical: 5,
+    margin: 10,
+    alignItems: 'center',
+    borderRadius: 5,
+    borderColor: 'grey',
+    borderWidth: 1,
+    shadowOffset: {width: 1, height: 3},
+    shadowColor: 'black',
+    shadowRadius: 2,
+    shadowOpacity: 0.6,
+  },
+  editButtonText: {
+    color: 'white',
+    textAlign: 'center',
+    fontSize: 15,
+    fontWeight: 'bold',
+  },
 });
 
-export default ProfileSetting;
+export default ProfileEdit;

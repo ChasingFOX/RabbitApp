@@ -76,7 +76,7 @@ function SignIn({navigation}: SignInScreenProps) {
       setLoading(false);
       console.log(errorResponse);
       if (errorResponse) {
-        Alert.alert('알림', errorResponse.data.message);
+        Alert.alert('알림', 'error');
       }
     } finally {
       setLoading(false);
