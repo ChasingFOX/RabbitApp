@@ -23,7 +23,9 @@ type SignInScreenProps = NativeStackScreenProps<RootStackParamList, 'SignIn'>;
 function SignIn({navigation}: SignInScreenProps) {
   const [email, setEmail] = useState('');
   const [passWord, setPassWord] = useState('');
+
   const [nickName, setNickName] = useState('');
+
   const [loading, setLoading] = useState(false);
 
   const crimetype = [
