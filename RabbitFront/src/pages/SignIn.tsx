@@ -52,28 +52,28 @@ function SignIn({navigation}: SignInScreenProps) {
       {
         setLoading(true);
         const response = await axios.post(`${Config.API_URL}/api/user`, {
-          name: email,
-          // passWord,
-          // isClicked,
+          email: email,
+          password: passWord,
+          nickname: 'ss',
+          crime: '1,2,3',
         });
-        console.log(response);
+        // console.log(response);
         // navigation.goBack();
         dispatch(
           userSlice.actions.setUser({
             email: response.data.data.email,
             nickName: response.data.data.nickName,
-            accessToken: response.data.data.accessToken,
+            // accessToken: response.data.data.accessToken,
           }),
         );
-        await EncryptedStorage.setItem(
-          'refreshToken',
-          response.data.data.refreshToken,
-        );
+        console.log('id', response.data.data.id);
+        await EncryptedStorage.setItem('id', response.data.data.id);
         Alert.alert('Login succeeded');
       }
     } catch (error) {
       const errorResponse = (error as AxiosError).response;
       setLoading(false);
+      Alert.alert('Login fault');
       console.log(errorResponse);
       if (errorResponse) {
         Alert.alert('알림', 'error');
