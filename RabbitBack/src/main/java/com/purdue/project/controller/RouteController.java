@@ -12,7 +12,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api")
 public class RouteController {
-
     @Autowired
     RouteDAO routeDAO;
 

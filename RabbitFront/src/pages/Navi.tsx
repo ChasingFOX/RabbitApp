@@ -1,3 +1,5 @@
+// Navigation Tab Code
+
 import * as React from 'react';
 import {
   Text,
@@ -15,11 +17,10 @@ import MapView, {
   PROVIDER_GOOGLE,
   PROVIDER_DEFAULT,
   Marker,
-  Polyline,
   Polygon,
 } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
-import {LoggedInParamList} from '../../App';
+import {LoggedInParamList} from '../../AppInner';
 import {useEffect} from 'react';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 
@@ -33,6 +34,7 @@ function Navi({navigation}: NaviScreenProps) {
   const [destinationCoordinates, setDestinationCoordinates] = useState([
     {latitude: latitude, longitude: longitude},
   ]);
+  // Mandatory coordinates to get a safery route
   const [directionCoordinates, setDirectionCoordinates] = useState([
     {
       latitude: 40.423999345292046,
@@ -64,7 +66,7 @@ function Navi({navigation}: NaviScreenProps) {
     },
     {latitude: 40.47381839642305, longitude: -86.94624699630066},
   ]);
-
+  // Code to get current location
   Geolocation.getCurrentPosition(
     position => {
       const latitude = JSON.stringify(position.coords.latitude);
@@ -73,17 +75,6 @@ function Navi({navigation}: NaviScreenProps) {
       setLogitude(Number(longitude));
       setCurrentLatitude(Number(latitude));
       setCurrentLongitude(Number(longitude));
-      // setCoordinates([
-      //   {
-      //     latitude: Number(latitude),
-      //     longitude: Number(longitude),
-      //   },
-      // ]);
-
-      //   setInterval(() => {
-      //     setLatitude(Number(latitude));
-      //     setLogitude(Number(longitude));
-      //   }, 5000);
     },
     error => {
       console.log(error.code, error.message);
@@ -97,34 +88,31 @@ function Navi({navigation}: NaviScreenProps) {
     longitude: -86.94624699630066,
   };
 
+  // Link to obtain current coordinates will be modified later
   const geoLocation = () => {
-    // if (true) {
-    //   Geolocation.getCurrentPosition(
-    //     position => {
-    //       console.log(position);
-    //     },
-    //     error => {
-    //       // See error code charts below.
-    //       console.log(error.code, error.message);
-    //     },
-    //     {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
-    //   );
-    //   //   Geolocation.watchPosition();
-    // }
+    if (true) {
+      Geolocation.getCurrentPosition(
+        position => {
+          console.log(position);
+        },
+        error => {
+          // See error code charts below.
+          console.log(error.code, error.message);
+        },
+        {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+      );
+    }
     Linking.openURL(
       'https://www.google.com/maps/dir/?api=1&origin=40.42489539482597,-86.91051411560053&destination=40.473360126380996,-86.94642755184898&travelmode=walking&waypoints=40.42119341508705,-86.91781885879092%7C40.42732532443506,-86.92463136381483%7C40.43249524031551,-86.9269298077754%7C40.446337675508566,-86.92821177376851%7C40.45851363603605,-86.93213657343334%7C40.46619283912356,-86.9486192066278%7C40.46716415540354,-86.95429476059878%7C40.47024506180284,-86.95576733520348%7C40.47034248927443,-86.9517606080918%7C40.46857485459526,-86.94694887644629%7C40.47062085295775,-86.939740426341',
     );
   };
 
+  // Css apply Code
   const styles = StyleSheet.create({
     map: {
       ...StyleSheet.absoluteFillObject,
     },
   });
-
-  // useEffect(() => {
-  //   setLatitude();
-  // }, [coordinates]);
 
   const [polygonCoordinates, setPolygonCoordinates] = useState([
     [
@@ -171,18 +159,12 @@ function Navi({navigation}: NaviScreenProps) {
 
   return (
     <View style={{flex: 1, justifyContent: 'center'}}>
+      {/* Code to get Google Map on the Background*/}
       <MapView
         style={styles.map}
         provider={
           Platform.OS === 'android' ? PROVIDER_GOOGLE : PROVIDER_DEFAULT
-        } // remove if not using Google Maps
-        // remove if not using Google Maps
-        // initialRegion={{
-        //   latitude: latitude,
-        //   longitude: longitude,
-        //   latitudeDelta: 0.0001,
-        //   longitudeDelta: 0.003,
-        // }}
+        }
         region={{
           latitude:
             destinationCoordinates[0]['latitude'] == 0
@@ -197,34 +179,14 @@ function Navi({navigation}: NaviScreenProps) {
         }}
         onRegionChangeComplete={() => {}}
         showsUserLocation={true}>
-        {/* {directionCoordinates.map((directionCoordinates, index) => (
-          <Marker
-            key={`coordinate_${index}`}
-            coordinate={directionCoordinates}
-          />
-        ))} */}
+        {}
         {destinationCoordinates.map((destinationCoordinates, index) => (
           <Marker
             key={`coordinate_${index}`}
             coordinate={destinationCoordinates}
           />
         ))}
-        {/* 
-        {coordinates.map((coordinates, index) => (
-          <Marker key={`coordinate_${index}`} coordinate={coordinates} />
-        ))} */}
         {/* <MapViewDirections
-          origin={origin}
-          waypoints={directionCoordinates}
-          destination={destination}
-          apikey={'AIzaSyB_nbHi0KEhdlrM8ioBv_GpYCeVH2p1-08'}
-          mode="DRIVING"
-          strokeWidth={3}
-          strokeColor="rgb(255,0,0)"
-          precision="low"
-          timePrecision="none"
-        />
-        <MapViewDirections
           origin={origin}
           destination={destination}
           apikey={'AIzaSyB_nbHi0KEhdlrM8ioBv_GpYCeVH2p1-08'}
@@ -239,19 +201,21 @@ function Navi({navigation}: NaviScreenProps) {
           }}
         /> */}
 
+        {/* Code to make polygon area */}
         <Polygon
           coordinates={polygonCoordinates[0]}
           strokeColor="#000" // fallback for when `strokeColors` is not supported by the map-provider
           fillColor="rgba(256,26,20,.3)"
-          // strokeWidth={6}
+          strokeWidth={2}
         />
         <Polygon
           coordinates={polygonCoordinates[1]}
           strokeColor="#000" // fallback for when `strokeColors` is not supported by the map-provider
           fillColor="rgba(256,26,20,.3)"
-          // strokeWidth={6}
+          strokeWidth={2}
         />
       </MapView>
+      {/* Code to search direction location */}
       <GooglePlacesAutocomplete
         GooglePlacesDetailsQuery={{fields: 'geometry'}}
         fetchDetails={true}
@@ -271,10 +235,6 @@ function Navi({navigation}: NaviScreenProps) {
           ];
 
           setDestinationCoordinates(destinationLocation);
-          // setLatitude(Number(details?.geometry?.location.lat));
-          // setLogitude(Number(details?.geometry?.location.lng));
-
-          // console.log('coordinates', typeof coordinates[0]['latitude']);
 
           console.log('dd', JSON.stringify(details?.geometry?.location));
 
@@ -308,10 +268,6 @@ function Navi({navigation}: NaviScreenProps) {
         <Text> latitude: {latitude} </Text>
         <Text> longitude: {longitude} </Text>
       </TouchableOpacity>
-
-      {/* <TouchableHighlight onPress={onClick}>
-        <Text>Home Screen</Text>
-      </TouchableHighlight> */}
     </View>
   );
 }

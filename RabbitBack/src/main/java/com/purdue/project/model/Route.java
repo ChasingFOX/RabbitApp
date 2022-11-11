@@ -15,18 +15,29 @@ public class Route {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Integer id;
+    @Column
     private Timestamp time;
+    @Column
     private String length;
+    @Column
     private Integer type;
-
+    @Column
     private Integer waypoint_id_1;
+    @Column
     private Integer waypoint_id_2;
+    @Column
     private Integer waypoint_id_3;
+    @Column
     private Integer waypoint_id_4;
+    @Column
     private Integer waypoint_id_5;
+    @Column
     private Integer waypoint_id_6;
+    @Column
     private Integer waypoint_id_7;
+    @Column
     private Integer waypoint_id_8;
+    @Column
     private Integer waypoint_id_9;
 
     @Transient

@@ -16,6 +16,7 @@ public class NavigationController {
     NaviDAO naviDAO;
     @Autowired
     LocationDAO locationDAO;
+
     @ResponseBody
     @RequestMapping(value = "/navi/create", method = RequestMethod.POST)
     public Navigation create(@RequestBody Navigation navigationObj) {
@@ -31,7 +32,7 @@ public class NavigationController {
         return naviDAO.save(navigation);
     }
 
-    @GetMapping("/navi/read/{id}")
+    @GetMapping("/navi/read/")
     public List<Navigation> readAll() {
 //        naviDAO.findall().filter
         return naviDAO.findAll();

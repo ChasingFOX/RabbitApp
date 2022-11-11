@@ -15,8 +15,9 @@ public class Location {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Integer id;
-
+    @Column
     private float lat;
+    @Column
     private float lon;
     @Override
     public String toString() {
