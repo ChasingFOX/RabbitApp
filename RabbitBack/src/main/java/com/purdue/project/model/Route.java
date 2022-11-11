@@ -2,6 +2,11 @@ package com.purdue.project.model;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.persistence.Table;
+
 import lombok.*;
 
 import javax.persistence.*;
@@ -14,7 +19,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "route")
 public class Route {
-    @Column
+
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Integer id;
@@ -25,8 +30,8 @@ public class Route {
     @Column
     private Integer type;
     @Column
-    @ElementCollection
-    private ArrayList<Location> waypoint = new ArrayList<Location>(); // [{}, {}]
+    @Transient
+    private ArrayList<Location> waypoint = new ArrayList<Location>();
 
     @Override
     public String toString() {
