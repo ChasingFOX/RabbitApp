@@ -20,7 +20,7 @@ import MapView, {
   Polygon,
 } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
-import {LoggedInParamList} from '../../App';
+import {LoggedInParamList} from '../../AppInner';
 import {useEffect} from 'react';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 
@@ -186,7 +186,7 @@ function Navi({navigation}: NaviScreenProps) {
             coordinate={destinationCoordinates}
           />
         ))}
-        <MapViewDirections
+        {/* <MapViewDirections
           origin={origin}
           destination={destination}
           apikey={'AIzaSyB_nbHi0KEhdlrM8ioBv_GpYCeVH2p1-08'}
@@ -199,7 +199,7 @@ function Navi({navigation}: NaviScreenProps) {
             console.log(`Distance: ${result.distance} km`);
             console.log(`Duration: ${result.duration} min.`);
           }}
-        />
+        /> */}
 
         {/* Code to make polygon area */}
         <Polygon
