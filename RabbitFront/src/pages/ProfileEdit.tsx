@@ -6,23 +6,33 @@ import {
   StyleSheet,
   ScrollView,
   Image,
+  TextInput,
+  Pressable,
 } from 'react-native';
 import {useCallback, useState} from 'react';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {ProfilePageParamList} from './ProfilePage';
+import {RootStackParamList} from '../../AppInner';
 import {Dimensions} from 'react-native';
+import {ProfilePageParamList} from './ProfilePage';
 
-type ProfileMainParamList = NativeStackScreenProps<
+type ProfileEditScreenProps = NativeStackScreenProps<
   ProfilePageParamList,
-  'ProfileMain'
+  'ProfileEdit'
 >;
 
-function Profile({navigation}: ProfileMainParamList) {
+function ProfileEdit({navigation}: ProfileEditScreenProps) {
   const windowWidth = Dimensions.get('window').width;
   const windowHeight = Dimensions.get('window').height;
-  const onEdit = useCallback(() => {
-    navigation.navigate('ProfileEdit');
+
+  const [btnActive, setBtnActive] = useState(false);
+
+  const gender = ['M', 'W'];
+  const btn = [true, false];
+
+  const onSubmit = useCallback(() => {
+    navigation.goBack();
   }, [navigation]);
+
   const crimetype = [
     {id: 1, type: 'Assualt'},
     {id: 2, type: 'Battery'},
@@ -50,25 +60,33 @@ function Profile({navigation}: ProfileMainParamList) {
     false,
   ]);
 
+  const ButtonClick = useCallback(
+    (idx: Number) => {
+      setIsClicked(prev =>
+        prev.map((element, index) => {
+          return index === idx ? !element : element;
+        }),
+      );
+    },
+    [isClicked],
+  );
+
   return (
-    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+    <ScrollView>
       <View style={styles.container}>
-        <Text style={styles.profileHead}>| Account</Text>
-        <View style={styles.profileContainer}>
-          <Image
-            source={require('../assets/foxProfile.png')}
-            style={styles.profileIcon}
-          />
-          <Text style={styles.accountText}>Hyun2</Text>
-          <View style={styles.emailPart}>
-            <Image
-              source={require('../assets/email.png')}
-              style={styles.emailIcon}
-            />
-            <Text style={styles.emailText}>abc@purdue.edu</Text>
-          </View>
-        </View>
+        <Text style={styles.profileHead}>| Nickname</Text>
+        <TextInput
+          style={styles.input}
+          placeholder=""
+          autoComplete="email"
+          textContentType="emailAddress"
+          returnKeyType="next"
+          keyboardType="email-address"
+          blurOnSubmit={false}
+        />
+
         <Text style={styles.profileHead}>| Dangers you want to avoid</Text>
+
         <View style={styles.crimeContainer}>
           {crimetype.map((item, index) => {
             return (
@@ -84,7 +102,7 @@ function Profile({navigation}: ProfileMainParamList) {
                   }>
                   <Text
                     onPress={() => {
-                      // ButtonClick(index);
+                      ButtonClick(index);
                     }}
                     style={
                       isClicked[index]
@@ -102,43 +120,42 @@ function Profile({navigation}: ProfileMainParamList) {
           })}
         </View>
         <View style={styles.editButton}>
-          <Text style={styles.editButtonText} onPress={onEdit}>
-            Edit
+          <Text style={styles.editButtonText} onPress={onSubmit}>
+            Submit
           </Text>
         </View>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'white',
     height: '100%',
-    width: '100%',
+    width: '95%',
     display: 'flex',
+    paddingVertical: 50,
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
   },
   profileContainer: {
     width: '90%',
-    height: '25%',
+    height: 100,
     display: 'flex',
+    flexDirection: 'row',
     backgroundColor: 'white',
+    padding: 10,
     margin: 10,
     marginBottom: 20,
     borderRadius: 10,
     borderWidth: 1,
-    paddingVertical: 0,
     borderColor: 'grey',
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: 'black',
     shadowOffset: {width: 2, height: 7},
     shadowOpacity: 0.3,
-    flexDirection: 'column',
-    flexWrap: 'nowrap',
   },
   crimeContainer: {
     width: '90%',
@@ -166,33 +183,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     justifyContent: 'flex-start',
   },
-  profileIcon: {
-    width: 60,
-    height: 60,
-  },
-  accountText: {
-    width: 130,
-    fontSize: 15,
-    padding: 5,
-    margin: 6,
-    backgroundColor: 'rgb(217, 217, 217)',
-    textAlign: 'center',
-  },
-  emailPart: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  emailIcon: {
-    width: 20,
-    height: 16,
-    textAlign: 'center',
-  },
-  emailText: {
-    fontSize: 15,
-    padding: 5,
-    textAlign: 'center',
-  },
+
   ButtonText: {
     color: 'white',
   },
@@ -200,6 +191,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'red',
   },
   buttonZone: {
+    display: 'flex',
+    flexDirection: 'row',
     margin: 10,
     alignItems: 'center',
   },
@@ -217,11 +210,35 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   input: {
-    width: 200,
-    backgroundColor: 'white',
+    width: '90%',
+    backgroundColor: 'rgba(0, 0, 0, 0.1)',
     paddingHorizontal: 10,
     paddingVertical: 10,
     margin: 10,
+  },
+  optionButton: {
+    backgroundColor: 'white',
+    width: 150,
+    paddingHorizontal: 20,
+    paddingVertical: 5,
+    margin: 10,
+    alignItems: 'center',
+    borderRadius: 20,
+    borderWidth: 0.3,
+    borderColor: 'grey',
+    shadowOffset: {width: 1, height: 3},
+    shadowColor: 'black',
+    shadowRadius: 2,
+    shadowOpacity: 0.6,
+  },
+  optionButtonActive: {
+    backgroundColor: '#f4511e',
+  },
+  crimeButtonContainer: {
+    display: 'flex',
+    width: 55,
+    height: 90,
+    backgroundColor: 'red',
   },
   crimeButton: {
     backgroundColor: 'white',
@@ -230,7 +247,7 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     margin: 10,
     alignItems: 'center',
-    borderRadius: 15,
+    borderRadius: 20,
     borderWidth: 0.3,
     borderColor: 'grey',
     shadowOffset: {width: 1, height: 3},
@@ -241,9 +258,16 @@ const styles = StyleSheet.create({
   crimeButtonActive: {
     backgroundColor: '#f4511e',
   },
+  loginButtonText: {
+    color: 'black',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  loginButtonTextActive: {
+    color: 'white',
+  },
   crimeButtonText: {
     color: 'black',
-    textAlign: 'center',
     fontSize: 13,
     fontWeight: 'bold',
   },
@@ -273,4 +297,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Profile;
+export default ProfileEdit;
