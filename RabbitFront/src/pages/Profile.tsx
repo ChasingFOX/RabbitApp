@@ -7,10 +7,9 @@ import {
   ScrollView,
   Image,
 } from 'react-native';
-import {useCallback, useState} from 'react';
+import {useCallback, useState, useEffect} from 'react';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {ProfilePageParamList} from './ProfilePage';
-import {Dimensions} from 'react-native';
 import axios, {AxiosError, AxiosResponse} from 'axios';
 import Config from 'react-native-config';
 import EncryptedStorage from 'react-native-encrypted-storage';
@@ -21,13 +20,6 @@ type ProfileMainParamList = NativeStackScreenProps<
 >;
 
 function Profile({navigation}: ProfileMainParamList) {
-  const windowWidth = Dimensions.get('window').width;
-  const windowHeight = Dimensions.get('window').height;
-  const onEdit = useCallback(async () => {
-    navigation.navigate('ProfileEdit');
-    const userId = await EncryptedStorage.getItem('id');
-    console.log(userId);
-  }, [navigation]);
   const crimetype = [
     {id: 1, type: 'Assualt'},
     {id: 2, type: 'Battery'},
@@ -41,6 +33,8 @@ function Profile({navigation}: ProfileMainParamList) {
     {id: 10, type: 'Stalking'},
     {id: 11, type: 'Weapon'},
   ];
+
+  const [crime, setCrime] = useState<String>('');
   const [isClicked, setIsClicked] = useState([
     false,
     false,
@@ -55,9 +49,15 @@ function Profile({navigation}: ProfileMainParamList) {
     false,
   ]);
 
-  const [nickName, setNickName] = useState<String>('ㅇㅇ');
-  const [email, setEmail] = useState<String>();
-  const [crime, setCrime] = useState<String>();
+  const [nickName, setNickName] = useState<String>('');
+  const [email, setEmail] = useState([]);
+  // const [crime, setCrime] = useState([]);
+
+  const onEdit = useCallback(async () => {
+    navigation.navigate('ProfileEdit');
+    const userId = await EncryptedStorage.getItem('id');
+    console.log(userId);
+  }, [navigation]);
 
   const getUserInfo = useCallback(async () => {
     const userId = await EncryptedStorage.getItem('id');
@@ -76,27 +76,23 @@ function Profile({navigation}: ProfileMainParamList) {
       if (errorResponse) {
       }
     } finally {
-      const arrayCrime = Array(crime);
-      arrayCrime.map((item, index) => {
-        isClicked[Number(item)] = true;
-      });
     }
-  }, [email, nickName, crime]);
+  }, [email, nickName, isClicked]);
 
-  // const getCrimeClicked = useCallback(() => {
-  //   console.log(arrayCrime);
+  useEffect(() => {
+    let newArr = [...isClicked];
+    if (crime !== '') {
+      crime.split(',').map((item: String) => {
+        newArr[Number(item)] = true;
+        console.log('newArr', newArr);
+      }, []);
+    }
 
-  //   // arrayCrime.map((item, index) => {
-  //   //   setIsClicked(prev =>
-  //   //     prev.map((element, index) => {
-  //   //       return index === Number(item ? !element : element;
-  //   //     }),
-  //   //   );
-  //   // });
-  // }, [isClicked]);
+    console.log('isClicked', isClicked);
+    setIsClicked(newArr);
+  }, [crime]);
 
   getUserInfo();
-  // getCrimeClicked();
 
   return (
     <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
@@ -231,7 +227,6 @@ const styles = StyleSheet.create({
   emailIcon: {
     width: 20,
     height: 16,
-    textAlign: 'center',
   },
   emailText: {
     fontSize: 15,
