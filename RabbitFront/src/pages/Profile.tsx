@@ -7,10 +7,12 @@ import {
   ScrollView,
   Image,
 } from 'react-native';
-import {useCallback, useState} from 'react';
+import {useCallback, useState, useEffect} from 'react';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {ProfilePageParamList} from './ProfilePage';
-import {Dimensions} from 'react-native';
+import axios, {AxiosError, AxiosResponse} from 'axios';
+import Config from 'react-native-config';
+import EncryptedStorage from 'react-native-encrypted-storage';
 
 type ProfileMainParamList = NativeStackScreenProps<
   ProfilePageParamList,
@@ -18,11 +20,6 @@ type ProfileMainParamList = NativeStackScreenProps<
 >;
 
 function Profile({navigation}: ProfileMainParamList) {
-  const windowWidth = Dimensions.get('window').width;
-  const windowHeight = Dimensions.get('window').height;
-  const onEdit = useCallback(() => {
-    navigation.navigate('ProfileEdit');
-  }, [navigation]);
   const crimetype = [
     {id: 1, type: 'Assualt'},
     {id: 2, type: 'Battery'},
@@ -36,6 +33,8 @@ function Profile({navigation}: ProfileMainParamList) {
     {id: 10, type: 'Stalking'},
     {id: 11, type: 'Weapon'},
   ];
+
+  const [crime, setCrime] = useState<String>('');
   const [isClicked, setIsClicked] = useState([
     false,
     false,
@@ -50,6 +49,51 @@ function Profile({navigation}: ProfileMainParamList) {
     false,
   ]);
 
+  const [nickName, setNickName] = useState<String>('');
+  const [email, setEmail] = useState([]);
+  // const [crime, setCrime] = useState([]);
+
+  const onEdit = useCallback(async () => {
+    navigation.navigate('ProfileEdit');
+    const userId = await EncryptedStorage.getItem('id');
+    console.log(userId);
+  }, [navigation]);
+
+  const getUserInfo = useCallback(async () => {
+    const userId = await EncryptedStorage.getItem('id');
+    try {
+      {
+        const response = await axios.get(
+          `${Config.API_URL}/api/user/${userId}`,
+        );
+        setEmail(response.data.email);
+        setNickName(response.data.nickname);
+        setCrime(response.data.crime);
+      }
+    } catch (error) {
+      const errorResponse = (error as AxiosError).response;
+      console.log('error', errorResponse);
+      if (errorResponse) {
+      }
+    } finally {
+    }
+  }, [email, nickName, isClicked]);
+
+  useEffect(() => {
+    let newArr = [...isClicked];
+    if (crime !== '') {
+      crime.split(',').map((item: String) => {
+        newArr[Number(item)] = true;
+        console.log('newArr', newArr);
+      }, []);
+    }
+
+    console.log('isClicked', isClicked);
+    setIsClicked(newArr);
+  }, [crime]);
+
+  getUserInfo();
+
   return (
     <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
       <View style={styles.container}>
@@ -59,13 +103,13 @@ function Profile({navigation}: ProfileMainParamList) {
             source={require('../assets/foxProfile.png')}
             style={styles.profileIcon}
           />
-          <Text style={styles.accountText}>Hyun2</Text>
+          <Text style={styles.accountText}>{nickName}</Text>
           <View style={styles.emailPart}>
             <Image
               source={require('../assets/email.png')}
               style={styles.emailIcon}
             />
-            <Text style={styles.emailText}>abc@purdue.edu</Text>
+            <Text style={styles.emailText}>{email}</Text>
           </View>
         </View>
         <Text style={styles.profileHead}>| Dangers you want to avoid</Text>
@@ -83,9 +127,6 @@ function Profile({navigation}: ProfileMainParamList) {
                       : styles.crimeButton
                   }>
                   <Text
-                    onPress={() => {
-                      // ButtonClick(index);
-                    }}
                     style={
                       isClicked[index]
                         ? StyleSheet.compose(
@@ -186,7 +227,6 @@ const styles = StyleSheet.create({
   emailIcon: {
     width: 20,
     height: 16,
-    textAlign: 'center',
   },
   emailText: {
     fontSize: 15,
