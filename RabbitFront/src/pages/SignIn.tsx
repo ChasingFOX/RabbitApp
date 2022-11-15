@@ -31,31 +31,29 @@ function SignIn({navigation}: SignInScreenProps) {
     // if (!email || !email.trim()) {
     //   return Alert.alert('Alert', 'Please Check your Email again');
     // }
-    if (!passWord || !passWord.trim()) {
-      return Alert.alert('Alert', 'Please Check your Password again');
-    }
-    if (
-      !/^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/.test(
-        email,
-      )
-    ) {
-      return Alert.alert('알림', '올바른 이메일 주소가 아닙니다.');
-    }
-    if (!/^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[$@^!%*#?&]).{8,50}$/.test(passWord)) {
-      return Alert.alert(
-        '알림',
-        '비밀번호는 영문,숫자,특수문자($@^!%*#?&)를 모두 포함하여 8자 이상 입력해야합니다.',
-      );
-    }
+    // if (!passWord || !passWord.trim()) {
+    //   return Alert.alert('Alert', 'Please Check your Password again');
+    // }
+    // if (
+    //   !/^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/.test(
+    //     email,
+    //   )
+    // ) {
+    //   return Alert.alert('알림', '올바른 이메일 주소가 아닙니다.');
+    // }
+    // if (!/^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[$@^!%*#?&]).{8,50}$/.test(passWord)) {
+    //   return Alert.alert(
+    //     '알림',
+    //     '비밀번호는 영문,숫자,특수문자($@^!%*#?&)를 모두 포함하여 8자 이상 입력해야합니다.',
+    //   );
+    // }
 
     try {
       {
         setLoading(true);
-        const response = await axios.post(`${Config.API_URL}/api/user`, {
+        const response = await axios.post(`${Config.API_URL}/api/login`, {
           email: email,
           password: passWord,
-          nickname: 'ss',
-          crime: '1,2,3',
         });
         // console.log(response);
         // navigation.goBack();
@@ -67,7 +65,7 @@ function SignIn({navigation}: SignInScreenProps) {
           }),
         );
         console.log('id', response.data.data.id);
-        await EncryptedStorage.setItem('id', response.data.data.id);
+        await EncryptedStorage.setItem('id', response.data.id);
         Alert.alert('Login succeeded');
       }
     } catch (error) {
@@ -75,9 +73,9 @@ function SignIn({navigation}: SignInScreenProps) {
       setLoading(false);
       Alert.alert('Login fault');
       console.log(errorResponse);
-      if (errorResponse) {
-        Alert.alert('알림', 'error');
-      }
+      // if (errorResponse) {
+      //   Alert.alert('알림', 'error');
+      // }
     } finally {
       setLoading(false);
     }

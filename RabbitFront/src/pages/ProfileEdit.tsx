@@ -85,7 +85,9 @@ function ProfileEdit({navigation}: ProfileEditScreenProps) {
           blurOnSubmit={false}
         />
 
-        <Text style={styles.profileHead}>| Dangers you want to avoid</Text>
+        <Text style={styles.profileHead}>
+          | Dangers you want to avoid (Up to 6)
+        </Text>
 
         <View style={styles.crimeContainer}>
           {crimetype.map((item, index) => {
@@ -131,8 +133,9 @@ function ProfileEdit({navigation}: ProfileEditScreenProps) {
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: 'white',
     height: '100%',
-    width: '95%',
+    width: '100%',
     display: 'flex',
     paddingVertical: 50,
     flexDirection: 'column',
