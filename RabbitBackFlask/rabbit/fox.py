@@ -1,46 +1,43 @@
-from flask import Flask, jsonify, request #, redirect, url_for
-# from flask_restful import Api, Resource
-# import numpy as np
-# import pickle as p
-# import json
+from flask import Flask, jsonify, request
+import way, os
 
 app = Flask(__name__)
 
 # dict type
 waypoints = {
-    'route1': {
+    'waypoint_1': {
         'lat': 0.0,
         'lon': 0.0
     },
-    'route2': {
+    'waypoint_2': {
         'lat': 0.0,
         'lon': 0.0
     },
-    'route3': {
+    'waypoint_3': {
         'lat': 0.0,
         'lon': 0.0
     },
-    'route4': {
+    'waypoint_4': {
         'lat': 0.0,
         'lon': 0.0
     },
-    'route5': {
+    'waypoint_5': {
         'lat': 0.0,
         'lon': 0.0
     },
-    'route6': {
+    'waypoint_6': {
         'lat': 0.0,
         'lon': 0.0
     },
-    'route7': {
+    'waypoint_7': {
         'lat': 0.0,
         'lon': 0.0
     },
-    'route8': {
+    'waypoint_8': {
         'lat': 0.0,
         'lon': 0.0
     },
-    'route9': {
+    'waypoint_9': {
         'lat': 0.0,
         'lon': 0.0
     }
@@ -61,18 +58,8 @@ def apiNavi():
         dest = request.json['dest']
         id = request.json['id']
 
-        ### python code 돌리는 something 함수 추가될 예정, 이 함수에서는 9개의 waypoint 반환 ###
-        # return(jsonify(something(orig, dest, id)))
-        
-        ## 이거는 임시 코드
-        waypoints['route1']['lat'] = 11.11
-        waypoints['route1']['lon'] = 22.22
-        waypoints['route2']['lat'] = 33.33
-        waypoints['route2']['lon'] = 44.44
-        waypoints['route3']['lat'] = 55.55
-        waypoints['route3']['lon'] = 66.66
-        ##
-
+        waypoints = way.wayNine(orig, dest, id)
+        ### 이 함수에서는 9개의 waypoint 반환 ###
         return jsonify(waypoints)
 
 
@@ -80,6 +67,8 @@ def apiNavi():
 def apiCalc():
     crime = request.json['crime']
     id = request.json['id']
+    
+    # id로 구글 드라이브 파일 읽어와야 함
 
     ##
     # user가 선택한 crime의 가중치를 이용하여, 시카고의 node + edge 파일을 구글 드라이브에 저장하는 자리
