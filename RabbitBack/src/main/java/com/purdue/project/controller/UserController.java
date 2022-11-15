@@ -1,6 +1,9 @@
 package com.purdue.project.controller;
 
 import com.purdue.project.dao.UserDAO;
+import com.purdue.project.exception.EmailExistException;
+import com.purdue.project.exception.PasswordNotMatchException;
+import com.purdue.project.exception.UserNotFoundException;
 import com.purdue.project.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -14,11 +17,25 @@ public class UserController {
     @Autowired
     UserDAO userDAO;
 
-    @PostMapping("/user")
-    public User save(@RequestBody User userObj) {
+    @PostMapping("/signUp")
+    public User signUp(@RequestBody User userObj) {
+        System.out.println(userDAO.findByEmail(userObj.getEmail()).isPresent());
+        if (userDAO.findByEmail(userObj.getEmail()).isPresent()) throw new EmailExistException();
+
         return userDAO.save(userObj);
     }
+    @PostMapping("/signIn")
+    public User signIn(@RequestBody User userObj) {
+        //  check if the user is valid
+        User user = userDAO.findByEmail(userObj.getEmail()).orElseThrow(UserNotFoundException::new);
 
+        //  check if the password is valid
+        if (!user.getPassword().equals(userObj.getPassword())) throw new PasswordNotMatchException();
+
+        User responseUser = user;
+        responseUser.setPassword(null);
+        return responseUser;
+    }
     @GetMapping("/user")
     public List<User> get() {
         return userDAO.findAll();
