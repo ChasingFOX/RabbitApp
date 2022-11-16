@@ -1,8 +1,17 @@
 package com.purdue.project.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.*;
 import java.util.Date;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "user")
 public class User {
@@ -20,54 +29,6 @@ public class User {
     private String crime;
     @Column
     private Date regdate;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getNickname() {
-        return nickname;
-    }
-
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
-    }
-
-    public String getCrime() {
-        return crime;
-    }
-
-    public void setCrime(String crime) {
-        this.crime = crime;
-    }
-
-    public Date getRegdate() {
-        return regdate;
-    }
-
-    public void setRegdate(Date regdate) {
-        this.regdate = regdate;
-    }
 
     @Override
     public String toString() {
