@@ -1,9 +1,8 @@
 package com.purdue.project.controller;
 
-import com.purdue.project.dao.UserDAO;
-import com.purdue.project.exception.PasswordNotMatchException;
-import com.purdue.project.exception.UserNotFoundException;
 import com.purdue.project.model.*;
+import com.purdue.project.dao.UserDAO;
+import com.purdue.project.exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +20,7 @@ public class UserController {
     public ResponseEntity<SignupResponse> signUp(@RequestBody User userObj) {
         //  check if the email is valid
         if (userDAO.findByEmail(userObj.getEmail()).isPresent()) {
-            return ResponseEntity.badRequest().body(new SignupResponse("중복된 이메일이 존재합니다."));
+            return ResponseEntity.badRequest().body(new SignupResponse("이미 존재하는 이메일입니다."));
         }
         userDAO.save(userObj);
         return ResponseEntity.ok(new SignupResponse("회원 가입이 완료되었습니다."));
@@ -58,9 +57,11 @@ public class UserController {
         }
     }
 
-    @PutMapping("/user")
+    @PostMapping("/user/update")
     public User update(@RequestBody User userObj) {
-        return userDAO.save(userObj);
+        Optional<User> user = userDAO.findById(userObj.getId());
+        User updatedUser  = new User(user.get().getId(), user.get().getEmail(), user.get().getPassword(), userObj.getNickname(), userObj.getCrime(), user.get().getRegdate());
+        return userDAO.save(updatedUser);
     }
 
     @DeleteMapping("/user/{id}")
