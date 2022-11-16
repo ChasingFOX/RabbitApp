@@ -9,9 +9,10 @@ import {
   Platform,
   StyleSheet,
   Linking,
+  Image,
 } from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {useCallback, useState} from 'react';
+import {useCallback, useState, useEffect, useRef} from 'react';
 import Geolocation from '@react-native-community/geolocation';
 import MapView, {
   PROVIDER_GOOGLE,
@@ -21,8 +22,9 @@ import MapView, {
 } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 import {LoggedInParamList} from '../../AppInner';
-import {useEffect} from 'react';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
+import {BottomSheetModal, BottomSheetModalProvider} from '@gorhom/bottom-sheet';
+import NaviDetail from '../components/NaviDetail';
 
 type NaviScreenProps = NativeStackScreenProps<LoggedInParamList, 'Navi'>;
 
@@ -66,6 +68,13 @@ function Navi({navigation}: NaviScreenProps) {
     },
     {latitude: 40.47381839642305, longitude: -86.94624699630066},
   ]);
+
+  const bottomSheetRef = useRef<BottomSheetModal>(null);
+
+  // callbacks
+  const handleSheetChanges = useCallback((index: number) => {
+    console.log('handleSheetChanges', index);
+  }, []);
   // Code to get current location
   Geolocation.getCurrentPosition(
     position => {
@@ -107,12 +116,7 @@ function Navi({navigation}: NaviScreenProps) {
     );
   };
 
-  // Css apply Code
-  const styles = StyleSheet.create({
-    map: {
-      ...StyleSheet.absoluteFillObject,
-    },
-  });
+  const [destinationName, setDestinationName] = useState<string>('');
 
   const [polygonCoordinates, setPolygonCoordinates] = useState([
     [
@@ -158,35 +162,46 @@ function Navi({navigation}: NaviScreenProps) {
   ]);
 
   return (
-    <View style={{flex: 1, justifyContent: 'center'}}>
-      {/* Code to get Google Map on the Background*/}
-      <MapView
-        style={styles.map}
-        provider={
-          Platform.OS === 'android' ? PROVIDER_GOOGLE : PROVIDER_DEFAULT
-        }
-        region={{
-          latitude:
-            destinationCoordinates[0]['latitude'] == 0
-              ? latitude
-              : destinationCoordinates[0]['latitude'],
-          longitude:
-            destinationCoordinates[0]['longitude'] == 0
-              ? longitude
-              : destinationCoordinates[0]['longitude'],
-          latitudeDelta: 0.0001,
-          longitudeDelta: 0.003,
-        }}
-        onRegionChangeComplete={() => {}}
-        showsUserLocation={true}>
-        {}
-        {destinationCoordinates.map((destinationCoordinates, index) => (
-          <Marker
-            key={`coordinate_${index}`}
-            coordinate={destinationCoordinates}
-          />
-        ))}
-        {/* <MapViewDirections
+    <BottomSheetModalProvider>
+      <View style={{height: '100%', flex: 1, justifyContent: 'flex-start'}}>
+        {/* <ActionSheet ref={actionSheetRef}>
+        <Text>Hi, I am here.</Text>
+      </ActionSheet> */}
+        <BottomSheetModal
+          ref={bottomSheetRef}
+          index={1}
+          snapPoints={['25%', '50%']}
+          onChange={handleSheetChanges}>
+          <NaviDetail destination={destinationName} />
+        </BottomSheetModal>
+        {/* Code to get Google Map on the Background*/}
+        <MapView
+          style={styles.map}
+          provider={
+            Platform.OS === 'android' ? PROVIDER_GOOGLE : PROVIDER_DEFAULT
+          }
+          region={{
+            latitude:
+              destinationCoordinates[0]['latitude'] == 0
+                ? latitude
+                : destinationCoordinates[0]['latitude'],
+            longitude:
+              destinationCoordinates[0]['longitude'] == 0
+                ? longitude
+                : destinationCoordinates[0]['longitude'],
+            latitudeDelta: 0.0001,
+            longitudeDelta: 0.003,
+          }}
+          onRegionChangeComplete={() => {}}
+          showsUserLocation={true}>
+          {}
+          {destinationCoordinates.map((destinationCoordinates, index) => (
+            <Marker
+              key={`coordinate_${index}`}
+              coordinate={destinationCoordinates}
+            />
+          ))}
+          {/* <MapViewDirections
           origin={origin}
           destination={destination}
           apikey={'AIzaSyB_nbHi0KEhdlrM8ioBv_GpYCeVH2p1-08'}
@@ -201,75 +216,124 @@ function Navi({navigation}: NaviScreenProps) {
           }}
         /> */}
 
-        {/* Code to make polygon area */}
-        <Polygon
-          coordinates={polygonCoordinates[0]}
-          strokeColor="#000" // fallback for when `strokeColors` is not supported by the map-provider
-          fillColor="rgba(256,26,20,.3)"
-          strokeWidth={2}
-        />
-        <Polygon
-          coordinates={polygonCoordinates[1]}
-          strokeColor="#000" // fallback for when `strokeColors` is not supported by the map-provider
-          fillColor="rgba(256,26,20,.3)"
-          strokeWidth={2}
-        />
-      </MapView>
-      {/* Code to search direction location */}
-      <GooglePlacesAutocomplete
-        GooglePlacesDetailsQuery={{fields: 'geometry'}}
-        fetchDetails={true}
-        placeholder="Search"
-        onPress={(data, details = null) => {
-          console.log(destinationCoordinates[0]['latitude']);
-          console.log(typeof destinationCoordinates[0]['latitude']);
-          // 'details' is provided when fetchDetails = true
+          {/* Code to make polygon area */}
+          <Polygon
+            coordinates={polygonCoordinates[0]}
+            strokeColor="#000" // fallback for when `strokeColors` is not supported by the map-provider
+            fillColor="rgba(256,26,20,.3)"
+            strokeWidth={2}
+          />
+          <Polygon
+            coordinates={polygonCoordinates[1]}
+            strokeColor="#000" // fallback for when `strokeColors` is not supported by the map-provider
+            fillColor="rgba(256,26,20,.3)"
+            strokeWidth={2}
+          />
+        </MapView>
+        {/* Code to search direction location */}
+        <View style={styles.searchBox}>
+          <Image
+            source={require('../assets/search.png')}
+            style={styles.searchIcon}
+          />
+          <GooglePlacesAutocomplete
+            GooglePlacesDetailsQuery={{fields: 'geometry'}}
+            fetchDetails={true}
+            placeholder="Search"
+            onPress={(data, details = null) => {
+              console.log(destinationCoordinates[0]['latitude']);
+              console.log(typeof destinationCoordinates[0]['latitude']);
+              // 'details' is provided when fetchDetails = true
 
-          console.log('dgl-lat', details?.geometry?.location.lat);
-          console.log('dgl-lng', details?.geometry?.location.lng);
-          const destinationLocation = [
-            {
-              latitude: Number(details?.geometry?.location.lat),
-              longitude: Number(details?.geometry?.location.lng),
-            },
-          ];
+              console.log('dgl-lat', details?.geometry?.location.lat);
+              console.log('dgl-lng', details?.geometry?.location.lng);
+              const destinationLocation = [
+                {
+                  latitude: Number(details?.geometry?.location.lat),
+                  longitude: Number(details?.geometry?.location.lng),
+                },
+              ];
 
-          setDestinationCoordinates(destinationLocation);
+              setDestinationCoordinates(destinationLocation);
 
-          console.log('dd', JSON.stringify(details?.geometry?.location));
+              console.log('dd', JSON.stringify(details?.geometry?.location));
 
-          console.log('latitude', typeof latitude);
-        }}
-        query={{
-          key: 'AIzaSyB_nbHi0KEhdlrM8ioBv_GpYCeVH2p1-08',
-          language: 'en',
-        }}
-        styles={{
-          textInputContainer: {
-            backgroundColor: 'grey',
-          },
-          textInput: {
-            height: 38,
-            color: '#5d5d5d',
-            fontSize: 16,
-          },
-          predefinedPlacesDescription: {
-            color: '#1faadb',
-          },
-        }}
-      />
+              console.log('latitude', typeof latitude);
 
-      <TouchableOpacity
-        onPress={() => geoLocation()}
-        style={{backgroundColor: '#89B2E9'}}>
-        <Text style={{color: 'white', textAlign: 'center'}}>
-          Get GeoLocation Button
-        </Text>
-        <Text> latitude: {latitude} </Text>
-        <Text> longitude: {longitude} </Text>
-      </TouchableOpacity>
-    </View>
+              console.log('------', details);
+
+              console.log('data', data.description);
+
+              setDestinationName(data.description);
+
+              console.log(data);
+
+              bottomSheetRef.current?.present();
+            }}
+            query={{
+              key: 'AIzaSyB_nbHi0KEhdlrM8ioBv_GpYCeVH2p1-08',
+              language: 'en',
+            }}
+            styles={{
+              textInputContainer: {
+                shadowColor: 'black',
+                shadowOffset: {width: 1},
+                shadowOpacity: 0.6,
+                marginHorizontal: 10,
+              },
+              textInput: {
+                height: 38,
+
+                color: '#5d5d5d',
+                fontSize: 16,
+              },
+              predefinedPlacesDescription: {
+                color: '#1faadb',
+              },
+            }}
+          />
+        </View>
+        <View>
+          <Text>'안녕하세요'</Text>
+        </View>
+
+        {/* <TouchableOpacity
+          onPress={() => geoLocation()}
+          style={{backgroundColor: '#89B2E9'}}>
+          <Text style={{color: 'white', textAlign: 'center'}}>
+            Get GeoLocation Button
+          </Text>
+          <Text> latitude: {latitude} </Text>
+          <Text> longitude: {longitude} </Text>
+        </TouchableOpacity> */}
+      </View>
+    </BottomSheetModalProvider>
   );
 }
+// Css apply Code
+const styles = StyleSheet.create({
+  map: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  searchBox: {
+    paddingTop: 10,
+    paddingBottom: 5,
+
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItem: 'center',
+
+    backgroundColor: 'white',
+  },
+
+  searchIcon: {
+    marginTop: 3,
+    width: 30,
+    height: 30,
+    marginLeft: 7,
+    marginRight: 1,
+  },
+});
 
 export default Navi;
