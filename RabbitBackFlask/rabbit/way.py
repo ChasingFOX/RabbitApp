@@ -15,7 +15,19 @@ import io
 from Google import Create_Service
 from googleapiclient.http import MediaIoBaseDownload
 
-def downGoogle():
+### About MySQL DB ###
+from flask_mysqldb import MySQL
+from fox import app
+
+app.config['MYSQL_USER'] = 'root'
+app.config['MYSQL_PASSWORD'] = '1234'
+app.config['MYSQL_HOST'] = '192.168.2.117'
+app.config['MYSQL_DB'] = 'rabbit'
+app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
+
+mysql = MySQL(app)
+
+def downGoogle(fileIdVal, userIdVal):
     CLIENT_SECRET_FILE = '/var/www/rabbit/client_secret.json'
     API_NAME = 'drive'
     API_VERSION = 'v3'
@@ -23,45 +35,49 @@ def downGoogle():
 
     service = Create_Service(CLIENT_SECRET_FILE, API_NAME, API_VERSION, SCOPES)
 
-    file_ids= ['1pJRK1OT1j2MziR37j2mcQHr5CJ5IpbLB', '1sJS2YjO93hZ2NtL0O4ipBwLkfa0MiEO4']
-    file_names = ['graph_nodes_risk.pickle', 'graph_edges_risk.pickle']
+    file_id = fileIdVal
+    file_name = userIdVal + ".pickle"
+    
+    print('\n')
+    print(file_id)
+    print('\n')
+    
+    request = service.files().get_media(fileId=file_id)
+    
+    fh = io.BytesIO()
+    downloader = MediaIoBaseDownload(fd=fh, request=request)
 
-    for file_id, file_name in zip(file_ids, file_names):
-        request = service.files().get_media(fileId=file_id)
-        
-        fh = io.BytesIO()
-        downloader = MediaIoBaseDownload(fd=fh, request=request)
+    done = False
 
-        done = False
+    while not done:
+        status, done = downloader.next_chunk()
+        print('Download progress {0}'.format(status.progress() * 100))
 
-        while not done:
-            status, done = downloader.next_chunk()
-            print('Download progress {0}'.format(status.progress() * 100))
+    fh.seek(0)
 
-        fh.seek(0)
-
-        with open(os.path.join('./userData', file_name), 'wb') as f:
-            f.write(fh.read())
-            f.close()
+    with open(os.path.join('/var/www/rabbit/userData', file_name), 'wb') as f:
+        f.write(fh.read())
+        f.close()
 
 def wayNine(orig, dest, id):
-    ###
-    # 원래는 아이디 가지고 DB에서 접근해서 파일 id 긁어와야 하는 자리 ###
-    ###
+    # user_id를 받아서 DB에서 접근 후, G2 file_id 알아냄
+    user_id = id
+
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT file_id FROM fileinfo WHERE user_id=%s" % (user_id))
+    
+    file_id = cur.fetchone()
+    file_id = str(file_id['file_id'])
+    cur.close()
 
     # Google Drive에서 파일 다운로드
-    downGoogle()
+    downGoogle(file_id, user_id)
 
     # local에 저장된 파일 가져오기
-    ### 원래는 파일명 아이디에 따라 바뀔 예정 ###
-    with open("userData/graph_nodes_risk.pickle","rb") as fr:
-        nodes = pkl.load(fr)
-
-    with open("userData/graph_edges_risk.pickle","rb") as fr:
-        edges = pkl.load(fr)
-
-    with open("G2.pickle","rb") as fr:
+    with open("/var/www/rabbit/userData/%s.pickle" % (user_id), "rb") as fr:
         G2 = pkl.load(fr) # G2 = ox.graph_from_gdfs(nodes, edges)
+
+    nodes, edges = ox.graph_to_gdfs(G2)
 
     origi = (orig['lat'], orig['lon'])
     desti = (dest['lat'], dest['lon'])
