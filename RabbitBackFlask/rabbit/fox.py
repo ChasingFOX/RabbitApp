@@ -58,8 +58,8 @@ def apiNavi():
         dest = request.json['dest']
         id = request.json['id']
 
-        waypoints = way.wayNine(orig, dest, id)
-        ### 이 함수에서는 9개의 waypoint 반환 ###
+        waypoints = way.wayNine(orig, dest, id) # 이 함수에서는 9개의 waypoint 반환
+        
         return jsonify(waypoints)
 
 
