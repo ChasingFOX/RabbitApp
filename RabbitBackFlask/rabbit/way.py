@@ -47,7 +47,7 @@ def downGoogle(fileIdVal, userIdVal):
         f.close()
 
 def wayNine(orig, dest, id):
-    # user_id를 받아서 DB에서 접근 후, G2 file_id 알아냄
+    # Get user_id, after that, DB access, Figure out the file_id of Graph
     user_id = id
 
     cur = mysql.connection.cursor()
@@ -57,10 +57,10 @@ def wayNine(orig, dest, id):
     file_id = str(file_id['file_id'])
     cur.close()
 
-    # Google Drive에서 파일 다운로드
+    # File Download at Google Drive
     downGoogle(file_id, user_id)
 
-    # local에 저장된 파일 가져오기
+    # Load a file that was saved from local
     with open("/var/www/rabbit/userData/%s.pickle" % (user_id), "rb") as fr:
         G2 = pkl.load(fr) # G2 = ox.graph_from_gdfs(nodes, edges)
 
