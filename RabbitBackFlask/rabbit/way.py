@@ -16,16 +16,7 @@ from Google import Create_Service
 from googleapiclient.http import MediaIoBaseDownload
 
 ### About MySQL DB ###
-from flask_mysqldb import MySQL
-from fox import app
-
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = '1234'
-app.config['MYSQL_HOST'] = '192.168.2.117'
-app.config['MYSQL_DB'] = 'rabbit'
-app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
-
-mysql = MySQL(app)
+from fox import mysql
 
 def downGoogle(fileIdVal, userIdVal):
     CLIENT_SECRET_FILE = '/var/www/rabbit/client_secret.json'
@@ -37,10 +28,6 @@ def downGoogle(fileIdVal, userIdVal):
 
     file_id = fileIdVal
     file_name = userIdVal + ".pickle"
-    
-    print('\n')
-    print(file_id)
-    print('\n')
     
     request = service.files().get_media(fileId=file_id)
     
@@ -59,7 +46,7 @@ def downGoogle(fileIdVal, userIdVal):
         f.write(fh.read())
         f.close()
 
-def wayNine(orig, dest, id):
+def wayNine(orig, dest, id, option):
     # user_id를 받아서 DB에서 접근 후, G2 file_id 알아냄
     user_id = id
 
@@ -83,110 +70,156 @@ def wayNine(orig, dest, id):
     desti = (dest['lat'], dest['lon'])
     orig_node = ox.distance.nearest_nodes(G2, origi[1], origi[0])
     dest_node = ox.distance.nearest_nodes(G2, desti[1], desti[0])
-    route1 = ox.shortest_path(G2, orig_node, dest_node, weight="length")
-    route2 = ox.shortest_path(G2, orig_node, dest_node, weight="risk score")
 
-    route1_length = int(sum(ox.utils_graph.get_route_edge_attributes(G2, route1, "length")))
-    route2_length = int(sum(ox.utils_graph.get_route_edge_attributes(G2, route2, "length")))
-    route1_risk = int(sum(ox.utils_graph.get_route_edge_attributes(G2, route1, "risk score")))
-    route2_risk = int(sum(ox.utils_graph.get_route_edge_attributes(G2, route2, "risk score")))
+    if (option == 1): # shortest
+        route1 = ox.shortest_path(G2, orig_node, dest_node, weight="length")
+        route1_length = int(sum(ox.utils_graph.get_route_edge_attributes(G2, route1, "length")))
+        route1_risk = int(sum(ox.utils_graph.get_route_edge_attributes(G2, route1, "risk score")))
+        print("Route shortest is", route1_length, "meters and has", route1_risk, "riskiness score.")
+        
+        # get the information about the nodes and edges in route
+        route1_nodes = nodes[nodes.index.isin(route1)]
+        route1_edges = ox.utils_graph.get_route_edge_attributes(G2, route1)
+        
+        # select the 9 nodes by analyzing the numbers of the node
+        num_nodes_route1 = len(route1_nodes)
+        selected_nodes_route1 = (num_nodes_route1//9)
+        selected_route1 = route1_nodes.iloc[::selected_nodes_route1]
+        selected_route1_df = pd.DataFrame(selected_route1)
+        result_num_route1 = selected_route1_df.reset_index().loc[:8, ['y', 'x'],]
+        
+        # select the 9 nodes by analyzing the length of the edges
+        selected_nodes_len_1 = math.trunc(route1_length/10)
+        route1_edges_df = pd.DataFrame(route1_edges)
+        route1_nodes_df = pd.DataFrame(route1_nodes)
+        
+        # get the riskiness of the edges in the route
+        route1_edges_riskiness = edges[edges['osmid'].isin(route1_edges_df['osmid'])]
 
-    print("Route 1 is", route1_length, "meters and has", route1_risk, "riskiness score.")
-    print("Route 2 is", route2_length, "meters and has", route2_risk, "riskiness score.")
+        sum_value = 0
+        nodes_idx_1= []
+        for index, edge in route1_edges_df.iterrows():
+            sum_value += edge["length"]
+            if(sum_value >= selected_nodes_len_1):
+                nodes_idx_1.append(route1_nodes_df.reset_index().loc[index, ['y', 'x']])
+                sum_value = 0
 
-    route1_nodes = nodes[nodes.index.isin(route1)]
-    route2_nodes = nodes[nodes.index.isin(route2)]
+        result_len_route1 = pd.DataFrame(nodes_idx_1) # shortest
 
-    route1_edges = ox.utils_graph.get_route_edge_attributes(G2, route1)
-    route2_edges = ox.utils_graph.get_route_edge_attributes(G2, route2)
-
-    num_nodes_route1 = len(route1_nodes)
-    num_nodes_route2 = len(route2_nodes)
-    selected_nodes_route1 = (num_nodes_route1//9)
-    selected_nodes_route2 = (num_nodes_route2//9)
-
-    selected_route1 = route1_nodes.iloc[::selected_nodes_route1]
-    selected_route2 = route2_nodes.iloc[::selected_nodes_route2]
-    selected_route1_df = pd.DataFrame(selected_route1)
-    selected_route2_df = pd.DataFrame(selected_route2)
-    result_num_route1 = selected_route1_df.reset_index().loc[:8, ['y', 'x'],]
-    result_num_route2 = selected_route2_df.reset_index().loc[:8, ['y', 'x'],]
-    
-    
-    ### by analyzing the length of the edges ###
-
-    selected_nodes_len_1 = math.trunc(route1_length/10)
-    selected_nodes_len_2 = math.trunc(route2_length/10)
-
-    route1_edges_df = pd.DataFrame(route1_edges)
-    route2_edges_df = pd.DataFrame(route2_edges)
-
-    route1_nodes_df = pd.DataFrame(route1_nodes)
-    route2_nodes_df = pd.DataFrame(route2_nodes)
-
-    # get the riskiness of the edges in the route
-    route1_edges_riskiness = edges[edges['osmid'].isin(route1_edges_df['osmid'])]
-    route2_edges_riskiness = edges[edges['osmid'].isin(route2_edges_df['osmid'])]
-
-    sum_value = 0
-    nodes_idx_1= []
-    for index, edge in route1_edges_df.iterrows():
-        sum_value += edge["length"]
-        if(sum_value >= selected_nodes_len_1):
-            nodes_idx_1.append(route1_nodes_df.reset_index().loc[index, ['y', 'x']])
-            sum_value = 0
-
-    sum_value = 0
-
-    nodes_idx_2 = []
-    for index, edge in route2_edges_df.iterrows():
-        sum_value += edge["length"]
-        if(sum_value >= selected_nodes_len_2):
-            nodes_idx_2.append(route2_nodes_df.reset_index().loc[index, ['y', 'x']])
-            sum_value = 0
-
-    result_len_route1 = pd.DataFrame(nodes_idx_1)
-    result_len_route2 = pd.DataFrame(nodes_idx_2)
-    
-    ### end ###
-
-    waypoints = {
-        'waypoint_1': {
-            'lat': float(result_num_route2.iloc[0, 0]),
-            'lon': float(result_num_route2.iloc[0, 1])
-        },
-        'waypoint_2': {
-            'lat': float(result_num_route2.iloc[1, 0]),
-            'lon': float(result_num_route2.iloc[1, 1])
-        },
-        'waypoint_3': {
-            'lat': float(result_num_route2.iloc[2, 0]),
-            'lon': float(result_num_route2.iloc[2, 1])
-        },
-        'waypoint_4': {
-            'lat': float(result_num_route2.iloc[3, 0]),
-            'lon': float(result_num_route2.iloc[3, 1])
-        },
-        'waypoint_5': {
-            'lat': float(result_num_route2.iloc[4, 0]),
-            'lon': float(result_num_route2.iloc[4, 1])
-        },
-        'waypoint_6': {
-            'lat': float(result_num_route2.iloc[5, 0]),
-            'lon': float(result_num_route2.iloc[5, 1])
-        },
-        'waypoint_7': {
-            'lat': float(result_num_route2.iloc[6, 0]),
-            'lon': float(result_num_route2.iloc[6, 1])
-        },
-        'waypoint_8': {
-            'lat': float(result_num_route2.iloc[7, 0]),
-            'lon': float(result_num_route2.iloc[7, 1])
-        },
-        'waypoint_9': {
-            'lat': float(result_num_route2.iloc[8, 0]),
-            'lon': float(result_num_route2.iloc[8, 1])
+        waypoints = {
+            'waypoint_1': {
+                'lat': float(result_num_route1.iloc[0, 0]),
+                'lon': float(result_num_route1.iloc[0, 1])
+            },
+            'waypoint_2': {
+                'lat': float(result_num_route1.iloc[1, 0]),
+                'lon': float(result_num_route1.iloc[1, 1])
+            },
+            'waypoint_3': {
+                'lat': float(result_num_route1.iloc[2, 0]),
+                'lon': float(result_num_route1.iloc[2, 1])
+            },
+            'waypoint_4': {
+                'lat': float(result_num_route1.iloc[3, 0]),
+                'lon': float(result_num_route1.iloc[3, 1])
+            },
+            'waypoint_5': {
+                'lat': float(result_num_route1.iloc[4, 0]),
+                'lon': float(result_num_route1.iloc[4, 1])
+            },
+            'waypoint_6': {
+                'lat': float(result_num_route1.iloc[5, 0]),
+                'lon': float(result_num_route1.iloc[5, 1])
+            },
+            'waypoint_7': {
+                'lat': float(result_num_route1.iloc[6, 0]),
+                'lon': float(result_num_route1.iloc[6, 1])
+            },
+            'waypoint_8': {
+                'lat': float(result_num_route1.iloc[7, 0]),
+                'lon': float(result_num_route1.iloc[7, 1])
+            },
+            'waypoint_9': {
+                'lat': float(result_num_route1.iloc[8, 0]),
+                'lon': float(result_num_route1.iloc[8, 1])
+            }
         }
-    }
+
+    elif (option == 2): # safetest
+        route2 = ox.shortest_path(G2, orig_node, dest_node, weight="risk score")
+        route2_length = int(sum(ox.utils_graph.get_route_edge_attributes(G2, route2, "length")))
+        route2_risk = int(sum(ox.utils_graph.get_route_edge_attributes(G2, route2, "risk score")))
+        print("Route safetest is", route2_length, "meters and has", route2_risk, "riskiness score.")
+
+        # get the information about the nodes and edges in route
+        route2_nodes = nodes[nodes.index.isin(route2)]
+        route2_edges = ox.utils_graph.get_route_edge_attributes(G2, route2)
+        
+        # select the 9 nodes by analyzing the numbers of the node
+        num_nodes_route2 = len(route2_nodes)
+        selected_nodes_route2 = (num_nodes_route2//9)
+        selected_route2 = route2_nodes.iloc[::selected_nodes_route2] 
+        selected_route2_df = pd.DataFrame(selected_route2)
+        result_num_route2 = selected_route2_df.reset_index().loc[:8, ['y', 'x'],]
+        
+        # select the 9 nodes by analyzing the length of the edges
+        selected_nodes_len_2 = math.trunc(route2_length/10)
+        route2_edges_df = pd.DataFrame(route2_edges)
+        route2_nodes_df = pd.DataFrame(route2_nodes)
+        
+        # get the riskiness of the edges in the route
+        route2_edges_riskiness = edges[edges['osmid'].isin(route2_edges_df['osmid'])]
+
+        sum_value = 0
+        nodes_idx_2 = []
+        for index, edge in route2_edges_df.iterrows():
+            sum_value += edge["length"]
+            if(sum_value >= selected_nodes_len_2):
+                nodes_idx_2.append(route2_nodes_df.reset_index().loc[index, ['y', 'x']])
+                sum_value = 0
+
+        result_len_route2 = pd.DataFrame(nodes_idx_2) # safetest
+        
+        waypoints = {
+            'waypoint_1': {
+                'lat': float(result_num_route2.iloc[0, 0]),
+                'lon': float(result_num_route2.iloc[0, 1])
+            },
+            'waypoint_2': {
+                'lat': float(result_num_route2.iloc[1, 0]),
+                'lon': float(result_num_route2.iloc[1, 1])
+            },
+            'waypoint_3': {
+                'lat': float(result_num_route2.iloc[2, 0]),
+                'lon': float(result_num_route2.iloc[2, 1])
+            },
+            'waypoint_4': {
+                'lat': float(result_num_route2.iloc[3, 0]),
+                'lon': float(result_num_route2.iloc[3, 1])
+            },
+            'waypoint_5': {
+                'lat': float(result_num_route2.iloc[4, 0]),
+                'lon': float(result_num_route2.iloc[4, 1])
+            },
+            'waypoint_6': {
+                'lat': float(result_num_route2.iloc[5, 0]),
+                'lon': float(result_num_route2.iloc[5, 1])
+            },
+            'waypoint_7': {
+                'lat': float(result_num_route2.iloc[6, 0]),
+                'lon': float(result_num_route2.iloc[6, 1])
+            },
+            'waypoint_8': {
+                'lat': float(result_num_route2.iloc[7, 0]),
+                'lon': float(result_num_route2.iloc[7, 1])
+            },
+            'waypoint_9': {
+                'lat': float(result_num_route2.iloc[8, 0]),
+                'lon': float(result_num_route2.iloc[8, 1])
+            }
+        }
+
+    else: # error
+        return Exception("Please Input a right option int number. Only 0(default), 1(shortest), 2(safetest).")
 
     return (waypoints)
