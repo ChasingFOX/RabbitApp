@@ -1,5 +1,9 @@
 from flask import Flask, jsonify, request
 from flask_mysqldb import MySQL
+
+### About Google Drive API Upload ###
+from googleapiclient.http import MediaFileUpload
+from Google import Create_Service
 import os
 
 app = Flask(__name__)
@@ -14,76 +18,51 @@ mysql = MySQL(app)
 
 import way
 
-# dict type
-waypoints = {
-    'waypoint_1': {
-        'lat': 0.0,
-        'lon': 0.0
-    },
-    'waypoint_2': {
-        'lat': 0.0,
-        'lon': 0.0
-    },
-    'waypoint_3': {
-        'lat': 0.0,
-        'lon': 0.0
-    },
-    'waypoint_4': {
-        'lat': 0.0,
-        'lon': 0.0
-    },
-    'waypoint_5': {
-        'lat': 0.0,
-        'lon': 0.0
-    },
-    'waypoint_6': {
-        'lat': 0.0,
-        'lon': 0.0
-    },
-    'waypoint_7': {
-        'lat': 0.0,
-        'lon': 0.0
-    },
-    'waypoint_8': {
-        'lat': 0.0,
-        'lon': 0.0
-    },
-    'waypoint_9': {
-        'lat': 0.0,
-        'lon': 0.0
-    }
-}
 
-### 계산하고 file_id 리턴할 함수
 def calcCrime(crime_val, userId_val):
     ##
-    # user가 선택한 crime의 가중치를 이용하여, 시카고의 G2 파일을 구글 드라이브에 저장하는 자리
+    # 원래 user가 선택한 crime의 가중치를 이용하여 분석하는 자리
     ##
-    pass
 
-@app.route('/api/navi/', methods=['GET', 'POST'])
+    # 일단 테스트 파일을 저장하는 임시 코드로 대체
+    
+
+    # 분석 후 해당 유저의 시카고의 Grpah 파일을 구글 드라이브에 저장
+
+    CLIENT_SECRET_FILE = 'client_secret.json'
+    API_NAME = 'drive'
+    API_VERSION = 'v3'
+    SCOPES = ['https://www.googleapis.com/auth/drive']
+
+    service = Create_Service(CLIENT_SECRET_FILE, API_NAME, API_VERSION, SCOPES)
+
+    folder_id = '1Pfj_Qaf8HBHqBQ9hNcIdPCf_dPhmGspY'
+
+    file_name = '%s.pickle' % (userId_val)
+    mime_type = 'application/octet-stream' # .pickle file's mime type
+
+    file_metadata = {'name': file_name, 'parents': [folder_id]}
+    
+    media = MediaFileUpload('/var/www/rabbit/userData/{0}'.format(file_name), mimetype=mime_type)
+
+    service.files().create(body=file_metadata, media_body=media, fields='id').execute()
+    file = service.files().create(body=file_metadata, media_body=media, fields='id').execute()
+    
+    return file.get("id") # uploaded file Id return
+
+
+@app.route('/api/navi/', methods=['POST'])
 def apiNavi():
-
-    global waypoints
-
-    if request.method == 'GET':
-        what = waypoints # 저장했던 way point json 파일 반환하는 과정으로 바꾸는 자리
-        return jsonify(what)
-
-    else:
-        orig = request.json['orig']
-        dest = request.json['dest']
-        id = request.json['id']
-        option = request.json['option']
-
-        waypoints = way.wayNine(orig, dest, str(id), int(option)) # 이 함수에서는 9개의 waypoint 반환
-        
-        return jsonify(waypoints)
+    orig = request.json['orig']
+    dest = request.json['dest']
+    id = request.json['id']
+    
+    return jsonify(way.wayNine(orig, dest, str(id))) # 이 함수에서는 9 + 9 + 9개의 waypoint 반환
 
 
 @app.route('/api/signup/calculate/', methods=['POST'])
 def apiCalc():
-    crime = request.json['crime']
+    crime = request.json['crime'] # 이거 list 이미 되어있나?
     userId = str(request.json['id'])
 
     fileId = calcCrime(crime, userId)
@@ -102,8 +81,8 @@ def apiCalc():
 # DB Update
 @app.route('/api/profile/calculate/', methods=['PUT'])
 def apiDBUpdate():
-    crime = request.json['crime']
-    userId = request.json['id']
+    crime = request.json['crime'] # 이거 list 이미 되어있나?
+    userId = str(request.json['id'])
 
     fileId = calcCrime(crime, userId)
 
