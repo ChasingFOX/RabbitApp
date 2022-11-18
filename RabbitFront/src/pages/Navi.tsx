@@ -26,6 +26,7 @@ import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete'
 import {BottomSheetModal, BottomSheetModalProvider} from '@gorhom/bottom-sheet';
 import SearchSheet from '../components/SearchSheet';
 import {useAppDispatch} from '../store';
+import directionSlice from '../slices/directionSlice';
 
 type SearchScreenProps = NativeStackScreenProps<NaviPageParamList, 'Search'>;
 
@@ -104,7 +105,7 @@ function Search({navigation}: SearchScreenProps) {
     if (true) {
       Geolocation.getCurrentPosition(
         position => {
-          console.log(position);
+          return position;
         },
         error => {
           // See error code charts below.
@@ -200,20 +201,6 @@ function Search({navigation}: SearchScreenProps) {
               coordinate={destinationCoordinates}
             />
           ))}
-          {/* <MapViewDirections
-          origin={origin}
-          destination={destination}
-          apikey={'AIzaSyB_nbHi0KEhdlrM8ioBv_GpYCeVH2p1-08'}
-          mode="DRIVING"
-          strokeWidth={3}
-          strokeColor="rgb(255,255,0s)"
-          precision="low"
-          timePrecision="none"
-          onReady={result => {
-            console.log(`Distance: ${result.distance} km`);
-            console.log(`Duration: ${result.duration} min.`);
-          }}
-        /> */}
 
           {/* Code to make polygon area */}
           <Polygon
@@ -265,6 +252,25 @@ function Search({navigation}: SearchScreenProps) {
               setDestinationName(data.description);
 
               console.log(data);
+
+              // Use current location and destination data for each page and store it in the reader's repository
+              dispatch(
+                directionSlice.actions.setDirection({
+                  destination: {
+                    lat: details?.geometry?.location.lat,
+                    lng: details?.geometry?.location.lng,
+                  },
+                  currentPosition: {
+                    lat: currentLatitude,
+                    lng: currentLongitude,
+                  },
+                }),
+              );
+
+              console.log('=====', details?.geometry?.location.lat);
+              console.log('=====', typeof details?.geometry?.location.lat);
+              console.log('..', currentLatitude);
+              console.log('..', typeof currentLatitude);
 
               bottomSheetRef.current?.present();
             }}

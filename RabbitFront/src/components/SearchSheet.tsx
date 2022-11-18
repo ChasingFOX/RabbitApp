@@ -16,6 +16,8 @@ import {NaviPageParamList} from '../pages/NaviPage';
 import axios, {AxiosError, AxiosResponse} from 'axios';
 import Config from 'react-native-config';
 import EncryptedStorage from 'react-native-encrypted-storage';
+import {useSelector} from 'react-redux';
+import {RootState} from '../store/reducer';
 
 export interface SearchSheetProps {
   destination: string;
@@ -24,6 +26,12 @@ export interface SearchSheetProps {
 const SearchSheet = ({destination}: SearchSheetProps) => {
   const navigation = useNavigation<NavigationProp<NaviPageParamList>>();
   const [loading, setLoading] = useState(false);
+  const currentPosition = useSelector(
+    (state: RootState) => state.direction.currentPosition,
+  );
+  const destinationPosition = useSelector(
+    (state: RootState) => state.direction.destination,
+  );
   const onNavigation = useCallback(() => {
     // if (true) {
     //   Geolocation.getCurrentPosition(
@@ -42,11 +50,14 @@ const SearchSheet = ({destination}: SearchSheetProps) => {
       'https://www.google.com/maps/dir/?api=1&origin=40.42489539482597,-86.91051411560053&destination=40.473360126380996,-86.94642755184898&travelmode=walking&waypoints=40.42119341508705,-86.91781885879092%7C40.42732532443506,-86.92463136381483%7C40.43249524031551,-86.9269298077754%7C40.446337675508566,-86.92821177376851%7C40.45851363603605,-86.93213657343334%7C40.46619283912356,-86.9486192066278%7C40.46716415540354,-86.95429476059878%7C40.47024506180284,-86.95576733520348%7C40.47034248927443,-86.9517606080918%7C40.46857485459526,-86.94694887644629%7C40.47062085295775,-86.939740426341',
     );
   }, []);
+
+  console.log('currentPosition', currentPosition);
+  console.log('destinationPosition', destinationPosition);
+
   const onDirection = useCallback(async () => {
     const userId = await EncryptedStorage.getItem('id');
     try {
       {
-        console.log(`${Config.DIRECTION_API_URL}/api/navi`);
         setLoading(true);
         const response = await axios.post(
           `${Config.DIRECTION_API_URL}/api/navi`,
@@ -59,12 +70,24 @@ const SearchSheet = ({destination}: SearchSheetProps) => {
               lat: 41.894444,
               lon: -87.623703,
             },
-            id: 88,
+            id: userId,
           },
         );
-        console.log(response);
+
+        // const response2 = {
+        //   orig: {
+        //     lat: 41.883118,
+        //     lon: -87.622917,
+        //   },
+        //   dest: {
+        //     lat: 41.894444,
+        //     lon: -87.623703,
+        //   },
+        //   id: userId,
+        // };
+
         setLoading(false);
-        navigation.navigate('Direction');
+        navigation.navigate('Direction', response.data);
       }
     } catch (error) {
       const errorResponse = (error as AxiosError).response;

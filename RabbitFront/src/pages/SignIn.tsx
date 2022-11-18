@@ -58,10 +58,6 @@ function SignIn({navigation}: SignInScreenProps) {
           email: email,
           password: passWord,
         });
-
-        console.log('succ response', response);
-        Alert.alert(response.data.message);
-
         await EncryptedStorage.setItem('id', String(response.data.id));
         setLoading(false);
         dispatch(
@@ -70,6 +66,7 @@ function SignIn({navigation}: SignInScreenProps) {
             nickName: response.data.nickName,
           }),
         );
+        Alert.alert(response.data.message);
       }
     } catch (error) {
       const errorResponse = (error as AxiosError).response;

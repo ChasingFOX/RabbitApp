@@ -25,10 +25,22 @@ import {LoggedInParamList} from '../../AppInner';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 import {BottomSheetModal, BottomSheetModalProvider} from '@gorhom/bottom-sheet';
 import DirectionSheet from '../components/DirectionSheet';
+import {NaviPageParamList} from '../pages/NaviPage';
+import {RouteProp, useRoute} from '@react-navigation/native';
+import {NavigationProp, useNavigation} from '@react-navigation/native';
+import {useSelector} from 'react-redux';
+import {RootState} from '../store/reducer';
 
-type NaviScreenProps = NativeStackScreenProps<LoggedInParamList, 'Navi'>;
+type NaviScreenProps = NativeStackScreenProps<LoggedInParamList, 'Direction'>;
+
+export type routeParamList = {
+  params: object;
+  safest: undefined;
+  shortest: undefined;
+};
 
 function Navi({navigation}: NaviScreenProps) {
+  // const route2 = useRoute<RouteProp<NaviPageParamList, 'Direction'>>();
   const [latitude, setLatitude] = useState(Number);
   const [longitude, setLogitude] = useState(Number);
   const [currentLatitude, setCurrentLatitude] = useState(Number);
@@ -36,38 +48,22 @@ function Navi({navigation}: NaviScreenProps) {
   const [destinationCoordinates, setDestinationCoordinates] = useState([
     {latitude: latitude, longitude: longitude},
   ]);
+  const route = useRoute<RouteProp<routeParamList>>();
+  const routeInfo = route.params;
+
+  const currentPosition = useSelector(
+    (state: RootState) => state.direction.currentPosition,
+  );
+  const destinationPosition = useSelector(
+    (state: RootState) => state.direction.destination,
+  );
+
+  if (routeInfo) {
+    console.log(route.params.safetest);
+  }
+  route.params;
   // Mandatory coordinates to get a safery route
-  const [directionCoordinates, setDirectionCoordinates] = useState([
-    {
-      latitude: 40.423999345292046,
-      longitude: -86.91371893175639,
-    },
-    {
-      latitude: 40.42119341508705,
-      longitude: -86.91781885879092,
-    },
-    {
-      latitude: 40.42119341508705,
-      longitude: -86.91781885879092,
-    },
-    {
-      latitude: 40.42732532443506,
-      longitude: -86.92463136381483,
-    },
-    {
-      latitude: 40.43249524031551,
-      longitude: -86.9269298077754,
-    },
-    {
-      latitude: 40.446337675508566,
-      longitude: -86.92821177376851,
-    },
-    {
-      latitude: 40.45851363603605,
-      longitude: -86.93213657343334,
-    },
-    {latitude: 40.47381839642305, longitude: -86.94624699630066},
-  ]);
+  // const safetestCoordinate = route?.params;
 
   const bottomSheetRef = useRef<BottomSheetModal>(null);
 
@@ -91,55 +87,48 @@ function Navi({navigation}: NaviScreenProps) {
     {enableHighAccuracy: true, timeout: 50000, maximumAge: 10000},
   );
 
-  const origin = {latitude: latitude, longitude: longitude};
+  const origin = {latitude: 41.883118, longitude: -87.622917};
   const destination = {
-    latitude: 40.47381839642305,
-    longitude: -86.94624699630066,
+    latitude: 41.894444,
+    longitude: -87.623703,
   };
 
   const [destinationName, setDestinationName] = useState<string>('');
 
   const [polygonCoordinates, setPolygonCoordinates] = useState([
-    [
-      {
-        latitude: 40.4310126,
-        longitude: -86.906664,
-      },
-      {
-        latitude: 40.4350317,
-        longitude: -86.9067815,
-      },
-      {
-        latitude: 40.4350337,
-        longitude: -86.9056211,
-      },
-      {
-        latitude: 40.4335597,
-        longitude: -86.9043596,
-      },
-      {
-        latitude: 40.4309274,
-        longitude: -86.9027288,
-      },
-    ],
-    [
-      {
-        latitude: 40.428616,
-        longitude: -86.910736,
-      },
-      {
-        latitude: 40.4311986,
-        longitude: -86.9106577,
-      },
-      {
-        latitude: 40.4310461,
-        longitude: -86.9131438,
-      },
-      {
-        latitude: 40.4299878,
-        longitude: -86.9121109,
-      },
-    ],
+    {latitude: 41.8945724, longitude: -87.6153454},
+    // {
+    //   latitude: 41.8937038,
+    //   longitude: -87.6147369,
+    // },
+    // {
+    //   latitude: 41.8843554,
+    //   longitude: -87.6206035,
+    // },
+    // {
+    //   latitude: 41.8843571,
+    //   longitude: -87.6241795,
+    // },
+    // {
+    //   latitude: 41.8942539,
+    //   longitude: -87.6228542,
+    // },
+    // {
+    //   latitude: 41.8943314,
+    //   longitude: -87.6178727,
+    // },
+    // {
+    //   latitude: 41.8942915,
+    //   longitude: -87.6201785,
+    // },
+    // {
+    //   latitude: 41.8842911,
+    //   longitude: -87.6241759,
+    // },
+    // {
+    //   latitude: 41.8942693,
+    //   longitude: -87.6217596,
+    // },
   ]);
 
   bottomSheetRef.current?.present();
@@ -152,7 +141,7 @@ function Navi({navigation}: NaviScreenProps) {
           index={1}
           snapPoints={['20%', '20%']}
           onChange={handleSheetChanges}>
-          <DirectionSheet />
+          {/* <DirectionSheet /> */}
         </BottomSheetModal>
         {/* Code to get Google Map on the Background*/}
         <MapView
@@ -175,29 +164,33 @@ function Navi({navigation}: NaviScreenProps) {
           onRegionChangeComplete={() => {}}
           showsUserLocation={true}>
           {}
-          {destinationCoordinates.map((destinationCoordinates, index) => (
-            <Marker
-              key={`coordinate_${index}`}
-              coordinate={destinationCoordinates}
-            />
+          {polygonCoordinates.map((destinationCoordinates, index) => (
+            <View>
+              <Marker
+                key={`coordinate_${index}`}
+                coordinate={destinationCoordinates}
+              />
+              <Text>{index}</Text>
+            </View>
           ))}
-          {/* <MapViewDirections
-          origin={origin}
-          destination={destination}
-          apikey={'AIzaSyB_nbHi0KEhdlrM8ioBv_GpYCeVH2p1-08'}
-          mode="DRIVING"
-          strokeWidth={3}
-          strokeColor="rgb(255,255,0s)"
-          precision="low"
-          timePrecision="none"
-          onReady={result => {
-            console.log(`Distance: ${result.distance} km`);
-            console.log(`Duration: ${result.duration} min.`);
-          }}
-        /> */}
+          <MapViewDirections
+            origin={origin}
+            destination={destination}
+            waypoints={polygonCoordinates}
+            apikey={'AIzaSyB_nbHi0KEhdlrM8ioBv_GpYCeVH2p1-08'}
+            mode="WALKING"
+            strokeWidth={3}
+            strokeColor="rgb(255,0,0)"
+            precision="low"
+            timePrecision="none"
+            onReady={result => {
+              console.log(`Distance: ${result.distance} km`);
+              console.log(`Duration: ${result.duration} min.`);
+            }}
+          />
 
           {/* Code to make polygon area */}
-          <Polygon
+          {/* <Polygon
             coordinates={polygonCoordinates[0]}
             strokeColor="#000" // fallback for when `strokeColors` is not supported by the map-provider
             fillColor="rgba(256,26,20,.3)"
@@ -208,7 +201,7 @@ function Navi({navigation}: NaviScreenProps) {
             strokeColor="#000" // fallback for when `strokeColors` is not supported by the map-provider
             fillColor="rgba(256,26,20,.3)"
             strokeWidth={2}
-          />
+          /> */}
         </MapView>
         {/* Code to search direction location */}
         <View style={styles.searchBox}>

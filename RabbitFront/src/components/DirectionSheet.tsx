@@ -12,13 +12,15 @@ import {useCallback, useState} from 'react';
 import Geolocation from '@react-native-community/geolocation';
 import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {NaviPageParamList} from '../pages/NaviPage';
+import {RouteProp, useRoute} from '@react-navigation/native';
 
 export interface DircetionSheetProps {
-  destination: string;
+  route: string;
 }
 
-const DirectionSheet = () => {
-  const navigation = useNavigation<NavigationProp<NaviPageParamList>>();
+const DirectionSheet = ({route}: DircetionSheetProps) => {
+  //   const route2 = useRoute<RouteProp<NaviPageParamList, 'Direction'>>();
+  //   const navigation = useNavigation<NavigationProp<NaviPageParamList>>();
   const onNavigation = useCallback(() => {
     // if (true) {
     //   Geolocation.getCurrentPosition(
@@ -37,9 +39,9 @@ const DirectionSheet = () => {
       'https://www.google.com/maps/dir/?api=1&origin=40.42489539482597,-86.91051411560053&destination=40.473360126380996,-86.94642755184898&travelmode=walking&waypoints=40.42119341508705,-86.91781885879092%7C40.42732532443506,-86.92463136381483%7C40.43249524031551,-86.9269298077754%7C40.446337675508566,-86.92821177376851%7C40.45851363603605,-86.93213657343334%7C40.46619283912356,-86.9486192066278%7C40.46716415540354,-86.95429476059878%7C40.47024506180284,-86.95576733520348%7C40.47034248927443,-86.9517606080918%7C40.46857485459526,-86.94694887644629%7C40.47062085295775,-86.939740426341',
     );
   }, []);
-  const onDirection = useCallback(() => {
-    navigation.navigate('Direction');
-  }, []);
+  //   console.log('route2.params', route2.params);
+
+  const onDirection = useCallback(() => {}, []);
 
   return (
     <View style={styles.container}>
