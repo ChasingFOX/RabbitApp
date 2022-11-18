@@ -1,92 +1,99 @@
-from flask import Flask, jsonify, request #, redirect, url_for
-# from flask_restful import Api, Resource
-# import numpy as np
-# import pickle as p
-# import json
+from flask import Flask, jsonify, request
+from flask_mysqldb import MySQL
+
+### About Google Drive API Upload ###
+from googleapiclient.http import MediaFileUpload
+from Google import Create_Service
+import os
 
 app = Flask(__name__)
 
-# dict type
-waypoints = {
-    'route1': {
-        'lat': 0.0,
-        'lon': 0.0
-    },
-    'route2': {
-        'lat': 0.0,
-        'lon': 0.0
-    },
-    'route3': {
-        'lat': 0.0,
-        'lon': 0.0
-    },
-    'route4': {
-        'lat': 0.0,
-        'lon': 0.0
-    },
-    'route5': {
-        'lat': 0.0,
-        'lon': 0.0
-    },
-    'route6': {
-        'lat': 0.0,
-        'lon': 0.0
-    },
-    'route7': {
-        'lat': 0.0,
-        'lon': 0.0
-    },
-    'route8': {
-        'lat': 0.0,
-        'lon': 0.0
-    },
-    'route9': {
-        'lat': 0.0,
-        'lon': 0.0
-    }
-}
+app.config['MYSQL_USER'] = 'root'
+app.config['MYSQL_PASSWORD'] = '1234'
+app.config['MYSQL_HOST'] = '192.168.2.117'
+app.config['MYSQL_DB'] = 'rabbit'
+app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
+
+mysql = MySQL(app)
+
+import way
 
 
-@app.route('/api/navi/', methods=['GET', 'POST'])
+def calcCrime(crime_val, userId_val):
+    ##
+    # Space of calculating each user's Graph of weight, now used test data
+    ##
+
+    # the Graph pickle file -> Save at Google Drive
+
+    CLIENT_SECRET_FILE = 'client_secret.json'
+    API_NAME = 'drive'
+    API_VERSION = 'v3'
+    SCOPES = ['https://www.googleapis.com/auth/drive']
+
+    service = Create_Service(CLIENT_SECRET_FILE, API_NAME, API_VERSION, SCOPES)
+
+    folder_id = '1Pfj_Qaf8HBHqBQ9hNcIdPCf_dPhmGspY'
+
+    file_name = '%s.pickle' % (userId_val)
+    mime_type = 'application/octet-stream' # .pickle file's mime type
+
+    file_metadata = {'name': file_name, 'parents': [folder_id]}
+    
+    media = MediaFileUpload('/var/www/rabbit/userData/{0}'.format(file_name), mimetype=mime_type)
+
+    file = service.files().create(body=file_metadata, media_body=media, fields='id').execute()
+    
+    return file.get("id") # uploaded file Id return
+
+
+@app.route('/api/navi/', methods=['POST'])
 def apiNavi():
-
-    global waypoints
-
-    if request.method == 'GET':
-        what = waypoints # 저장했던 way point json 파일 반환하는 과정으로 바꾸는 자리
-        return jsonify(what)
-
-    else:
-        orig = request.json['orig']
-        dest = request.json['dest']
-        id = request.json['id']
-
-        ### python code 돌리는 something 함수 추가될 예정, 이 함수에서는 9개의 waypoint 반환 ###
-        # return(jsonify(something(orig, dest, id)))
-        
-        ## 이거는 임시 코드
-        waypoints['route1']['lat'] = 11.11
-        waypoints['route1']['lon'] = 22.22
-        waypoints['route2']['lat'] = 33.33
-        waypoints['route2']['lon'] = 44.44
-        waypoints['route3']['lat'] = 55.55
-        waypoints['route3']['lon'] = 66.66
-        ##
-
-        return jsonify(waypoints)
-
-
-@app.route('/api/calculate/', methods=['POST'])
-def apiCalc():
-    crime = request.json['crime']
+    orig = request.json['orig']
+    dest = request.json['dest']
     id = request.json['id']
+    
+    return jsonify(way.wayNine(orig, dest, str(id))) # In this func, return 9 + 9 + 9 waypoints
 
-    ##
-    # user가 선택한 crime의 가중치를 이용하여, 시카고의 node + edge 파일을 구글 드라이브에 저장하는 자리
-    ##
+
+@app.route('/api/signup/calculate/', methods=['POST'])  # not exist? then save. After Sign-Up process, user saved. Then this request can be used.
+def apiCalc():
+    userId = str(request.json['id'])
+
+    cur = mysql.connection.cursor()
+
+    cur.execute("SELECT crime FROM user WHERE id = '%s'" % (userId))
+    crime = cur.fetchone()
+    crime = str(crime['crime'])
+
+    fileId = calcCrime(crime, userId)
+
+    cur.execute("INSERT INTO fileinfo (user_id, file_id) VALUES ('%s', '%s')" % (userId, fileId))
+
+    mysql.connection.commit()
+    cur.close()
+
+    return "Done POST crime DB"
+
+
+# DB Update
+@app.route('/api/profile/calculate/', methods=['PUT']) # exist? then revise.
+def apiDBUpdate():
+    crime = str(request.json['crime'])
+    userId = str(request.json['id'])
+
+    fileId = calcCrime(crime, userId)
+
+    cur = mysql.connection.cursor()
+    cur.execute("UPDATE fileinfo SET file_id = '%s' WHERE user_id = '%s'" % (fileId, userId))
+
+    cur.execute("UPDATE user SET crime = '%s' WHERE id = '%s'" % (crime, userId)) # user table crime value change
     
-    #return jsonify() # ??
-    
+    mysql.connection.commit()
+    cur.close()
+
+    return "Done UPDATE crime DB"
+
 
 if __name__=='__main__':
     app.run(debug=True)
