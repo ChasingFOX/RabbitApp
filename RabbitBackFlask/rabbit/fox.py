@@ -58,15 +58,17 @@ def apiNavi():
 
 @app.route('/api/signup/calculate/', methods=['POST'])  # not exist? then save. After Sign-Up process, user saved. Then this request can be used.
 def apiCalc():
-    crime = str(request.json['crime'])
     userId = str(request.json['id'])
+
+    cur = mysql.connection.cursor()
+
+    cur.execute("SELECT crime FROM user WHERE id = '%s'" % (userId))
+    crime = cur.fetchone()
+    crime = str(crime['crime'])
 
     fileId = calcCrime(crime, userId)
 
-    cur = mysql.connection.cursor()
     cur.execute("INSERT INTO fileinfo (user_id, file_id) VALUES ('%s', '%s')" % (userId, fileId))
-
-    cur.execute("UPDATE user SET crime = '%s' WHERE id = '%s'" % (crime, userId)) # user table crime value upload
 
     mysql.connection.commit()
     cur.close()
