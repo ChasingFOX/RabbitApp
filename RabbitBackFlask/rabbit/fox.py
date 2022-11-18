@@ -21,10 +21,19 @@ import way
 
 def calcCrime(crime_val, userId_val):
     ##
+<<<<<<< HEAD
     # Space of the code that analysis by user's choice crime options, now test file applied
     ##
 
     # After analysis, specific user's Chicago weight Graph pickle file save at Google Drive.
+=======
+    # 원래 user가 선택한 crime_val 이용하여 분석하는 자리
+    ##
+
+    ### 일단 테스트 파일(userId = 80, 88, 89)을 저장하는 임시 코드로 대체
+
+    # 분석 후 해당 유저의 시카고의 Grpah 파일을 구글 드라이브에 저장
+>>>>>>> 81f7613de96971bd8e908009100f335bd9ab8915
 
     CLIENT_SECRET_FILE = 'client_secret.json'
     API_NAME = 'drive'
