@@ -10,12 +10,15 @@ import {
 } from 'react-native';
 import {useCallback, useState} from 'react';
 import Geolocation from '@react-native-community/geolocation';
+import {NavigationProp, useNavigation} from '@react-navigation/native';
+import {NaviPageParamList} from '../pages/NaviPage';
 
-export interface NavieDetailProps {
+export interface DircetionSheetProps {
   destination: string;
 }
 
-const NaviDetail = ({destination}: NavieDetailProps) => {
+const DirectionSheet = () => {
+  const navigation = useNavigation<NavigationProp<NaviPageParamList>>();
   const onNavigation = useCallback(() => {
     // if (true) {
     //   Geolocation.getCurrentPosition(
@@ -34,39 +37,50 @@ const NaviDetail = ({destination}: NavieDetailProps) => {
       'https://www.google.com/maps/dir/?api=1&origin=40.42489539482597,-86.91051411560053&destination=40.473360126380996,-86.94642755184898&travelmode=walking&waypoints=40.42119341508705,-86.91781885879092%7C40.42732532443506,-86.92463136381483%7C40.43249524031551,-86.9269298077754%7C40.446337675508566,-86.92821177376851%7C40.45851363603605,-86.93213657343334%7C40.46619283912356,-86.9486192066278%7C40.46716415540354,-86.95429476059878%7C40.47024506180284,-86.95576733520348%7C40.47034248927443,-86.9517606080918%7C40.46857485459526,-86.94694887644629%7C40.47062085295775,-86.939740426341',
     );
   }, []);
+  const onDirection = useCallback(() => {
+    navigation.navigate('Direction');
+  }, []);
 
   return (
     <View style={styles.container}>
-      <TouchableHighlight>
-        <Text style={styles.destinationText}>{destination}</Text>
-      </TouchableHighlight>
-
       <View style={styles.buttonContainer}>
-        <View style={styles.naviButton}>
-          <Image
-            source={require('../assets/navigation.png')}
-            style={styles.naviIcon}
-          />
-          <Text
-            style={styles.naviButtonText}
-            onPress={() => {
-              onNavigation();
-            }}>
-            Navigation
-          </Text>
-        </View>
         <View
           style={StyleSheet.compose(styles.naviButton, styles.directionButton)}>
-          <Image
-            source={require('../assets/direction.png')}
-            style={styles.directionIcon}
-          />
           <Text
             style={StyleSheet.compose(
               styles.naviButtonText,
               styles.directionButtonText,
-            )}>
-            Direction
+            )}
+            onPress={() => {
+              onDirection();
+            }}>
+            Fastest{'\n'}Route
+          </Text>
+        </View>
+        <View
+          style={StyleSheet.compose(styles.naviButton, styles.directionButton)}>
+          <Text
+            style={StyleSheet.compose(
+              styles.naviButtonText,
+              styles.directionButtonText,
+            )}
+            onPress={() => {
+              onDirection();
+            }}>
+            Shortest{'\n'}Route
+          </Text>
+        </View>
+        <View
+          style={StyleSheet.compose(styles.naviButton, styles.directionButton)}>
+          <Text
+            style={StyleSheet.compose(
+              styles.naviButtonText,
+              styles.directionButtonText,
+            )}
+            onPress={() => {
+              onDirection();
+            }}>
+            Default{'\n'}Route
           </Text>
         </View>
         <Image source={require('../assets/line.png')} style={styles.line} />
@@ -78,35 +92,22 @@ const NaviDetail = ({destination}: NavieDetailProps) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
   },
-  destinationText: {
-    margin: 15,
-    fontSize: 17,
-  },
+
   buttonContainer: {
-    width: 350,
+    width: '100%',
     height: 250,
     display: 'flex',
-    backgroundColor: 'white',
-    marginTop: 10,
-    paddingTop: 10,
-    borderRadius: 10,
-    borderWidth: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: 'black',
-    shadowOffset: {width: 2, height: 7},
-    shadowOpacity: 0.3,
     flexDirection: 'row',
     flexWrap: 'wrap',
+    justifyContent: 'center',
   },
   naviButton: {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'center',
     backgroundColor: '#4255FF',
-    width: 150,
+    width: 100,
     paddingVertical: 4,
     margin: 10,
     alignItems: 'center',
@@ -146,4 +147,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default NaviDetail;
+export default DirectionSheet;

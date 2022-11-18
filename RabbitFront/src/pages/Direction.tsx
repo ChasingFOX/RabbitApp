@@ -21,15 +21,14 @@ import MapView, {
   Polygon,
 } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
-import {NaviPageParamList} from './NaviPage';
+import {LoggedInParamList} from '../../AppInner';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 import {BottomSheetModal, BottomSheetModalProvider} from '@gorhom/bottom-sheet';
-import SearchSheet from '../components/SearchSheet';
-import {useAppDispatch} from '../store';
+import DirectionSheet from '../components/DirectionSheet';
 
-type SearchScreenProps = NativeStackScreenProps<NaviPageParamList, 'Search'>;
+type NaviScreenProps = NativeStackScreenProps<LoggedInParamList, 'Navi'>;
 
-function Search({navigation}: SearchScreenProps) {
+function Navi({navigation}: NaviScreenProps) {
   const [latitude, setLatitude] = useState(Number);
   const [longitude, setLogitude] = useState(Number);
   const [currentLatitude, setCurrentLatitude] = useState(Number);
@@ -72,7 +71,6 @@ function Search({navigation}: SearchScreenProps) {
 
   const bottomSheetRef = useRef<BottomSheetModal>(null);
 
-  const dispatch = useAppDispatch();
   // callbacks
   const handleSheetChanges = useCallback((index: number) => {
     console.log('handleSheetChanges', index);
@@ -97,25 +95,6 @@ function Search({navigation}: SearchScreenProps) {
   const destination = {
     latitude: 40.47381839642305,
     longitude: -86.94624699630066,
-  };
-
-  // Link to obtain current coordinates will be modified later
-  const geoLocation = () => {
-    if (true) {
-      Geolocation.getCurrentPosition(
-        position => {
-          console.log(position);
-        },
-        error => {
-          // See error code charts below.
-          console.log(error.code, error.message);
-        },
-        {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
-      );
-    }
-    Linking.openURL(
-      'https://www.google.com/maps/dir/?api=1&origin=40.42489539482597,-86.91051411560053&destination=40.473360126380996,-86.94642755184898&travelmode=walking&waypoints=40.42119341508705,-86.91781885879092%7C40.42732532443506,-86.92463136381483%7C40.43249524031551,-86.9269298077754%7C40.446337675508566,-86.92821177376851%7C40.45851363603605,-86.93213657343334%7C40.46619283912356,-86.9486192066278%7C40.46716415540354,-86.95429476059878%7C40.47024506180284,-86.95576733520348%7C40.47034248927443,-86.9517606080918%7C40.46857485459526,-86.94694887644629%7C40.47062085295775,-86.939740426341',
-    );
   };
 
   const [destinationName, setDestinationName] = useState<string>('');
@@ -163,15 +142,17 @@ function Search({navigation}: SearchScreenProps) {
     ],
   ]);
 
+  bottomSheetRef.current?.present();
+
   return (
     <BottomSheetModalProvider>
       <View style={{height: '100%', flex: 1, justifyContent: 'flex-start'}}>
         <BottomSheetModal
           ref={bottomSheetRef}
           index={1}
-          snapPoints={['25%', '50%']}
+          snapPoints={['20%', '20%']}
           onChange={handleSheetChanges}>
-          <SearchSheet destination={destinationName} />
+          <DirectionSheet />
         </BottomSheetModal>
         {/* Code to get Google Map on the Background*/}
         <MapView
@@ -240,32 +221,14 @@ function Search({navigation}: SearchScreenProps) {
             fetchDetails={true}
             placeholder="Search"
             onPress={(data, details = null) => {
-              console.log(destinationCoordinates[0]['latitude']);
-              // 'details' is provided when fetchDetails = true
-
-              console.log('dgl-lat', details?.geometry?.location.lat);
-              console.log('dgl-lng', details?.geometry?.location.lng);
               const destinationLocation = [
                 {
                   latitude: Number(details?.geometry?.location.lat),
                   longitude: Number(details?.geometry?.location.lng),
                 },
               ];
-
               setDestinationCoordinates(destinationLocation);
-
-              console.log('dd', JSON.stringify(details?.geometry?.location));
-
-              console.log('latitude', typeof latitude);
-
-              console.log('------', details);
-
-              console.log('data', data.description);
-
               setDestinationName(data.description);
-
-              console.log(data);
-
               bottomSheetRef.current?.present();
             }}
             query={{
@@ -281,7 +244,6 @@ function Search({navigation}: SearchScreenProps) {
               },
               textInput: {
                 height: 38,
-
                 color: '#5d5d5d',
                 fontSize: 16,
               },
@@ -334,4 +296,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Search;
+export default Navi;
