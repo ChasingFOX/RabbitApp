@@ -11,13 +11,13 @@ public class User {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Integer id;
     @Column
-    private String name;
-    @Column
     private String email;
     @Column
-    private String gender;
+    private String password;
     @Column
-    private Integer age;
+    private String nickname;
+    @Column
+    private String crime;
     @Column
     private Date regdate;
 
@@ -29,14 +29,6 @@ public class User {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getEmail() {
         return email;
     }
@@ -45,20 +37,28 @@ public class User {
         this.email = email;
     }
 
-    public String getGender() {
-        return gender;
+    public String getPassword() {
+        return password;
     }
 
-    public void setGender(String gender) {
-        this.gender = gender;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
-    public Integer getAge() {
-        return age;
+    public String getNickname() {
+        return nickname;
     }
 
-    public void setAge(Integer age) {
-        this.age = age;
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public String getCrime() {
+        return crime;
+    }
+
+    public void setCrime(String crime) {
+        this.crime = crime;
     }
 
     public Date getRegdate() {
@@ -73,10 +73,10 @@ public class User {
     public String toString() {
         return "User{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
-                ", gender='" + gender + '\'' +
-                ", age=" + age +
+                ", password='" + password + '\'' +
+                ", nickname='" + nickname + '\'' +
+                ", crime='" + crime + '\'' +
                 ", regdate=" + regdate +
                 '}';
     }

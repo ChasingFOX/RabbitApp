@@ -17,6 +17,7 @@ import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../AppInner';
 import axios, {AxiosError} from 'axios';
 import Config from 'react-native-config';
+import EncryptedStorage from 'react-native-encrypted-storage';
 
 type SignInScreenProps = NativeStackScreenProps<RootStackParamList, 'SignIn'>;
 
@@ -54,13 +55,16 @@ function SignIn({navigation}: SignInScreenProps) {
     false,
     false,
   ]);
+  const isClickedIndex: number[] = [];
 
   const isTrueNumber = isClicked.filter(item => item == true);
   useEffect(() => {
     if (isTrueNumber.length == 7) {
       Alert.alert('You can choose up to six.');
     }
-    console.log(isTrueNumber);
+    console.log('isTri', isTrueNumber);
+    console.log('isCl', isClicked);
+    crimeIndex();
   }, [isClicked]);
 
   const ButtonClick = useCallback(
@@ -73,6 +77,14 @@ function SignIn({navigation}: SignInScreenProps) {
     },
     [isClicked],
   );
+
+  const crimeIndex = () => {
+    let fromIndex = isClicked.indexOf(true);
+    while (fromIndex != -1) {
+      isClickedIndex.push(fromIndex);
+      fromIndex = isClicked.indexOf(true, fromIndex + 1);
+    }
+  };
 
   const onSubmit = useCallback(async () => {
     if (loading) {
@@ -99,32 +111,29 @@ function SignIn({navigation}: SignInScreenProps) {
       );
     }
 
-    console.log(Config.API_URL);
-
     try {
       {
         setLoading(true);
         const response = await axios.post(`${Config.API_URL}/api/user`, {
-          name: email,
-          // passWord,
-          // isClicked,
+          email: email,
+          password: passWord,
+          nickname: nickName,
+          crime: String(isClickedIndex),
         });
-        console.log(response);
+        await EncryptedStorage.setItem('id', String(response.data.id));
         Alert.alert('알림', '회원가입에 성공하였습니다.');
         navigation.goBack();
       }
     } catch (error) {
       const errorResponse = (error as AxiosError).response;
       setLoading(false);
-      console.log(errorResponse);
+      console.log('error', errorResponse);
       if (errorResponse) {
         Alert.alert('알림', 'error');
       }
     } finally {
       setLoading(false);
     }
-
-    Alert.alert('Login succeeded');
   }, [loading, email, passWord, isClicked]);
 
   const onChangeEmail = useCallback(text => {
