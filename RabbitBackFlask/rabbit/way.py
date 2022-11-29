@@ -11,17 +11,10 @@ from Google import Create_Service
 from googleapiclient.http import MediaIoBaseDownload
 
 ### About MySQL DB ###
-from fox import mysql
+from fox import mysql, service
 
 
 def downGoogle(fileIdVal, userIdVal):
-    CLIENT_SECRET_FILE = '/var/www/rabbit/client_secret.json'
-    API_NAME = 'drive'
-    API_VERSION = 'v3'
-    SCOPES = ['https://www.googleapis.com/auth/drive']
-
-    service = Create_Service(CLIENT_SECRET_FILE, API_NAME, API_VERSION, SCOPES)
-
     file_id = fileIdVal
     file_name = userIdVal + ".pickle"
     
@@ -74,13 +67,18 @@ def wayNine(orig, dest, id):
     print("Route shortest is", route1_length, "meters and has", route1_risk, "riskiness score.")
         
     # get the information about the nodes and edges in route
-    route1_nodes = nodes[nodes.index.isin(route1)]
+    route1_nodes = []
+    for node in route1:
+        route1_nodes.append(list(nodes.loc[[node]].values[0]))
+
+    route1_nodes_df = pd.DataFrame(route1_nodes)
+    route1_nodes_df.columns = ['y', 'x', 'street_count', 'ref', 'highway', 'geometry', 'assigned_cell', 'risk score']
     route1_edges = ox.utils_graph.get_route_edge_attributes(G2, route1)
         
     # select the 9 nodes by analyzing the numbers of the node
-    num_nodes_route1 = len(route1_nodes)
+    num_nodes_route1 = len(route1)
     selected_nodes_route1 = (num_nodes_route1//9)
-    selected_route1 = route1_nodes.iloc[::selected_nodes_route1]
+    selected_route1 = route1_nodes_df.iloc[::selected_nodes_route1]
     selected_route1_df = pd.DataFrame(selected_route1)
     result_num_route1 = selected_route1_df.reset_index().loc[:8, ['y', 'x'],] # return
 
@@ -91,13 +89,18 @@ def wayNine(orig, dest, id):
     print("Route safetest is", route2_length, "meters and has", route2_risk, "riskiness score.")
 
     # get the information about the nodes and edges in route
-    route2_nodes = nodes[nodes.index.isin(route2)]
+    route2_nodes = []
+    for node in route2:
+        route2_nodes.append(list(nodes.loc[[node]].values[0]))
+
+    route2_nodes_df = pd.DataFrame(route2_nodes)
+    route2_nodes_df.columns = ['y', 'x', 'street_count', 'ref', 'highway', 'geometry', 'assigned_cell', 'risk score']
     route2_edges = ox.utils_graph.get_route_edge_attributes(G2, route2)
     
     # select the 9 nodes by analyzing the numbers of the node
-    num_nodes_route2 = len(route2_nodes)
+    num_nodes_route2 = len(route2)
     selected_nodes_route2 = (num_nodes_route2//9)
-    selected_route2 = route2_nodes.iloc[::selected_nodes_route2] 
+    selected_route2 = route2_nodes_df.iloc[::selected_nodes_route2] 
     selected_route2_df = pd.DataFrame(selected_route2)
     result_num_route2 = selected_route2_df.reset_index().loc[:8, ['y', 'x'],] # return
 

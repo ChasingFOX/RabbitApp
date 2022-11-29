@@ -19,8 +19,6 @@ app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
 mysql = MySQL(app)
 
-import way
-
 # To detect Chicago Scope
 ox.config(use_cache=True)
 query = {'city': 'Chicago'}
@@ -35,6 +33,8 @@ API_VERSION = 'v3'
 SCOPES = ['https://www.googleapis.com/auth/drive']
 
 service = Create_Service(CLIENT_SECRET_FILE, API_NAME, API_VERSION, SCOPES)
+
+import way
 
 
 def calcCrime(crime_val, userId_val):
