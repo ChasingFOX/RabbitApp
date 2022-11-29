@@ -6,6 +6,10 @@ from googleapiclient.http import MediaFileUpload
 from Google import Create_Service
 import os
 
+## About scope checking ###
+from shapely.geometry import Point, Polygon
+import osmnx as ox
+
 app = Flask(__name__)
 
 app.config['MYSQL_USER'] = 'root'
@@ -17,6 +21,13 @@ app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 mysql = MySQL(app)
 
 import way
+
+# To detect Chicago Scope
+ox.config(use_cache=True)
+query = {'city': 'Chicago'}
+gdf = ox.geocode_to_gdf(query)
+coordinates = list(gdf.iloc[0]['geometry'].exterior.coords)
+poly = Polygon(coordinates) # Chicago City Polygon
 
 
 def calcCrime(crime_val, userId_val):
@@ -53,8 +64,17 @@ def apiNavi():
     dest = request.json['dest']
     id = request.json['id']
     
-    return jsonify(way.wayNine(orig, dest, str(id))) # In this func, return 9 + 9 + 9 waypoints
+    p1 = Point(orig['lon'], orig['lat'])
+    p2 = Point(dest['lon'], dest['lat'])
 
+    print(p1.within(poly))
+    print(p2.within(poly))
+
+    if (p1.within(poly) and p2.within(poly)):
+        return jsonify(way.wayNine(orig, dest, str(id))) # In this func, return 9 + 9 + 9 waypoints
+    else:
+        return 'Error, Please enter correct Chicago Coordinates'
+        
 
 @app.route('/api/signup/calculate/', methods=['POST'])  # not exist? then save. After Sign-Up process, user saved. Then this request can be used.
 def apiCalc():

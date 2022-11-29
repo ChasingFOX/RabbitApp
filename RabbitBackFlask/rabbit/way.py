@@ -18,6 +18,7 @@ from googleapiclient.http import MediaIoBaseDownload
 ### About MySQL DB ###
 from fox import mysql
 
+
 def downGoogle(fileIdVal, userIdVal):
     CLIENT_SECRET_FILE = '/var/www/rabbit/client_secret.json'
     API_NAME = 'drive'
@@ -85,25 +86,25 @@ def wayNine(orig, dest, id):
     selected_nodes_route1 = (num_nodes_route1//9)
     selected_route1 = route1_nodes.iloc[::selected_nodes_route1]
     selected_route1_df = pd.DataFrame(selected_route1)
-    result_num_route1 = selected_route1_df.reset_index().loc[:8, ['y', 'x'],]
+    result_num_route1 = selected_route1_df.reset_index().loc[:8, ['y', 'x'],] # return
         
     # select the 9 nodes by analyzing the length of the edges
-    selected_nodes_len_1 = math.trunc(route1_length/10)
-    route1_edges_df = pd.DataFrame(route1_edges)
-    route1_nodes_df = pd.DataFrame(route1_nodes)
+    # selected_nodes_len_1 = math.trunc(route1_length/10)
+    # route1_edges_df = pd.DataFrame(route1_edges)
+    # route1_nodes_df = pd.DataFrame(route1_nodes)
         
     # get the riskiness of the edges in the route
-    route1_edges_riskiness = edges[edges['osmid'].isin(route1_edges_df['osmid'])]
+    # route1_edges_riskiness = edges[edges['osmid'].isin(route1_edges_df['osmid'])]
 
-    sum_value = 0
-    nodes_idx_1= []
-    for index, edge in route1_edges_df.iterrows():
-        sum_value += edge["length"]
-        if(sum_value >= selected_nodes_len_1):
-            nodes_idx_1.append(route1_nodes_df.reset_index().loc[index, ['y', 'x']])
-            sum_value = 0
+    # sum_value = 0
+    # nodes_idx_1= []
+    # for index, edge in route1_edges_df.iterrows():
+    #     sum_value += edge["length"]
+    #     if(sum_value >= selected_nodes_len_1):
+    #         nodes_idx_1.append(route1_nodes_df.reset_index().loc[index, ['y', 'x']])
+    #         sum_value = 0
 
-    result_len_route1 = pd.DataFrame(nodes_idx_1) # shortest
+    # result_len_route1 = pd.DataFrame(nodes_idx_1) # shortest
 
 
     route2 = ox.shortest_path(G2, orig_node, dest_node, weight="risk score")
@@ -120,25 +121,25 @@ def wayNine(orig, dest, id):
     selected_nodes_route2 = (num_nodes_route2//9)
     selected_route2 = route2_nodes.iloc[::selected_nodes_route2] 
     selected_route2_df = pd.DataFrame(selected_route2)
-    result_num_route2 = selected_route2_df.reset_index().loc[:8, ['y', 'x'],]
+    result_num_route2 = selected_route2_df.reset_index().loc[:8, ['y', 'x'],] # return
     
     # select the 9 nodes by analyzing the length of the edges
-    selected_nodes_len_2 = math.trunc(route2_length/10)
-    route2_edges_df = pd.DataFrame(route2_edges)
-    route2_nodes_df = pd.DataFrame(route2_nodes)
+    # selected_nodes_len_2 = math.trunc(route2_length/10)
+    # route2_edges_df = pd.DataFrame(route2_edges)
+    # route2_nodes_df = pd.DataFrame(route2_nodes)
     
     # get the riskiness of the edges in the route
-    route2_edges_riskiness = edges[edges['osmid'].isin(route2_edges_df['osmid'])]
+    # route2_edges_riskiness = edges[edges['osmid'].isin(route2_edges_df['osmid'])]
 
-    sum_value = 0
-    nodes_idx_2 = []
-    for index, edge in route2_edges_df.iterrows():
-        sum_value += edge["length"]
-        if(sum_value >= selected_nodes_len_2):
-            nodes_idx_2.append(route2_nodes_df.reset_index().loc[index, ['y', 'x']])
-            sum_value = 0
+    # sum_value = 0
+    # nodes_idx_2 = []
+    # for index, edge in route2_edges_df.iterrows():
+    #    sum_value += edge["length"]
+    #    if(sum_value >= selected_nodes_len_2):
+    #        nodes_idx_2.append(route2_nodes_df.reset_index().loc[index, ['y', 'x']])
+    #        sum_value = 0
 
-    result_len_route2 = pd.DataFrame(nodes_idx_2) # safetest
+    # result_len_route2 = pd.DataFrame(nodes_idx_2) # safetest
 
 
     waypoints = {
