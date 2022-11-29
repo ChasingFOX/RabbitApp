@@ -3,6 +3,7 @@ import pandas as pd
 import pickle as pkl
 
 import osmnx as ox
+import math
 
 ### About Google Drive API Download ###
 import os
@@ -56,8 +57,8 @@ def wayNine(orig, dest, id):
 
     nodes, edges = ox.graph_to_gdfs(G2)
 
-    origi = (orig['lat'], orig['lon'])
-    desti = (dest['lat'], dest['lon'])
+    origi = (orig['latitude'], orig['longitude'])
+    desti = (dest['latitude'], dest['longitude'])
     orig_node = ox.distance.nearest_nodes(G2, origi[1], origi[0])
     dest_node = ox.distance.nearest_nodes(G2, desti[1], desti[0])
 
@@ -65,7 +66,7 @@ def wayNine(orig, dest, id):
     route1_length = int(sum(ox.utils_graph.get_route_edge_attributes(G2, route1, "length")))
     route1_risk = int(sum(ox.utils_graph.get_route_edge_attributes(G2, route1, "risk score")))
     print("Route shortest is", route1_length, "meters and has", route1_risk, "riskiness score.")
-        
+    
     # get the information about the nodes and edges in route
     route1_nodes = []
     for node in route1:
@@ -81,6 +82,23 @@ def wayNine(orig, dest, id):
     selected_route1 = route1_nodes_df.iloc[::selected_nodes_route1]
     selected_route1_df = pd.DataFrame(selected_route1)
     result_num_route1 = selected_route1_df.reset_index().loc[:8, ['y', 'x'],] # return
+
+    # by analyzing the length of the edges
+    selected_nodes_len_1 = math.trunc(route1_length/10)
+    route1_edges_df = pd.DataFrame(route1_edges)
+
+    # get the riskness of the edges in the route
+    route1_edges_riskiness = edges[edges['osmid'].isin(route1_edges_df['osmid'])]
+
+    sum_val = 0
+    nodes_idx_1= []
+    for index, edge in route1_edges_df.iterrows():
+        sum_val += edge["length"]
+        if(sum_val >= selected_nodes_len_1):
+            nodes_idx_1.append(route1_nodes_df.reset_index().loc[index, ['y', 'x']])
+            sum_val = 0
+
+    result_len_route1 = pd.DataFrame(nodes_idx_1)
 
 
     route2 = ox.shortest_path(G2, orig_node, dest_node, weight="risk score")
@@ -104,84 +122,105 @@ def wayNine(orig, dest, id):
     selected_route2_df = pd.DataFrame(selected_route2)
     result_num_route2 = selected_route2_df.reset_index().loc[:8, ['y', 'x'],] # return
 
+    selected_nodes_len_2 = selected_nodes_len_2 = math.trunc(route2_length/10)
+    route2_edges_df = pd.DataFrame(route2_edges)
+
+    # get the riskiness of the edges in the route
+    route2_edges_riskiness = edges[edges['osmid'].isin(route2_edges_df['osmid'])]
+
+    sum_val = 0
+    nodes_idx_2 = []
+    for index, edge in route2_edges_df.iterrows():
+        sum_val += edge["length"]
+        if(sum_val >= selected_nodes_len_2):
+            nodes_idx_2.append(route2_nodes_df.reset_index().loc[index, ['y', 'x']])
+            sum_val = 0
+
+    result_len_route2 = pd.DataFrame(nodes_idx_2)
+
+
     waypoints = {
         'shortest': {
-            'total_riskness': int(route1_risk),
-            'waypoint_1': {
-                'lat': float(result_num_route1.iloc[0, 0]),
-                'lon': float(result_num_route1.iloc[0, 1])
-            },
-            'waypoint_2': {
-                'lat': float(result_num_route1.iloc[1, 0]),
-                'lon': float(result_num_route1.iloc[1, 1])
-            },
-            'waypoint_3': {
-                'lat': float(result_num_route1.iloc[2, 0]),
-                'lon': float(result_num_route1.iloc[2, 1])
-            },
-            'waypoint_4': {
-                'lat': float(result_num_route1.iloc[3, 0]),
-                'lon': float(result_num_route1.iloc[3, 1])
-            },
-            'waypoint_5': {
-                'lat': float(result_num_route1.iloc[4, 0]),
-                'lon': float(result_num_route1.iloc[4, 1])
-            },
-            'waypoint_6': {
-                'lat': float(result_num_route1.iloc[5, 0]),
-                'lon': float(result_num_route1.iloc[5, 1])
-            },
-            'waypoint_7': {
-                'lat': float(result_num_route1.iloc[6, 0]),
-                'lon': float(result_num_route1.iloc[6, 1])
-            },
-            'waypoint_8': {
-                'lat': float(result_num_route1.iloc[7, 0]),
-                'lon': float(result_num_route1.iloc[7, 1])
-            },
-            'waypoint_9': {
-                'lat': float(result_num_route1.iloc[8, 0]),
-                'lon': float(result_num_route1.iloc[8, 1])
-            }
+            'total_riskiness': int(route1_risk),
+            'waypoint': [
+                {
+                    'latitude': float(result_num_route1.iloc[0, 0]),
+                    'longitude': float(result_num_route1.iloc[0, 1])
+                },
+                {
+                    'latitude': float(result_num_route1.iloc[1, 0]),
+                    'longitude': float(result_num_route1.iloc[1, 1])
+                },
+                {
+                    'latitude': float(result_num_route1.iloc[2, 0]),
+                    'longitude': float(result_num_route1.iloc[2, 1])
+                },
+                {
+                    'latitude': float(result_num_route1.iloc[3, 0]),
+                    'longitude': float(result_num_route1.iloc[3, 1])
+                },
+                {
+                    'latitude': float(result_num_route1.iloc[4, 0]),
+                    'longitude': float(result_num_route1.iloc[4, 1])
+                },
+                {
+                    'latitude': float(result_num_route1.iloc[5, 0]),
+                    'longitude': float(result_num_route1.iloc[5, 1])
+                },
+                {
+                    'latitude': float(result_num_route1.iloc[6, 0]),
+                    'longitude': float(result_num_route1.iloc[6, 1])
+                },
+                {
+                    'latitude': float(result_num_route1.iloc[7, 0]),
+                    'longitude': float(result_num_route1.iloc[7, 1])
+                },
+                {
+                    'latitude': float(result_num_route1.iloc[8, 0]),
+                    'longitude': float(result_num_route1.iloc[8, 1])
+                }
+            ]
         },
         'safetest': {
-            'total_riskness': int(route2_risk),
-            'waypoint_1': {
-                'lat': float(result_num_route2.iloc[0, 0]),
-                'lon': float(result_num_route2.iloc[0, 1])
-            },
-            'waypoint_2': {
-                'lat': float(result_num_route2.iloc[1, 0]),
-                'lon': float(result_num_route2.iloc[1, 1])
-            },
-            'waypoint_3': {
-                'lat': float(result_num_route2.iloc[2, 0]),
-                'lon': float(result_num_route2.iloc[2, 1])
-            },
-            'waypoint_4': {
-                'lat': float(result_num_route2.iloc[3, 0]),
-                'lon': float(result_num_route2.iloc[3, 1])
-            },
-            'waypoint_5': {
-                'lat': float(result_num_route2.iloc[4, 0]),
-                'lon': float(result_num_route2.iloc[4, 1])
-            },
-            'waypoint_6': {
-                'lat': float(result_num_route2.iloc[5, 0]),
-                'lon': float(result_num_route2.iloc[5, 1])
-            },
-            'waypoint_7': {
-                'lat': float(result_num_route2.iloc[6, 0]),
-                'lon': float(result_num_route2.iloc[6, 1])
-            },
-            'waypoint_8': {
-                'lat': float(result_num_route2.iloc[7, 0]),
-                'lon': float(result_num_route2.iloc[7, 1])
-            },
-            'waypoint_9': {
-                'lat': float(result_num_route2.iloc[8, 0]),
-                'lon': float(result_num_route2.iloc[8, 1])
-            }
+            'total_riskiness': int(route2_risk),
+            'waypoint': [
+                {
+                    'latitude': float(result_num_route2.iloc[0, 0]),
+                    'longitude': float(result_num_route2.iloc[0, 1])
+                },
+                {
+                    'latitude': float(result_num_route2.iloc[1, 0]),
+                    'longitude': float(result_num_route2.iloc[1, 1])
+                },
+                {
+                    'latitude': float(result_num_route2.iloc[2, 0]),
+                    'longitude': float(result_num_route2.iloc[2, 1])
+                },
+                {
+                    'latitude': float(result_num_route2.iloc[3, 0]),
+                    'longitude': float(result_num_route2.iloc[3, 1])
+                },
+                {
+                    'latitude': float(result_num_route2.iloc[4, 0]),
+                    'longitude': float(result_num_route2.iloc[4, 1])
+                },
+                {
+                    'latitude': float(result_num_route2.iloc[5, 0]),
+                    'longitude': float(result_num_route2.iloc[5, 1])
+                },
+                {
+                    'latitude': float(result_num_route2.iloc[6, 0]),
+                    'longitude': float(result_num_route2.iloc[6, 1])
+                },
+                {
+                    'latitude': float(result_num_route2.iloc[7, 0]),
+                    'longitude': float(result_num_route2.iloc[7, 1])
+                },
+                {
+                    'latitude': float(result_num_route2.iloc[8, 0]),
+                    'longitude': float(result_num_route2.iloc[8, 1])
+                }
+            ]
         }
     }
 

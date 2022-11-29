@@ -65,8 +65,8 @@ def apiNavi():
     dest = request.json['dest']
     id = request.json['id']
     
-    p1 = Point(orig['lon'], orig['lat'])
-    p2 = Point(dest['lon'], dest['lat'])
+    p1 = Point(orig['longitude'], orig['latitude'])
+    p2 = Point(dest['longitude'], dest['latitude'])
 
     if (p1.within(poly) and p2.within(poly)):
         return jsonify(way.wayNine(orig, dest, str(id))) # In this func, return 9 + 9 + 9 waypoints
