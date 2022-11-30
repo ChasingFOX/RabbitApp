@@ -4,9 +4,9 @@ const initialState = {
   email: '',
   password: '',
   nickName: '',
-  crime: '',
-  accessToken: '',
-  refreshToken: '',
+  // crime: '',
+  // accessToken: '',
+  // refreshToken: '',
 };
 const userSlice = createSlice({
   name: 'user',
@@ -14,10 +14,9 @@ const userSlice = createSlice({
   reducers: {
     setUser(state, action) {
       state.email = action.payload.email;
-      state.password = action.payload.password;
       state.nickName = action.payload.nickName;
-      state.accessToken = action.payload.accessToken;
-      state.refreshToken = action.payload.refreshToken;
+      // state.accessToken = action.payload.accessToken;
+      // state.refreshToken = action.payload.refreshToken;
     },
     setName(state, action) {
       state.nickName = action.payload.nanickNameme;

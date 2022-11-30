@@ -114,25 +114,24 @@ function SignIn({navigation}: SignInScreenProps) {
     try {
       {
         setLoading(true);
-        const response = await axios.post(`${Config.API_URL}/api/user`, {
+        const response = await axios.post(`${Config.API_URL}/api/signUp`, {
           email: email,
           password: passWord,
           nickname: nickName,
           crime: String(isClickedIndex),
         });
-        await EncryptedStorage.setItem('id', String(response.data.id));
+
         Alert.alert('알림', '회원가입에 성공하였습니다.');
+        setLoading(false);
         navigation.goBack();
       }
     } catch (error) {
       const errorResponse = (error as AxiosError).response;
       setLoading(false);
-      console.log('error', errorResponse);
       if (errorResponse) {
-        Alert.alert('알림', 'error');
+        Alert.alert(errorResponse?.data?.message);
       }
     } finally {
-      setLoading(false);
     }
   }, [loading, email, passWord, isClicked]);
 
