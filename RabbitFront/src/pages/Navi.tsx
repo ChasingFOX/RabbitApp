@@ -19,6 +19,7 @@ import MapView, {
   PROVIDER_DEFAULT,
   Marker,
   Polygon,
+  LatLng,
 } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 import {NaviPageParamList} from './NaviPage';
@@ -27,6 +28,12 @@ import {BottomSheetModal, BottomSheetModalProvider} from '@gorhom/bottom-sheet';
 import SearchSheet from '../components/SearchSheet';
 import {useAppDispatch} from '../store';
 import directionSlice from '../slices/directionSlice';
+import polygonData from '../constants/polygone.json';
+import polygonData2 from '../constants/crime_polygon_vector.json';
+import polygonData3 from '../constants/crime_polygon_vector_change.json';
+import polygonData4 from '../constants/crime_polygon_vector_dict4.json';
+import test from '../constants/test.json';
+import {ScrollView} from 'react-native-gesture-handler';
 
 type SearchScreenProps = NativeStackScreenProps<NaviPageParamList, 'Search'>;
 
@@ -70,6 +77,34 @@ function Search({navigation}: SearchScreenProps) {
     },
     {latitude: 40.47381839642305, longitude: -86.94624699630066},
   ]);
+
+  const [assualt, setAssault] = useState(false);
+  const [battery, setBattery] = useState(false);
+  const [homicide, setHomicide] = useState(false);
+  const [humanTracking, setHumanTracking] = useState(false);
+  const [kidnapping, setKidnapping] = useState(false);
+  const [narcotics, setNarcotics] = useState(false);
+  const [publicIndecency, setPublicIndecency] = useState(false);
+  const [robbery, setRobbery] = useState(false);
+  const [sexual, setSexual] = useState(false);
+  const [stalking, setStalking] = useState(false);
+  const [weapon, setWeapon] = useState(false);
+
+  const [polygon, setPolygon] = useState();
+
+  const crimetype = [
+    {id: 1, type: 'Assualt'},
+    {id: 2, type: 'Battery'},
+    {id: 3, type: 'Homicide'},
+    {id: 4, type: 'Human Tracking'},
+    {id: 5, type: 'Kidnapping'},
+    {id: 6, type: 'Narcotics'},
+    {id: 7, type: 'Public Indecency'},
+    {id: 8, type: 'Robbery'},
+    {id: 9, type: 'Sexual'},
+    {id: 10, type: 'Stalking'},
+    {id: 11, type: 'Weapon'},
+  ];
 
   const bottomSheetRef = useRef<BottomSheetModal>(null);
 
@@ -164,6 +199,32 @@ function Search({navigation}: SearchScreenProps) {
     ],
   ]);
 
+  const [polygonTest, setPolygonTest] = useState(
+    JSON.parse(String(polygonData4)).Assualt,
+  );
+
+  const onAssualtPolygon = () => {
+    setPolygonTest(JSON.parse(String(polygonData4)).Assualt);
+  };
+
+  const onBatteryPolygon = () => {
+    setPolygonTest(JSON.parse(String(polygonData4)).Battery);
+  };
+
+  const testPolygon = () => {
+    polygonCoordinates.map((item, index) => {
+      console.log('item', item);
+      return (
+        <Polygon
+          coordinates={item}
+          strokeColor="#000" // fallback for when `strokeColors` is not supported by the map-provider
+          fillColor="rgba(256,26,20,.3)"
+          strokeWidth={1}
+        />
+      );
+    });
+  };
+
   return (
     <BottomSheetModalProvider>
       <View style={{height: '100%', flex: 1, justifyContent: 'flex-start'}}>
@@ -203,102 +264,121 @@ function Search({navigation}: SearchScreenProps) {
           ))}
 
           {/* Code to make polygon area */}
-          <Polygon
+          {/* { <Polygon
             coordinates={polygonCoordinates[0]}
             strokeColor="#000" // fallback for when `strokeColors` is not supported by the map-provider
             fillColor="rgba(256,26,20,.3)"
-            strokeWidth={2}
-          />
-          <Polygon
-            coordinates={polygonCoordinates[1]}
-            strokeColor="#000" // fallback for when `strokeColors` is not supported by the map-provider
-            fillColor="rgba(256,26,20,.3)"
-            strokeWidth={2}
-          />
+            strokeWidth={1}
+          />} */}
+
+          {polygonTest.map((item: LatLng[]) => {
+            console.log('item', item);
+            return (
+              <Polygon
+                coordinates={item}
+                strokeColor="#000" // fallback for when `strokeColors` is not supported by the map-provider
+                fillColor="rgba(256,26,20,.3)"
+                strokeWidth={1}
+              />
+            );
+          })}
         </MapView>
         {/* Code to search direction location */}
-        <View style={styles.searchBox}>
-          <Image
-            source={require('../assets/search.png')}
-            style={styles.searchIcon}
-          />
-          <GooglePlacesAutocomplete
-            GooglePlacesDetailsQuery={{fields: 'geometry'}}
-            fetchDetails={true}
-            placeholder="Search"
-            onPress={(data, details = null) => {
-              console.log(destinationCoordinates[0]['latitude']);
-              // 'details' is provided when fetchDetails = true
+        <View style={styles.test}>
+          <View style={styles.searchBox}>
+            <Image
+              source={require('../assets/search.png')}
+              style={styles.searchIcon}
+            />
+            <GooglePlacesAutocomplete
+              GooglePlacesDetailsQuery={{fields: 'geometry'}}
+              fetchDetails={true}
+              placeholder="Search"
+              onPress={(data, details = null) => {
+                console.log('dgl-lat', details?.geometry?.location.lat);
+                console.log('dgl-lng', details?.geometry?.location.lng);
+                const destinationLocation = [
+                  {
+                    latitude: Number(details?.geometry?.location.lat),
+                    longitude: Number(details?.geometry?.location.lng),
+                  },
+                ];
 
-              console.log('dgl-lat', details?.geometry?.location.lat);
-              console.log('dgl-lng', details?.geometry?.location.lng);
-              const destinationLocation = [
-                {
-                  latitude: Number(details?.geometry?.location.lat),
-                  longitude: Number(details?.geometry?.location.lng),
+                setDestinationCoordinates(destinationLocation);
+
+                console.log('dd', JSON.stringify(details?.geometry?.location));
+
+                console.log('latitude', typeof latitude);
+
+                console.log('------', details);
+
+                console.log('data', data.description);
+
+                setDestinationName(data.description);
+
+                console.log(data);
+
+                // Use current location and destination data for each page and store it in the reader's repository
+                dispatch(
+                  directionSlice.actions.setDirection({
+                    destination: {
+                      lat: details?.geometry?.location.lat,
+                      lng: details?.geometry?.location.lng,
+                    },
+                    currentPosition: {
+                      lat: currentLatitude,
+                      lng: currentLongitude,
+                    },
+                  }),
+                );
+
+                console.log('=====', details?.geometry?.location.lat);
+                console.log('=====', typeof details?.geometry?.location.lat);
+                console.log('..', currentLatitude);
+                console.log('..', typeof currentLatitude);
+
+                bottomSheetRef.current?.present();
+              }}
+              query={{
+                key: 'AIzaSyB_nbHi0KEhdlrM8ioBv_GpYCeVH2p1-08',
+                language: 'en',
+              }}
+              styles={{
+                textInputContainer: {
+                  shadowColor: 'black',
+                  shadowOffset: {width: 1},
+                  shadowOpacity: 0.6,
+                  marginHorizontal: 10,
                 },
-              ];
+                textInput: {
+                  height: 38,
 
-              setDestinationCoordinates(destinationLocation);
-
-              console.log('dd', JSON.stringify(details?.geometry?.location));
-
-              console.log('latitude', typeof latitude);
-
-              console.log('------', details);
-
-              console.log('data', data.description);
-
-              setDestinationName(data.description);
-
-              console.log(data);
-
-              // Use current location and destination data for each page and store it in the reader's repository
-              dispatch(
-                directionSlice.actions.setDirection({
-                  destination: {
-                    lat: details?.geometry?.location.lat,
-                    lng: details?.geometry?.location.lng,
-                  },
-                  currentPosition: {
-                    lat: currentLatitude,
-                    lng: currentLongitude,
-                  },
-                }),
-              );
-
-              console.log('=====', details?.geometry?.location.lat);
-              console.log('=====', typeof details?.geometry?.location.lat);
-              console.log('..', currentLatitude);
-              console.log('..', typeof currentLatitude);
-
-              bottomSheetRef.current?.present();
-            }}
-            query={{
-              key: 'AIzaSyB_nbHi0KEhdlrM8ioBv_GpYCeVH2p1-08',
-              language: 'en',
-            }}
-            styles={{
-              textInputContainer: {
-                shadowColor: 'black',
-                shadowOffset: {width: 1},
-                shadowOpacity: 0.6,
-                marginHorizontal: 10,
-              },
-              textInput: {
-                height: 38,
-
-                color: '#5d5d5d',
-                fontSize: 16,
-              },
-              predefinedPlacesDescription: {
-                color: '#1faadb',
-              },
-            }}
-          />
-        </View>
-        <View>
-          <Text>'안녕하세요'</Text>
+                  color: '#5d5d5d',
+                  fontSize: 16,
+                },
+                predefinedPlacesDescription: {
+                  color: '#1faadb',
+                },
+              }}
+            />
+          </View>
+          <ScrollView horizontal={true} style={styles.polygonContainer}>
+            <View style={styles.crimeButton}>
+              <Text onPress={onBatteryPolygon}>'Assualt'</Text>
+            </View>
+            <View style={styles.crimeButton}>
+              <Text>'1'</Text>
+            </View>
+            <View style={styles.crimeButton}>
+              <Text>'2'</Text>
+            </View>
+            <View style={styles.crimeButton}>
+              <Text>'3'</Text>
+            </View>
+            <View style={styles.crimeButton}>
+              <Text>'4'</Text>
+            </View>
+          </ScrollView>
         </View>
 
         {/* <TouchableOpacity
@@ -319,15 +399,16 @@ const styles = StyleSheet.create({
   map: {
     ...StyleSheet.absoluteFillObject,
   },
+  test: {
+    display: 'flex',
+  },
   searchBox: {
     paddingTop: 10,
     paddingBottom: 5,
-
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'center',
     alignItem: 'center',
-
     backgroundColor: 'white',
   },
 
@@ -337,6 +418,36 @@ const styles = StyleSheet.create({
     height: 30,
     marginLeft: 7,
     marginRight: 1,
+  },
+  polygonContainer: {
+    paddingBottom: 13,
+  },
+  crimeButton: {
+    backgroundColor: 'white',
+    width: 90,
+    height: 25,
+    paddingVertical: 5,
+    margin: 5,
+    alignItems: 'center',
+    borderRadius: 10,
+    borderWidth: 0.3,
+    borderColor: 'grey',
+    shadowOffset: {width: 1, height: 3},
+    shadowColor: 'black',
+    shadowRadius: 2,
+    shadowOpacity: 0.6,
+  },
+  crimeButtonActive: {
+    backgroundColor: '#f4511e',
+  },
+  crimeButtonText: {
+    color: 'black',
+    textAlign: 'center',
+    fontSize: 13,
+    fontWeight: 'bold',
+  },
+  crimeButtonTextActive: {
+    color: 'white',
   },
 });
 
