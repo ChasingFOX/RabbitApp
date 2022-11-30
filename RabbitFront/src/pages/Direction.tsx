@@ -95,40 +95,79 @@ function Navi({navigation}: NaviScreenProps) {
 
   const [destinationName, setDestinationName] = useState<string>('');
 
-  const [polygonCoordinates, setPolygonCoordinates] = useState([
-    {latitude: 41.8945724, longitude: -87.6153454},
-    // {
-    //   latitude: 41.8937038,
-    //   longitude: -87.6147369,
-    // },
-    // {
-    //   latitude: 41.8843554,
-    //   longitude: -87.6206035,
-    // },
-    // {
-    //   latitude: 41.8843571,
-    //   longitude: -87.6241795,
-    // },
-    // {
-    //   latitude: 41.8942539,
-    //   longitude: -87.6228542,
-    // },
-    // {
-    //   latitude: 41.8943314,
-    //   longitude: -87.6178727,
-    // },
-    // {
-    //   latitude: 41.8942915,
-    //   longitude: -87.6201785,
-    // },
-    // {
-    //   latitude: 41.8842911,
-    //   longitude: -87.6241759,
-    // },
-    // {
-    //   latitude: 41.8942693,
-    //   longitude: -87.6217596,
-    // },
+  const [safeDirection, setSafeDirection] = useState([
+    {latitude: 41.8831893, longitude: -87.6229557},
+
+    {
+      latitude: 41.8842629,
+      longitude: -87.6234411,
+    },
+    {
+      latitude: 41.8843538,
+      longitude: -87.623393,
+    },
+    {
+      latitude: 41.8843875,
+      longitude: -87.614487,
+    },
+    {
+      latitude: 41.8867789,
+      longitude: -87.6141318,
+    },
+    {
+      latitude: 41.8942781,
+      longitude: -87.6153689,
+    },
+
+    {
+      latitude: 41.8943341,
+      longitude: -87.6176843,
+    },
+    {
+      latitude: 41.8942915,
+      longitude: -87.6201785,
+    },
+    {
+      latitude: 41.8942693,
+      longitude: -87.6217596,
+    },
+  ]);
+
+  const [shortDirection, setShortDirection] = useState([
+    {latitude: 41.8831893, longitude: -87.6229557},
+
+    {
+      latitude: 41.8840012,
+      longitude: -87.6234354,
+    },
+    {
+      latitude: 41.8846016,
+      longitude: -87.624288,
+    },
+    {
+      latitude: 41.8865832,
+      longitude: -87.6243085,
+    },
+    {
+      latitude: 41.8881127,
+      longitude: -87.6243382,
+    },
+    {
+      latitude: 41.8898255,
+      longitude: -87.623893,
+    },
+    {
+      latitude: 41.8909594,
+      longitude: -87.6239373,
+    },
+    {
+      latitude: 41.8919676,
+      longitude: -87.6239677,
+    },
+    {
+      latitude: 41.8932627,
+      longitude: -87.6239916,
+    },
   ]);
 
   bottomSheetRef.current?.present();
@@ -164,7 +203,7 @@ function Navi({navigation}: NaviScreenProps) {
           onRegionChangeComplete={() => {}}
           showsUserLocation={true}>
           {}
-          {polygonCoordinates.map((destinationCoordinates, index) => (
+          {safeDirection.map((destinationCoordinates, index) => (
             <View>
               <Marker
                 key={`coordinate_${index}`}
@@ -176,11 +215,26 @@ function Navi({navigation}: NaviScreenProps) {
           <MapViewDirections
             origin={origin}
             destination={destination}
-            waypoints={polygonCoordinates}
+            waypoints={safeDirection}
             apikey={'AIzaSyB_nbHi0KEhdlrM8ioBv_GpYCeVH2p1-08'}
             mode="WALKING"
             strokeWidth={3}
             strokeColor="rgb(255,0,0)"
+            precision="low"
+            timePrecision="none"
+            onReady={result => {
+              console.log(`Distance: ${result.distance} km`);
+              console.log(`Duration: ${result.duration} min.`);
+            }}
+          />
+          <MapViewDirections
+            origin={origin}
+            destination={destination}
+            waypoints={shortDirection}
+            apikey={'AIzaSyB_nbHi0KEhdlrM8ioBv_GpYCeVH2p1-08'}
+            mode="WALKING"
+            strokeWidth={3}
+            strokeColor="rgb(0,0,255)"
             precision="low"
             timePrecision="none"
             onReady={result => {
