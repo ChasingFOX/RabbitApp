@@ -26,7 +26,7 @@ Public safety is one of the most significant concerns in the United States since
 
 ## Overview
 
-<img align="center" width="500" alt="image" src="https://user-images.githubusercontent.com/101122651/196250447-9df4550a-6066-4f6e-8414-6f93e017a336.png">
+<img align="center" width="858" alt="196250447-9df4550a-6066-4f6e-8414-6f93e017a336" src="https://user-images.githubusercontent.com/74031620/204821506-0b70f00b-4b19-4a2d-bde3-0406f78514ca.png">
 
 ## Tech Stack
 

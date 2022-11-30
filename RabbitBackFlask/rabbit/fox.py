@@ -1,3 +1,4 @@
+### About flask ###
 from flask import Flask, jsonify, request
 from flask_mysqldb import MySQL
 
@@ -9,6 +10,7 @@ from Google import Create_Service
 from shapely.geometry import Point, Polygon
 import osmnx as ox
 
+# To connect with MySQL DB
 app = Flask(__name__)
 
 app.config['MYSQL_USER'] = 'root'
@@ -26,7 +28,7 @@ gdf = ox.geocode_to_gdf(query)
 coordinates = list(gdf.iloc[0]['geometry'].exterior.coords)
 poly = Polygon(coordinates) # Chicago City Polygon
 
-# For Google Drive API
+# To connect with Google Drive API
 CLIENT_SECRET_FILE = 'client_secret.json'
 API_NAME = 'drive'
 API_VERSION = 'v3'
@@ -38,6 +40,11 @@ import way
 
 
 def calcCrime(crime_val, userId_val):
+    import socket
+    socket.setdefaulttimeout(60*3) # 3 minutes
+    
+    crime_list = crime_val.replace(' ', '').split(',')
+    
     ##
     # Space of calculating each user's Graph of weight, now used test data
     # crime_val is string type !!!
@@ -69,7 +76,7 @@ def apiNavi():
     p2 = Point(dest['longitude'], dest['latitude'])
 
     if (p1.within(poly) and p2.within(poly)):
-        return jsonify(way.wayNine(orig, dest, str(id))) # In this func, return 9 + 9 + 9 waypoints
+        return jsonify(way.wayNine(orig, dest, str(id))) # In this func, return 9 + 9 + 9 + 9 + 9 waypoints
     else:
         return 'Error, Please enter correct Chicago Coordinates'
         
@@ -84,9 +91,23 @@ def apiCalc():
     crime = cur.fetchone()
     crime = str(crime['crime'])
 
-    fileId = calcCrime(crime, userId)
+    if crime == 'None': # case 1: user didn't select crime types, so in DB, crime col value is Null
+        folder_id = '1Pfj_Qaf8HBHqBQ9hNcIdPCf_dPhmGspY'
 
-    cur.execute("INSERT INTO fileinfo (user_id, file_id) VALUES ('%s', '%s')" % (userId, fileId))
+        mime_type = 'application/octet-stream' # .pickle file's mime type
+
+        media = MediaFileUpload('/var/www/rabbit/userData/default.pickle', mimetype=mime_type)
+        
+        file_name = '%s.pickle' % (userId)
+        file_metadata = {'name': file_name, 'parents': [folder_id]}
+        
+        file = service.files().create(body=file_metadata, media_body=media, fields='id').execute()
+        fileId = file.get("id") # uploaded file Id return
+        cur.execute("INSERT INTO fileinfo (user_id, file_id) VALUES ('%s', '%s')" % (userId, fileId))
+
+    else: # case 2: user selected crime types
+        fileId = calcCrime(crime, userId)
+        cur.execute("INSERT INTO fileinfo (user_id, file_id) VALUES ('%s', '%s')" % (userId, fileId))
 
     mysql.connection.commit()
     cur.close()
