@@ -28,9 +28,12 @@ function SignIn({navigation}: SignInScreenProps) {
   const dispatch = useAppDispatch();
 
   const onSubmit = useCallback(async () => {
-    // if (!email || !email.trim()) {
-    //   return Alert.alert('Alert', 'Please Check your Email again');
-    // }
+    if (loading) {
+      return;
+    }
+    if (!email || !email.trim()) {
+      return Alert.alert('Alert', 'Please Check your Email again');
+    }
     if (!passWord || !passWord.trim()) {
       return Alert.alert('Alert', 'Please Check your Password again');
     }
@@ -51,37 +54,27 @@ function SignIn({navigation}: SignInScreenProps) {
     try {
       {
         setLoading(true);
-        const response = await axios.post(`${Config.API_URL}/api/user`, {
+        const response = await axios.post(`${Config.API_URL}/api/signIn`, {
           email: email,
           password: passWord,
-          nickname: 'ss',
-          crime: '1,2,3',
         });
-        // console.log(response);
-        // navigation.goBack();
+        await EncryptedStorage.setItem('id', String(response.data.id));
+        setLoading(false);
         dispatch(
           userSlice.actions.setUser({
-            email: response.data.data.email,
-            nickName: response.data.data.nickName,
-            // accessToken: response.data.data.accessToken,
+            email: response.data.email,
+            nickName: response.data.nickName,
           }),
         );
-        console.log('id', response.data.data.id);
-        await EncryptedStorage.setItem('id', response.data.data.id);
-        Alert.alert('Login succeeded');
+        Alert.alert(response.data.message);
       }
     } catch (error) {
       const errorResponse = (error as AxiosError).response;
       setLoading(false);
-      Alert.alert('Login fault');
-      console.log(errorResponse);
-      if (errorResponse) {
-        Alert.alert('알림', 'error');
-      }
+      Alert.alert(errorResponse?.data?.message);
     } finally {
-      setLoading(false);
     }
-  }, []);
+  }, [loading, email, passWord]);
 
   const onSignUp = useCallback(() => {
     navigation.navigate('SignUp');

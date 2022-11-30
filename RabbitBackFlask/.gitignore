@@ -187,4 +187,10 @@ pyvenv.cfg
 .venv
 pip-selfcheck.json
 
+### google drive module ###
+client_secret.json
+cache/
+*.pickle
+*.pkl
+
 # End of https://www.toptal.com/developers/gitignore/api/venv

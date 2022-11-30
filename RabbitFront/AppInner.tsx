@@ -25,14 +25,15 @@ import SignUp from './src/pages/SignUp';
 import SignIn from './src/pages/SignIn';
 import ProfileEdit from './src/pages/ProfileEdit';
 import ProfilePage from './src/pages/ProfilePage';
+import NaviPage from './src/pages/NaviPage';
 import Config from 'react-native-config';
 import axios, {AxiosError} from 'axios';
 import {useSelector} from 'react-redux';
 import {RootState} from './src/store/reducer';
 
 export type LoggedInParamList = {
-  ProfileSetting: undefined;
   Navi: undefined;
+  Direction: undefined;
   Search: undefined;
   Data: undefined;
   Profile: undefined;
@@ -49,8 +50,9 @@ const Stack = createNativeStackNavigator();
 
 function AppInner() {
   const isLoggedIn = useSelector((state: RootState) => !!state.user.email);
+  console.log('isLoggedIn', isLoggedIn);
 
-  return isLoggedIn ? (
+  return !isLoggedIn ? (
     <Stack.Navigator>
       <Stack.Screen
         name="SignIn"
@@ -67,7 +69,7 @@ function AppInner() {
     <Tab.Navigator>
       <Tab.Screen
         name="Navi"
-        component={Navi}
+        component={NaviPage}
         options={{
           tabBarActiveTintColor: 'red',
           title: 'Rabbit',
