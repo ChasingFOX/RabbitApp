@@ -1,6 +1,7 @@
 ### About flask ###
 from flask import Flask, jsonify, request
 from flask_mysqldb import MySQL
+from flask_api import status
 
 ### About Google Drive API Upload ###
 from googleapiclient.http import MediaFileUpload
@@ -9,6 +10,12 @@ from Google import Create_Service
 ## About scope checking ###
 from shapely.geometry import Point, Polygon
 import osmnx as ox
+
+### About calcCrime ###
+import pickle as pkl
+import numpy as np
+import os
+from sklearn.preprocessing import RobustScaler
 
 # To connect with MySQL DB
 app = Flask(__name__)
@@ -39,19 +46,10 @@ service = Create_Service(CLIENT_SECRET_FILE, API_NAME, API_VERSION, SCOPES)
 import way
 
 
-def calcCrime(crime_val, userId_val):
+def uploadGoogle(userId_val):
     import socket
-    socket.setdefaulttimeout(60*3) # 3 minutes
+    socket.setdefaulttimeout(60*3) # Graph upload time: 3 minutes limit
     
-    crime_list = crime_val.replace(' ', '').split(',')
-    
-    ##
-    # Space of calculating each user's Graph of weight, now used test data
-    # crime_val is string type !!!
-    ##
-
-    # the Graph pickle file -> Save at Google Drive
-
     folder_id = '1Pfj_Qaf8HBHqBQ9hNcIdPCf_dPhmGspY'
 
     file_name = '%s.pickle' % (userId_val)
@@ -66,6 +64,76 @@ def calcCrime(crime_val, userId_val):
     return file.get("id") # uploaded file Id return
 
 
+def calcCrime(crime_val, userId_val):
+    crime_list = crime_val.replace(' ', '').split(',')
+
+    with open('/var/www/rabbit/admin/graph_edges.pickle', 'rb') as fr:
+        edges = pkl.load(fr)
+    
+    # test file
+    with open('/var/www/rabbit/admin/al_riskscore_graph.pkl', 'rb') as fr:
+        test_nodes = pkl.load(fr)
+        ##
+        # Space of calculating each user's Graph of weight, now used test data
+        # Daye's code
+        ##
+    
+    test_nodes.rename(columns={'crime_score': 'risk score'}, inplace=True)
+    nodes = test_nodes
+
+    # Imputing risk scores in the edge
+    edges_u = edges.reset_index(level=1).reset_index(level=1) # reset the index of edges to 'u'
+
+    edges_u = edges_u.merge(nodes['risk score'], how='inner', left_index=True, right_index=True) # merge edges and nodes
+
+    # add the 'v' to the index
+    edges_u.index.rename('u', inplace=True)
+    edges_u.set_index([edges_u.index,'v'], inplace=True)
+    edges_u.rename(columns={"risk score": "risk score_u"}, inplace=True)
+
+    # reset the index of edges to 'v'
+    edges_v = edges_u.reset_index(level=0)
+
+    # merge edges and nodes
+    edges_v = edges_v.merge(nodes['risk score'], how='inner', left_index=True, right_index=True)
+
+    # add the 'v' to the index
+    edges_v.rename(columns={"u": "v", "risk score" : "risk score_v"}, inplace=True)
+    edges_v.index.rename('u', inplace=True)
+    edges_v.set_index([edges_v.index,'v'], inplace=True)
+    edges_v.set_index([edges_v.index,'key'], inplace=True)
+
+    # get the mean of the start and end nodes's riskiness
+    edges_v['risk score'] = (edges_v['risk score_u'] + edges_v['risk score_v'])/2
+
+    # Create the ratio in edge considering the length and riskiness 3:7 & 5:5 & 7:3
+    transformer_length = RobustScaler()
+    transformer_length.fit(np.reshape(list(edges_v['length']),(-1,1)))
+
+    transformer_risk = RobustScaler()
+    transformer_risk.fit(np.reshape(list(edges_v['risk score']),(-1,1)))
+
+    scaled_length = transformer_length.transform(np.reshape(list(edges_v['length']),(-1,1)))
+    scaled_risk = transformer_risk.transform(np.reshape(list(edges_v['risk score']),(-1,1)))
+
+    edges_v['l_r_3_7'] = (scaled_length * 0.3 + scaled_risk * 0.7) - min((scaled_length * 0.3 + scaled_risk * 0.7))
+    edges_v['l_r_5_5'] = (scaled_length * 0.5 + scaled_risk * 0.5) - min((scaled_length * 0.5 + scaled_risk * 0.5))
+    edges_v['l_r_7_3'] = (scaled_length * 0.7 + scaled_risk * 0.3) - min((scaled_length * 0.7 + scaled_risk * 0.3))
+
+    edges = edges_v
+
+    # Re-create the graph based on the nodes and edges considering the riskiness
+    G_risk = ox.graph_from_gdfs(nodes, edges) # create graph with nodes and edges including risk score
+
+    # Upload G_risk pkl named by userId at local folder
+    with open('/var/www/rabbit/userData/%s.pickle' % (userId_val), 'wb') as f:
+        pkl.dump(G_risk, f)
+
+    fileId = uploadGoogle(userId_val) # the Graph pickle file -> Save at Google Drive
+
+    return fileId
+
+
 @app.route('/api/navi/', methods=['POST'])
 def apiNavi():
     orig = request.json['orig']
@@ -77,8 +145,8 @@ def apiNavi():
 
     if (p1.within(poly) and p2.within(poly)):
         return jsonify(way.wayNine(orig, dest, str(id))) # In this func, return 9 + 9 + 9 + 9 + 9 waypoints
-    else:
-        return 'Error, Please enter correct Chicago Coordinates'
+    else: # Error 400
+        return 'Error, Please enter correct Chicago Coordinates', status.HTTP_400_BAD_REQUEST
         
 
 @app.route('/api/signup/calculate/', methods=['POST'])  # not exist? then save. After Sign-Up process, user saved. Then this request can be used.

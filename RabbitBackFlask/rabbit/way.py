@@ -160,7 +160,7 @@ def wayNine(orig, dest, id):
     selected_route3_df = pd.DataFrame(selected_route3)
     result_num_route3 = selected_route3_df.reset_index().loc[:8, ['y', 'x'],] # return
 
-    selected_nodes_len_3 = selected_nodes_len_3 = math.trunc(route3_length/10)
+    selected_nodes_len_3 = math.trunc(route3_length/10)
     route3_edges_df = pd.DataFrame(route3_edges)
 
     # get the riskiness of the edges in the route
@@ -197,7 +197,7 @@ def wayNine(orig, dest, id):
     selected_route4_df = pd.DataFrame(selected_route4)
     result_num_route4 = selected_route4_df.reset_index().loc[:8, ['y', 'x'],] # return
 
-    selected_nodes_len_4 = selected_nodes_len_4 = math.trunc(route4_length/10)
+    selected_nodes_len_4 = math.trunc(route4_length/10)
     route4_edges_df = pd.DataFrame(route4_edges)
 
     # get the riskiness of the edges in the route
@@ -234,7 +234,7 @@ def wayNine(orig, dest, id):
     selected_route5_df = pd.DataFrame(selected_route5)
     result_num_route5 = selected_route5_df.reset_index().loc[:8, ['y', 'x'],] # return
 
-    selected_nodes_len_5 = selected_nodes_len_5 = math.trunc(route5_length/10)
+    selected_nodes_len_5 = math.trunc(route5_length/10)
     route5_edges_df = pd.DataFrame(route5_edges)
 
     # get the riskiness of the edges in the route
