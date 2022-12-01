@@ -33,13 +33,13 @@ import {RootState} from '../store/reducer';
 
 type NaviScreenProps = NativeStackScreenProps<LoggedInParamList, 'Direction'>;
 
-export type routeParamList = {
-  params: object;
-  safest: undefined;
-  shortest: undefined;
+export type Object = {
+  navigation: object;
+  // safest: undefined;
+  // shortest: undefined;
 };
 
-function Navi({navigation}: NaviScreenProps) {
+function Direction({navigation}: Object) {
   // const route2 = useRoute<RouteProp<NaviPageParamList, 'Direction'>>();
   const [latitude, setLatitude] = useState(Number);
   const [longitude, setLogitude] = useState(Number);
@@ -48,20 +48,20 @@ function Navi({navigation}: NaviScreenProps) {
   const [destinationCoordinates, setDestinationCoordinates] = useState([
     {latitude: latitude, longitude: longitude},
   ]);
-  const route = useRoute<RouteProp<routeParamList>>();
-  const routeInfo = route.params;
+  // const route = useRoute<RouteProp<routeParamList>>();
+  // const routeInfo = route.params;
 
-  const currentPosition = useSelector(
-    (state: RootState) => state.direction.currentPosition,
+  const departurePosition = useSelector(
+    (state: RootState) => state.direction.departurePosition,
   );
-  const destinationPosition = useSelector(
-    (state: RootState) => state.direction.destination,
+  const arrivalPosition = useSelector(
+    (state: RootState) => state.direction.arrivalPosition,
   );
 
-  if (routeInfo) {
-    console.log(route.params.safetest);
-  }
-  route.params;
+  // if (routeInfo) {
+  //   console.log(route.params.safetest);
+  // }
+  // route.params;
   // Mandatory coordinates to get a safery route
   // const safetestCoordinate = route?.params;
 
@@ -86,6 +86,8 @@ function Navi({navigation}: NaviScreenProps) {
     },
     {enableHighAccuracy: true, timeout: 50000, maximumAge: 10000},
   );
+
+  console.log(navigation);
 
   const origin = {latitude: 41.883118, longitude: -87.622917};
   const destination = {
@@ -132,6 +134,8 @@ function Navi({navigation}: NaviScreenProps) {
       longitude: -87.6217596,
     },
   ]);
+
+  const [safeWaypoint, setSafeWaypoin] = useState([]);
 
   const [shortDirection, setShortDirection] = useState([
     {latitude: 41.8831893, longitude: -87.6229557},
@@ -180,7 +184,7 @@ function Navi({navigation}: NaviScreenProps) {
           index={1}
           snapPoints={['20%', '20%']}
           onChange={handleSheetChanges}>
-          {/* <DirectionSheet /> */}
+          <DirectionSheet />
         </BottomSheetModal>
         {/* Code to get Google Map on the Background*/}
         <MapView
@@ -189,21 +193,15 @@ function Navi({navigation}: NaviScreenProps) {
             Platform.OS === 'android' ? PROVIDER_GOOGLE : PROVIDER_DEFAULT
           }
           region={{
-            latitude:
-              destinationCoordinates[0]['latitude'] == 0
-                ? latitude
-                : destinationCoordinates[0]['latitude'],
-            longitude:
-              destinationCoordinates[0]['longitude'] == 0
-                ? longitude
-                : destinationCoordinates[0]['longitude'],
-            latitudeDelta: 0.0001,
-            longitudeDelta: 0.003,
+            latitude: arrivalPosition.latitude,
+            longitude: arrivalPosition.longitude,
+            latitudeDelta: 0.01,
+            longitudeDelta: 0.01,
           }}
           onRegionChangeComplete={() => {}}
           showsUserLocation={true}>
           {}
-          {safeDirection.map((destinationCoordinates, index) => (
+          {/* {safeDirection.map((destinationCoordinates, index) => (
             <View>
               <Marker
                 key={`coordinate_${index}`}
@@ -211,10 +209,10 @@ function Navi({navigation}: NaviScreenProps) {
               />
               <Text>{index}</Text>
             </View>
-          ))}
+          ))} */}
           <MapViewDirections
-            origin={origin}
-            destination={destination}
+            origin={departurePosition}
+            destination={arrivalPosition}
             waypoints={safeDirection}
             apikey={'AIzaSyB_nbHi0KEhdlrM8ioBv_GpYCeVH2p1-08'}
             mode="WALKING"
@@ -258,48 +256,7 @@ function Navi({navigation}: NaviScreenProps) {
           /> */}
         </MapView>
         {/* Code to search direction location */}
-        <View style={styles.searchBox}>
-          <Image
-            source={require('../assets/search.png')}
-            style={styles.searchIcon}
-          />
-          <GooglePlacesAutocomplete
-            GooglePlacesDetailsQuery={{fields: 'geometry'}}
-            fetchDetails={true}
-            placeholder="Search"
-            onPress={(data, details = null) => {
-              const destinationLocation = [
-                {
-                  latitude: Number(details?.geometry?.location.lat),
-                  longitude: Number(details?.geometry?.location.lng),
-                },
-              ];
-              setDestinationCoordinates(destinationLocation);
-              setDestinationName(data.description);
-              bottomSheetRef.current?.present();
-            }}
-            query={{
-              key: 'AIzaSyB_nbHi0KEhdlrM8ioBv_GpYCeVH2p1-08',
-              language: 'en',
-            }}
-            styles={{
-              textInputContainer: {
-                shadowColor: 'black',
-                shadowOffset: {width: 1},
-                shadowOpacity: 0.6,
-                marginHorizontal: 10,
-              },
-              textInput: {
-                height: 38,
-                color: '#5d5d5d',
-                fontSize: 16,
-              },
-              predefinedPlacesDescription: {
-                color: '#1faadb',
-              },
-            }}
-          />
-        </View>
+
         <View>
           <Text>'안녕하세요'</Text>
         </View>
@@ -343,4 +300,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Navi;
+export default Direction;
