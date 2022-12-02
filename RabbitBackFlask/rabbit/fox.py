@@ -103,14 +103,14 @@ def get_f(location):
     ymin = 41.6
     ymax = 42.05
 
-    xx, yy = np.mgrid[xmin:xmax:1000j, ymin:ymax:1000j]
+    xx, yy = np.mgrid[xmin:xmax:100j, ymin:ymax:100j]
 
     positions = np.vstack([xx.ravel(), yy.ravel()])
     values = np.vstack([x, y])
     kernel = stats.gaussian_kde(values)
 
     f = np.reshape(kernel(positions).T, xx.shape)
-    
+
     return f
 
 
@@ -119,7 +119,7 @@ def population_normalization(crime_ex_df, root_dir):
     xmax = -87.5
     ymin = 41.6
     ymax = 42.05
-    xx, yy = np.mgrid[xmin:xmax:1000j, ymin:ymax:1000j]
+    xx, yy = np.mgrid[xmin:xmax:100j, ymin:ymax:100j]
 
     with open(root_dir + "chicago_polygon_ratio.pkl", "rb") as f:
         chicago_polygon = pkl.load(f)
@@ -148,9 +148,9 @@ def population_normalization(crime_ex_df, root_dir):
         xs, ys = zip(*vectors_list[i])
      
     data_list = []
-    data_list.append(np.squeeze((np.reshape(xx,(1000000,1)))).T)
-    data_list.append(np.squeeze((np.reshape(yy,(1000000,1)))).T)
-    data_list.append(np.squeeze((np.reshape(crime_ex_df,(1000000,1)))).T)
+    data_list.append(np.squeeze((np.reshape(xx,(10000,1)))).T)
+    data_list.append(np.squeeze((np.reshape(yy,(10000,1)))).T)
+    data_list.append(np.squeeze((np.reshape(crime_ex_df,(10000,1)))).T)
     crime_density_vertex = pd.DataFrame(data_list).T
 
     crime_density_vertex.columns = ['longitude','latitude','crime_density']
@@ -183,7 +183,6 @@ def population_normalization(crime_ex_df, root_dir):
     crime_density_vertex['ratio'] = ratio_list
 
     crime_density_vertex['population'] = 0
-    crime_density_vertex
 
     crime_density_vertex['adjust_crime_density'] = 0
 
@@ -208,7 +207,7 @@ def minimum_search (longitude, latitude, cell_longitude, cell_latitude):
 def dataAnalysis(crime_val):
     root_dir = '/var/www/rabbit/admin/'
 
-    with open(root_dir + "urban_5_dataset.pkl", "rb") as f:
+    with open(root_dir + "100by100_urban_5_dataset.pkl", "rb") as f:
         urban_dataset = pkl.load(f)
     with open(root_dir + "al_riskscore_graph.pkl", "rb") as f:
         node = pkl.load(f)
