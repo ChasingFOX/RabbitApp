@@ -28,20 +28,18 @@ import {BottomSheetModal, BottomSheetModalProvider} from '@gorhom/bottom-sheet';
 import SearchSheet from '../components/SearchSheet';
 import {useAppDispatch} from '../store';
 import directionSlice from '../slices/directionSlice';
-
 import polygonData from '../constants/crime_polygon_vector_dict4.json';
-import test from '../constants/test.json';
 import {ScrollView} from 'react-native-gesture-handler';
 
 type SearchScreenProps = NativeStackScreenProps<NaviPageParamList, 'Search'>;
 
 function Search({navigation}: SearchScreenProps) {
   const [latitude, setLatitude] = useState(Number);
-  const [longitude, setLogitude] = useState(Number);
+  const [longitude, setLongitude] = useState(Number);
   const [currentLatitude, setCurrentLatitude] = useState(Number);
   const [currentLongitude, setCurrentLongitude] = useState(Number);
   const [destinationCoordinates, setDestinationCoordinates] = useState([
-    {latitude: latitude, longitude: longitude},
+    {latitude: 0, longitude: 0},
   ]);
   // Mandatory coordinates to get a safery route
   const [directionCoordinates, setDirectionCoordinates] = useState([
@@ -75,18 +73,6 @@ function Search({navigation}: SearchScreenProps) {
     },
     {latitude: 40.47381839642305, longitude: -86.94624699630066},
   ]);
-
-  const [assualt, setAssault] = useState(false);
-  const [battery, setBattery] = useState(false);
-  const [homicide, setHomicide] = useState(false);
-  const [humanTracking, setHumanTracking] = useState(false);
-  const [kidnapping, setKidnapping] = useState(false);
-  const [narcotics, setNarcotics] = useState(false);
-  const [publicIndecency, setPublicIndecency] = useState(false);
-  const [robbery, setRobbery] = useState(false);
-  const [sexual, setSexual] = useState(false);
-  const [stalking, setStalking] = useState(false);
-  const [weapon, setWeapon] = useState(false);
 
   const [polygonCoordinates, setPolygonCoordinates] = useState(
     JSON.parse(String(polygonData)).Assualt,
@@ -132,9 +118,11 @@ function Search({navigation}: SearchScreenProps) {
       const latitude = JSON.stringify(position.coords.latitude);
       const longitude = JSON.stringify(position.coords.longitude);
       setLatitude(Number(latitude));
-      setLogitude(Number(longitude));
-      setCurrentLatitude(Number(latitude));
-      setCurrentLongitude(Number(longitude));
+      setLongitude(Number(longitude));
+      // 해결해야됨 왜 무한 렌더링이 되지?
+
+      // setCurrentLatitude(Number(latitude));
+      // setCurrentLongitude(Number(longitude));
     },
     error => {
       console.log(error.code, error.message);
@@ -142,30 +130,50 @@ function Search({navigation}: SearchScreenProps) {
     {enableHighAccuracy: true, timeout: 50000, maximumAge: 10000},
   );
 
+  useEffect(() => {
+    dispatch(
+      directionSlice.actions.setDeparturePosition({
+        departurePosition: {
+          latitude: Number(latitude),
+          longitude: Number(longitude),
+        },
+      }),
+    );
+
+    setDestinationCoordinates([
+      {
+        latitude: Number(latitude),
+        longitude: Number(longitude),
+      },
+    ]);
+  }, [latitude]);
+
   const origin = {latitude: latitude, longitude: longitude};
   const destination = {
     latitude: 40.47381839642305,
     longitude: -86.94624699630066,
   };
 
+  console.log('dsd');
+
   // Link to obtain current coordinates will be modified later
-  const geoLocation = () => {
-    if (true) {
-      Geolocation.getCurrentPosition(
-        position => {
-          return position;
-        },
-        error => {
-          // See error code charts below.
-          console.log(error.code, error.message);
-        },
-        {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
-      );
-    }
-    Linking.openURL(
-      'https://www.google.com/maps/dir/?api=1&origin=40.42489539482597,-86.91051411560053&destination=40.473360126380996,-86.94642755184898&travelmode=walking&waypoints=40.42119341508705,-86.91781885879092%7C40.42732532443506,-86.92463136381483%7C40.43249524031551,-86.9269298077754%7C40.446337675508566,-86.92821177376851%7C40.45851363603605,-86.93213657343334%7C40.46619283912356,-86.9486192066278%7C40.46716415540354,-86.95429476059878%7C40.47024506180284,-86.95576733520348%7C40.47034248927443,-86.9517606080918%7C40.46857485459526,-86.94694887644629%7C40.47062085295775,-86.939740426341',
-    );
-  };
+  // const geoLocation = () => {
+  //   if (true) {
+  //     Geolocation.getCurrentPosition(
+  //       position => {
+  //         return position;
+  //       },
+  //       error => {
+  //         // See error code charts below.
+  //         console.log(error.code, error.message);
+  //       },
+  //       {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+  //     );
+  //   }
+  //   Linking.openURL(
+  //     'https://www.google.com/maps/dir/?api=1&origin=40.42489539482597,-86.91051411560053&destination=40.473360126380996,-86.94642755184898&travelmode=walking&waypoints=40.42119341508705,-86.91781885879092%7C40.42732532443506,-86.92463136381483%7C40.43249524031551,-86.9269298077754%7C40.446337675508566,-86.92821177376851%7C40.45851363603605,-86.93213657343334%7C40.46619283912356,-86.9486192066278%7C40.46716415540354,-86.95429476059878%7C40.47024506180284,-86.95576733520348%7C40.47034248927443,-86.9517606080918%7C40.46857485459526,-86.94694887644629%7C40.47062085295775,-86.939740426341',
+  //   );
+  // };
 
   const [destinationName, setDestinationName] = useState<string>('');
 
@@ -226,7 +234,18 @@ function Search({navigation}: SearchScreenProps) {
           ref={bottomSheetRef}
           index={1}
           snapPoints={['25%', '50%']}
-          onChange={handleSheetChanges}>
+          onChange={handleSheetChanges}
+          style={{
+            borderRadius: 25,
+            shadow: 10,
+            shadowColor: '#000',
+            shadowOffset: {
+              width: 0,
+              height: 2,
+            },
+            shadowOpacity: 1,
+            shadowRadius: 7,
+          }}>
           <SearchSheet
             destination={destinationName}
             destinationCoordinate={destinationCoordinates}
@@ -239,10 +258,10 @@ function Search({navigation}: SearchScreenProps) {
             Platform.OS === 'android' ? PROVIDER_GOOGLE : PROVIDER_DEFAULT
           }
           region={{
-            latitude: 41.86659392082987,
-            longitude: -87.67360410595464,
-            latitudeDelta: 0.7,
-            longitudeDelta: 0.7,
+            latitude: destinationCoordinates[0].latitude,
+            longitude: destinationCoordinates[0].longitude,
+            latitudeDelta: 0.07,
+            longitudeDelta: 0.001,
           }}
           onRegionChangeComplete={() => {}}
           showsUserLocation={true}>
@@ -287,21 +306,27 @@ function Search({navigation}: SearchScreenProps) {
               }}
               placeholder="Current Position"
               onPress={(data, details = null) => {
+                // Use current location and destination data for each page and store it in the reader's repository
                 const destinationLocation = [
                   {
                     latitude: Number(details?.geometry?.location.lat),
                     longitude: Number(details?.geometry?.location.lng),
                   },
                 ];
+
                 setDestinationCoordinates(destinationLocation);
-                setDestinationName(data.description);
-                // Use current location and destination data for each page and store it in the reader's repository
+
                 dispatch(
                   directionSlice.actions.setDeparturePosition({
                     departurePosition: {
                       latitude: details?.geometry?.location.lat,
                       longitude: details?.geometry?.location.lng,
                     },
+                  }),
+                );
+                dispatch(
+                  directionSlice.actions.setDepartureName({
+                    departureName: data.structured_formatting.main_text,
                   }),
                 );
                 console.log('----', details?.geometry?.location.lat);
@@ -343,6 +368,7 @@ function Search({navigation}: SearchScreenProps) {
                     longitude: Number(desDetails?.geometry?.location.lng),
                   },
                 ];
+
                 setDestinationCoordinates(destinationLocation);
                 setDestinationName(data.description);
 
@@ -355,6 +381,13 @@ function Search({navigation}: SearchScreenProps) {
                     },
                   }),
                 );
+                dispatch(
+                  directionSlice.actions.setArrivalName({
+                    arrivalName: data.structured_formatting.main_text,
+                  }),
+                );
+
+                console.log('dsds', data.structured_formatting.main_text);
 
                 console.log('des--', desDetails?.geometry?.location.lat);
                 console.log('des--', desDetails?.geometry?.location.lng);

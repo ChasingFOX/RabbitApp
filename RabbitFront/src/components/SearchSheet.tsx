@@ -18,6 +18,8 @@ import Config from 'react-native-config';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import {useSelector} from 'react-redux';
 import {RootState} from '../store/reducer';
+import {useAppDispatch} from '../store';
+import waypointSlice from '../slices/waypointSlice';
 
 export interface SearchSheetProps {
   destination: string;
@@ -36,6 +38,9 @@ const SearchSheet = (
   const arrivalPosition = useSelector(
     (state: RootState) => state.direction.arrivalPosition,
   );
+
+  const dispatch = useAppDispatch();
+
   const onNavigation = useCallback(() => {
     // if (true) {
     //   Geolocation.getdeparturePosition(
@@ -62,6 +67,8 @@ const SearchSheet = (
     try {
       {
         setLoading(true);
+        console.log('search-dep', departurePosition);
+        console.log('search-arr', arrivalPosition);
         const response = await axios.post(
           `${Config.DIRECTION_API_URL}/api/navi`,
           {
@@ -77,14 +84,27 @@ const SearchSheet = (
           },
         );
 
+        dispatch(
+          waypointSlice.actions.setWaypoint({
+            blueWaypoint: response.data.blue.waypoint,
+            greenWaypoint: response.data.green.waypoint,
+            orangeWaypoint: response.data.orange.waypoint,
+            redWaypoint: response.data.red.waypoint,
+            yellowWaypoint: response.data.yellow.waypoint,
+          }),
+        );
+
         setLoading(false);
-        console.log('searchsheet data', response.data);
-        navigation.navigate('Direction', response.data);
+        // console.log('searchsheet data', response.data);
+        // console.log('response.data.blue.waypoint', response.data.blue.waypoint);
+        navigation.navigate('Direction');
       }
     } catch (error) {
       const errorResponse = (error as AxiosError).response;
+
       if (errorResponse) {
         console.log('error', errorResponse);
+        Alert.alert('error', errorResponse.data);
       }
       setLoading(false);
     } finally {
