@@ -137,44 +137,6 @@ def wayNine(orig, dest, id):
             sum_val = 0
 
     result_len_route2 = pd.DataFrame(nodes_idx_2)
-
-    # ---------------------#
-    route3 = ox.shortest_path(G2, orig_node, dest_node, weight="l_r_5_5")
-    route3_length = int(sum(ox.utils_graph.get_route_edge_attributes(G2, route3, "length")))
-    route3_risk = int(sum(ox.utils_graph.get_route_edge_attributes(G2, route3, "risk score")))
-    print("Route yellow is", route3_length, "meters and has", route3_risk, "riskiness score.")
-
-    # get the information about the nodes and edges in route
-    route3_nodes = []
-    for node in route3:
-        route3_nodes.append(list(nodes.loc[[node]].values[0]))
-
-    route3_nodes_df = pd.DataFrame(route3_nodes)
-    route3_nodes_df.columns = ['y', 'x', 'street_count', 'ref', 'highway', 'geometry', 'assigned_cell', 'risk score']
-    route3_edges = ox.utils_graph.get_route_edge_attributes(G2, route3)
-    
-    # select the 9 nodes by analyzing the numbers of the node
-    num_nodes_route3 = len(route3)
-    selected_nodes_route3 = (num_nodes_route3//9)
-    selected_route3 = route3_nodes_df.iloc[::selected_nodes_route3] 
-    selected_route3_df = pd.DataFrame(selected_route3)
-    result_num_route3 = selected_route3_df.reset_index().loc[:8, ['y', 'x'],] # return
-
-    selected_nodes_len_3 = math.trunc(route3_length/10)
-    route3_edges_df = pd.DataFrame(route3_edges)
-
-    # get the riskiness of the edges in the route
-    route3_edges_riskiness = edges[edges['osmid'].isin(route3_edges_df['osmid'])]
-
-    sum_val = 0
-    nodes_idx_3 = []
-    for index, edge in route3_edges_df.iterrows():
-        sum_val += edge["length"]
-        if(sum_val >= selected_nodes_len_3):
-            nodes_idx_3.append(route3_nodes_df.reset_index().loc[index, ['y', 'x']])
-            sum_val = 0
-
-    result_len_route3 = pd.DataFrame(nodes_idx_3)
     # ---------------------#
     route4 = ox.shortest_path(G2, orig_node, dest_node, weight="l_r_7_3")
     route4_length = int(sum(ox.utils_graph.get_route_edge_attributes(G2, route4, "length")))
@@ -331,47 +293,6 @@ def wayNine(orig, dest, id):
                 {
                     'latitude': float(result_num_route2.iloc[8, 0]),
                     'longitude': float(result_num_route2.iloc[8, 1])
-                }
-            ]
-        },
-        'yellow': {
-            'total_riskiness': int(route3_risk),
-            'waypoint': [
-                {
-                    'latitude': float(result_num_route3.iloc[0, 0]),
-                    'longitude': float(result_num_route3.iloc[0, 1])
-                },
-                {
-                    'latitude': float(result_num_route3.iloc[1, 0]),
-                    'longitude': float(result_num_route3.iloc[1, 1])
-                },
-                {
-                    'latitude': float(result_num_route3.iloc[2, 0]),
-                    'longitude': float(result_num_route3.iloc[2, 1])
-                },
-                {
-                    'latitude': float(result_num_route3.iloc[3, 0]),
-                    'longitude': float(result_num_route3.iloc[3, 1])
-                },
-                {
-                    'latitude': float(result_num_route3.iloc[4, 0]),
-                    'longitude': float(result_num_route3.iloc[4, 1])
-                },
-                {
-                    'latitude': float(result_num_route3.iloc[5, 0]),
-                    'longitude': float(result_num_route3.iloc[5, 1])
-                },
-                {
-                    'latitude': float(result_num_route3.iloc[6, 0]),
-                    'longitude': float(result_num_route3.iloc[6, 1])
-                },
-                {
-                    'latitude': float(result_num_route3.iloc[7, 0]),
-                    'longitude': float(result_num_route3.iloc[7, 1])
-                },
-                {
-                    'latitude': float(result_num_route3.iloc[8, 0]),
-                    'longitude': float(result_num_route3.iloc[8, 1])
                 }
             ]
         },
