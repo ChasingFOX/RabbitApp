@@ -1,16 +1,26 @@
 import {createSlice} from '@reduxjs/toolkit';
 
 const initialState = {
-  destination: {},
-  currentPosition: {},
+  arrivalName: '',
+  arrivalPosition: {latitude: 0, longitude: 0},
+  departureName: '',
+  departurePosition: {latitude: 0, longitude: 0},
 };
 const directionSlice = createSlice({
   name: 'direction',
   initialState,
   reducers: {
-    setDirection(state, action) {
-      state.destination = action.payload.destination;
-      state.currentPosition = action.payload.currentPosition;
+    setArrivalName(state, action) {
+      state.arrivalName = action.payload.arrivalName;
+    },
+    setArrivalPosition(state, action) {
+      state.arrivalPosition = action.payload.arrivalPosition;
+    },
+    setDepartureName(state, action) {
+      state.departureName = action.payload.departureName;
+    },
+    setDeparturePosition(state, action) {
+      state.departurePosition = action.payload.departurePosition;
     },
   },
   extraReducers: builder => {},

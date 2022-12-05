@@ -104,6 +104,7 @@ function AppInner() {
         name="Search"
         component={Search}
         options={{
+          tabBarActiveTintColor: 'red',
           title: 'Search',
           tabBarIcon: ({focused}) => {
             if (focused === false) {
@@ -136,6 +137,7 @@ function AppInner() {
         name="Data"
         component={Data}
         options={{
+          tabBarActiveTintColor: 'red',
           title: 'Data',
           tabBarIcon: ({focused}) => {
             if (focused === false) {
@@ -168,6 +170,7 @@ function AppInner() {
         name="Camera"
         component={Camera}
         options={{
+          tabBarActiveTintColor: 'red',
           title: 'Camera',
           tabBarIcon: ({focused}) => {
             if (focused === false) {
@@ -204,6 +207,7 @@ function AppInner() {
         name="Profile"
         component={ProfilePage}
         options={{
+          tabBarActiveTintColor: 'red',
           title: 'Profile',
           tabBarIcon: ({focused}) => {
             if (focused === false) {

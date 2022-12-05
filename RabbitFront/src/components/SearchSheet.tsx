@@ -18,23 +18,32 @@ import Config from 'react-native-config';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import {useSelector} from 'react-redux';
 import {RootState} from '../store/reducer';
+import {useAppDispatch} from '../store';
+import waypointSlice from '../slices/waypointSlice';
 
 export interface SearchSheetProps {
   destination: string;
+  destinationCoordinate: {};
 }
 
-const SearchSheet = ({destination}: SearchSheetProps) => {
+const SearchSheet = (
+  {destination}: SearchSheetProps,
+  {destinationCoordinate}: SearchSheetProps,
+) => {
   const navigation = useNavigation<NavigationProp<NaviPageParamList>>();
   const [loading, setLoading] = useState(false);
-  const currentPosition = useSelector(
-    (state: RootState) => state.direction.currentPosition,
+  const departurePosition = useSelector(
+    (state: RootState) => state.direction.departurePosition,
   );
-  const destinationPosition = useSelector(
-    (state: RootState) => state.direction.destination,
+  const arrivalPosition = useSelector(
+    (state: RootState) => state.direction.arrivalPosition,
   );
+
+  const dispatch = useAppDispatch();
+
   const onNavigation = useCallback(() => {
     // if (true) {
-    //   Geolocation.getCurrentPosition(
+    //   Geolocation.getdeparturePosition(
     //     position => {
     //       console.log(position);
     //     },
@@ -45,54 +54,57 @@ const SearchSheet = ({destination}: SearchSheetProps) => {
     //     {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
     //   );
     // }
-
-    Linking.openURL(
-      'https://www.google.com/maps/dir/?api=1&origin=40.42489539482597,-86.91051411560053&destination=40.473360126380996,-86.94642755184898&travelmode=walking&waypoints=40.42119341508705,-86.91781885879092%7C40.42732532443506,-86.92463136381483%7C40.43249524031551,-86.9269298077754%7C40.446337675508566,-86.92821177376851%7C40.45851363603605,-86.93213657343334%7C40.46619283912356,-86.9486192066278%7C40.46716415540354,-86.95429476059878%7C40.47024506180284,-86.95576733520348%7C40.47034248927443,-86.9517606080918%7C40.46857485459526,-86.94694887644629%7C40.47062085295775,-86.939740426341',
-    );
+    // Linking.openURL(
+    //   'https://www.google.com/maps/dir/?api=1&origin=40.42489539482597,-86.91051411560053&destination=40.473360126380996,-86.94642755184898&travelmode=walking&waypoints=40.42119341508705,-86.91781885879092%7C40.42732532443506,-86.92463136381483%7C40.43249524031551,-86.9269298077754%7C40.446337675508566,-86.92821177376851%7C40.45851363603605,-86.93213657343334%7C40.46619283912356,-86.9486192066278%7C40.46716415540354,-86.95429476059878%7C40.47024506180284,-86.95576733520348%7C40.47034248927443,-86.9517606080918%7C40.46857485459526,-86.94694887644629%7C40.47062085295775,-86.939740426341',
+    // );
   }, []);
 
-  console.log('currentPosition', currentPosition);
-  console.log('destinationPosition', destinationPosition);
+  console.log('departurePosition', departurePosition);
+  console.log('arrivalPosition', arrivalPosition);
 
   const onDirection = useCallback(async () => {
     const userId = await EncryptedStorage.getItem('id');
     try {
       {
         setLoading(true);
+        console.log('search-dep', departurePosition);
+        console.log('search-arr', arrivalPosition);
         const response = await axios.post(
           `${Config.DIRECTION_API_URL}/api/navi`,
           {
             orig: {
-              lat: 41.883118,
-              lon: -87.622917,
+              latitude: departurePosition.latitude,
+              longitude: departurePosition.longitude,
             },
             dest: {
-              lat: 41.894444,
-              lon: -87.623703,
+              latitude: arrivalPosition.latitude,
+              longitude: arrivalPosition.longitude,
             },
-            id: userId,
+            id: 88,
           },
         );
 
-        // const response2 = {
-        //   orig: {
-        //     lat: 41.883118,
-        //     lon: -87.622917,
-        //   },
-        //   dest: {
-        //     lat: 41.894444,
-        //     lon: -87.623703,
-        //   },
-        //   id: userId,
-        // };
+        dispatch(
+          waypointSlice.actions.setWaypoint({
+            blueWaypoint: response.data.blue.waypoint,
+            greenWaypoint: response.data.green.waypoint,
+            orangeWaypoint: response.data.orange.waypoint,
+            redWaypoint: response.data.red.waypoint,
+            yellowWaypoint: response.data.yellow.waypoint,
+          }),
+        );
 
         setLoading(false);
-        navigation.navigate('Direction', response.data);
+        // console.log('searchsheet data', response.data);
+        // console.log('response.data.blue.waypoint', response.data.blue.waypoint);
+        navigation.navigate('Direction');
       }
     } catch (error) {
       const errorResponse = (error as AxiosError).response;
+
       if (errorResponse) {
         console.log('error', errorResponse);
+        Alert.alert('error', errorResponse.data);
       }
       setLoading(false);
     } finally {
