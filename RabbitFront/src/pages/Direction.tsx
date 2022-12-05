@@ -33,13 +33,13 @@ import {RootState} from '../store/reducer';
 
 type NaviScreenProps = NativeStackScreenProps<LoggedInParamList, 'Direction'>;
 
-export type routeParamList = {
-  params: object;
-  safest: undefined;
-  shortest: undefined;
+export type Object = {
+  navigation: object;
+  // safest: undefined;
+  // shortest: undefined;
 };
 
-function Navi({navigation}: NaviScreenProps) {
+function Direction({navigation}: Object) {
   // const route2 = useRoute<RouteProp<NaviPageParamList, 'Direction'>>();
   const [latitude, setLatitude] = useState(Number);
   const [longitude, setLogitude] = useState(Number);
@@ -48,20 +48,44 @@ function Navi({navigation}: NaviScreenProps) {
   const [destinationCoordinates, setDestinationCoordinates] = useState([
     {latitude: latitude, longitude: longitude},
   ]);
-  const route = useRoute<RouteProp<routeParamList>>();
-  const routeInfo = route.params;
+  // const route = useRoute<RouteProp<routeParamList>>();
+  // const routeInfo = route.params;
 
-  const currentPosition = useSelector(
-    (state: RootState) => state.direction.currentPosition,
+  const departurePosition = useSelector(
+    (state: RootState) => state.direction.departurePosition,
   );
-  const destinationPosition = useSelector(
-    (state: RootState) => state.direction.destination,
+  const arrivalPosition = useSelector(
+    (state: RootState) => state.direction.arrivalPosition,
+  );
+  const wayPointChecked = useSelector(
+    (state: RootState) => state.waypoint.wayPointChecked,
+  );
+  const blueWaypoint = useSelector(
+    (state: RootState) => state.waypoint.blueWaypoint,
+  );
+  const greenWaypoint = useSelector(
+    (state: RootState) => state.waypoint.greenWaypoint,
+  );
+  const orangeWaypoint = useSelector(
+    (state: RootState) => state.waypoint.orangeWaypoint,
+  );
+  const redWaypoint = useSelector(
+    (state: RootState) => state.waypoint.redWaypoint,
+  );
+  const yellowWaypoint = useSelector(
+    (state: RootState) => state.waypoint.yellowWaypoint,
   );
 
-  if (routeInfo) {
-    console.log(route.params.safetest);
-  }
-  route.params;
+  console.log('direction-blueWaypoint', blueWaypoint);
+  console.log('direction-greenWaypoint', greenWaypoint);
+  console.log('direction-orangeWaypoint', orangeWaypoint);
+  console.log('direction-redWaypoint', redWaypoint);
+  console.log('direction-yellowWaypoint', yellowWaypoint);
+
+  // if (routeInfo) {
+  //   console.log(route.params.safetest);
+  // }
+  // route.params;
   // Mandatory coordinates to get a safery route
   // const safetestCoordinate = route?.params;
 
@@ -95,82 +119,9 @@ function Navi({navigation}: NaviScreenProps) {
 
   const [destinationName, setDestinationName] = useState<string>('');
 
-  const [safeDirection, setSafeDirection] = useState([
-    {latitude: 41.8831893, longitude: -87.6229557},
-
-    {
-      latitude: 41.8842629,
-      longitude: -87.6234411,
-    },
-    {
-      latitude: 41.8843538,
-      longitude: -87.623393,
-    },
-    {
-      latitude: 41.8843875,
-      longitude: -87.614487,
-    },
-    {
-      latitude: 41.8867789,
-      longitude: -87.6141318,
-    },
-    {
-      latitude: 41.8942781,
-      longitude: -87.6153689,
-    },
-
-    {
-      latitude: 41.8943341,
-      longitude: -87.6176843,
-    },
-    {
-      latitude: 41.8942915,
-      longitude: -87.6201785,
-    },
-    {
-      latitude: 41.8942693,
-      longitude: -87.6217596,
-    },
-  ]);
-
-  const [shortDirection, setShortDirection] = useState([
-    {latitude: 41.8831893, longitude: -87.6229557},
-
-    {
-      latitude: 41.8840012,
-      longitude: -87.6234354,
-    },
-    {
-      latitude: 41.8846016,
-      longitude: -87.624288,
-    },
-    {
-      latitude: 41.8865832,
-      longitude: -87.6243085,
-    },
-    {
-      latitude: 41.8881127,
-      longitude: -87.6243382,
-    },
-    {
-      latitude: 41.8898255,
-      longitude: -87.623893,
-    },
-    {
-      latitude: 41.8909594,
-      longitude: -87.6239373,
-    },
-    {
-      latitude: 41.8919676,
-      longitude: -87.6239677,
-    },
-    {
-      latitude: 41.8932627,
-      longitude: -87.6239916,
-    },
-  ]);
-
   bottomSheetRef.current?.present();
+
+  console.log('waypointchecked', wayPointChecked);
 
   return (
     <BottomSheetModalProvider>
@@ -179,8 +130,19 @@ function Navi({navigation}: NaviScreenProps) {
           ref={bottomSheetRef}
           index={1}
           snapPoints={['20%', '20%']}
-          onChange={handleSheetChanges}>
-          {/* <DirectionSheet /> */}
+          onChange={handleSheetChanges}
+          style={{
+            borderRadius: 25,
+            shadow: 10,
+            shadowColor: '#000',
+            shadowOffset: {
+              width: 0,
+              height: 2,
+            },
+            shadowOpacity: 1,
+            shadowRadius: 7,
+          }}>
+          <DirectionSheet route={''} />
         </BottomSheetModal>
         {/* Code to get Google Map on the Background*/}
         <MapView
@@ -189,59 +151,106 @@ function Navi({navigation}: NaviScreenProps) {
             Platform.OS === 'android' ? PROVIDER_GOOGLE : PROVIDER_DEFAULT
           }
           region={{
-            latitude:
-              destinationCoordinates[0]['latitude'] == 0
-                ? latitude
-                : destinationCoordinates[0]['latitude'],
-            longitude:
-              destinationCoordinates[0]['longitude'] == 0
-                ? longitude
-                : destinationCoordinates[0]['longitude'],
-            latitudeDelta: 0.0001,
-            longitudeDelta: 0.003,
+            latitude: arrivalPosition.latitude,
+            longitude: arrivalPosition.longitude,
+            latitudeDelta: 0.01,
+            longitudeDelta: 0.01,
           }}
           onRegionChangeComplete={() => {}}
           showsUserLocation={true}>
           {}
-          {safeDirection.map((destinationCoordinates, index) => (
+
+          <Marker coordinate={departurePosition} title="Start" />
+
+          <Marker coordinate={arrivalPosition} title="Arrive" />
+
+          {/* {greenWaypoint.map((destinationCoordinates, index) => (
+            <Marker
+              key={`coordinate_${index}`}
+              coordinate={destinationCoordinates}
+              pinColor="blue"
+              opacity={0.5}
+            />
+          ))} */}
+          {/* {redWaypoint.map((destinationCoordinates, index) => (
             <View>
               <Marker
                 key={`coordinate_${index}`}
                 coordinate={destinationCoordinates}
+                opacity={0.5}
+                title={'1111'}
               />
               <Text>{index}</Text>
             </View>
-          ))}
-          <MapViewDirections
-            origin={origin}
-            destination={destination}
-            waypoints={safeDirection}
-            apikey={'AIzaSyB_nbHi0KEhdlrM8ioBv_GpYCeVH2p1-08'}
-            mode="WALKING"
-            strokeWidth={3}
-            strokeColor="rgb(255,0,0)"
-            precision="low"
-            timePrecision="none"
-            onReady={result => {
-              console.log(`Distance: ${result.distance} km`);
-              console.log(`Duration: ${result.duration} min.`);
-            }}
-          />
-          <MapViewDirections
-            origin={origin}
-            destination={destination}
-            waypoints={shortDirection}
-            apikey={'AIzaSyB_nbHi0KEhdlrM8ioBv_GpYCeVH2p1-08'}
-            mode="WALKING"
-            strokeWidth={3}
-            strokeColor="rgb(0,0,255)"
-            precision="low"
-            timePrecision="none"
-            onReady={result => {
-              console.log(`Distance: ${result.distance} km`);
-              console.log(`Duration: ${result.duration} min.`);
-            }}
-          />
+          ))} */}
+          {wayPointChecked[0] ? (
+            <MapViewDirections
+              origin={departurePosition}
+              destination={arrivalPosition}
+              waypoints={blueWaypoint}
+              apikey={'AIzaSyB_nbHi0KEhdlrM8ioBv_GpYCeVH2p1-08'}
+              mode="WALKING"
+              strokeWidth={3}
+              strokeColor="rgb(0,0,255)"
+              precision="low"
+              timePrecision="none"
+              onReady={result => {
+                console.log(`Distance: ${result.distance} km`);
+                console.log(`Duration: ${result.duration} min.`);
+              }}
+            />
+          ) : null}
+          {wayPointChecked[1] ? (
+            <MapViewDirections
+              origin={departurePosition}
+              destination={arrivalPosition}
+              waypoints={greenWaypoint}
+              apikey={'AIzaSyB_nbHi0KEhdlrM8ioBv_GpYCeVH2p1-08'}
+              mode="WALKING"
+              strokeWidth={3}
+              strokeColor="rgb(0,255,0)"
+              precision="low"
+              timePrecision="none"
+              onReady={result => {
+                console.log(`Distance: ${result.distance} km`);
+                console.log(`Duration: ${result.duration} min.`);
+              }}
+            />
+          ) : null}
+          {wayPointChecked[2] ? (
+            <MapViewDirections
+              origin={departurePosition}
+              destination={arrivalPosition}
+              waypoints={orangeWaypoint}
+              apikey={'AIzaSyB_nbHi0KEhdlrM8ioBv_GpYCeVH2p1-08'}
+              mode="WALKING"
+              strokeWidth={3}
+              strokeColor="rgb(255,127,0)"
+              precision="low"
+              timePrecision="none"
+              onReady={result => {
+                console.log(`Distance: ${result.distance} km`);
+                console.log(`Duration: ${result.duration} min.`);
+              }}
+            />
+          ) : null}
+          {wayPointChecked[3] ? (
+            <MapViewDirections
+              origin={departurePosition}
+              destination={arrivalPosition}
+              waypoints={redWaypoint}
+              apikey={'AIzaSyB_nbHi0KEhdlrM8ioBv_GpYCeVH2p1-08'}
+              mode="WALKING"
+              strokeWidth={3}
+              strokeColor="rgb(255,0,0)"
+              precision="low"
+              timePrecision="none"
+              onReady={result => {
+                console.log(`Distance: ${result.distance} km`);
+                console.log(`Duration: ${result.duration} min.`);
+              }}
+            />
+          ) : null}
 
           {/* Code to make polygon area */}
           {/* <Polygon
@@ -258,48 +267,7 @@ function Navi({navigation}: NaviScreenProps) {
           /> */}
         </MapView>
         {/* Code to search direction location */}
-        <View style={styles.searchBox}>
-          <Image
-            source={require('../assets/search.png')}
-            style={styles.searchIcon}
-          />
-          <GooglePlacesAutocomplete
-            GooglePlacesDetailsQuery={{fields: 'geometry'}}
-            fetchDetails={true}
-            placeholder="Search"
-            onPress={(data, details = null) => {
-              const destinationLocation = [
-                {
-                  latitude: Number(details?.geometry?.location.lat),
-                  longitude: Number(details?.geometry?.location.lng),
-                },
-              ];
-              setDestinationCoordinates(destinationLocation);
-              setDestinationName(data.description);
-              bottomSheetRef.current?.present();
-            }}
-            query={{
-              key: 'AIzaSyB_nbHi0KEhdlrM8ioBv_GpYCeVH2p1-08',
-              language: 'en',
-            }}
-            styles={{
-              textInputContainer: {
-                shadowColor: 'black',
-                shadowOffset: {width: 1},
-                shadowOpacity: 0.6,
-                marginHorizontal: 10,
-              },
-              textInput: {
-                height: 38,
-                color: '#5d5d5d',
-                fontSize: 16,
-              },
-              predefinedPlacesDescription: {
-                color: '#1faadb',
-              },
-            }}
-          />
-        </View>
+
         <View>
           <Text>'안녕하세요'</Text>
         </View>
@@ -343,4 +311,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Navi;
+export default Direction;

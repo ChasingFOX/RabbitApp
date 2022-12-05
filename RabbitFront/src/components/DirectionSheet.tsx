@@ -1,19 +1,10 @@
 import * as React from 'react';
-import {
-  Image,
-  StyleSheet,
-  Text,
-  TouchableHighlight,
-  View,
-  Linking,
-  Alert,
-} from 'react-native';
-import {useCallback, useState} from 'react';
-import Geolocation from '@react-native-community/geolocation';
-import {NavigationProp, useNavigation} from '@react-navigation/native';
-import {NaviPageParamList} from '../pages/NaviPage';
-import {RouteProp, useRoute} from '@react-navigation/native';
-
+import {Image, StyleSheet, Text, View, Linking, Alert} from 'react-native';
+import {useCallback} from 'react';
+import {useAppDispatch} from '../store';
+import waypointSlice from '../slices/waypointSlice';
+import {useSelector} from 'react-redux';
+import {RootState} from '../store/reducer';
 export interface DircetionSheetProps {
   route: string;
 }
@@ -43,46 +34,152 @@ const DirectionSheet = ({route}: DircetionSheetProps) => {
 
   const onDirection = useCallback(() => {}, []);
 
+  const dispatch = useAppDispatch();
+
+  const handleWaypoint = (color: string) => {
+    if (color == 'Blue') {
+      dispatch(
+        waypointSlice.actions.setWaypoint({
+          wayPointChecked: [true, false, false, false],
+        }),
+      );
+    }
+    if (color == 'Green') {
+      dispatch(
+        waypointSlice.actions.setWaypoint({
+          wayPointChecked: [false, true, false, false],
+        }),
+      );
+    }
+    if (color == 'Orange') {
+      dispatch(
+        waypointSlice.actions.setWaypoint({
+          wayPointChecked: [false, false, true, false],
+        }),
+      );
+    }
+    if (color == 'Red') {
+      dispatch(
+        waypointSlice.actions.setWaypoint({
+          wayPointChecked: [false, false, false, true],
+        }),
+      );
+    }
+  };
+
+  // const waypointButtonClick = useCallback(
+  //   (idx: Number) => {
+  //     setPolygonButton(prev =>
+  //       prev.map((element, index) => {
+  //         return index === idx ? !element : false;
+  //       }),
+  //     );
+  //     console.log('polygonButton', polygonButton);
+  //   },
+  //   [polygonButton],
+  // );
+
+  const waypointChecked = useSelector(
+    (state: RootState) => state.waypoint.wayPointChecked,
+  );
+
+  const arrivalName = useSelector(
+    (state: RootState) => state.direction.arrivalName,
+  );
+
+  const departureName = useSelector(
+    (state: RootState) => state.direction.departureName,
+  );
+
   return (
     <View style={styles.container}>
+      <Text
+        style={
+          styles.headerText
+        }>{`From: ${departureName}\nTo: ${arrivalName}`}</Text>
       <View style={styles.buttonContainer}>
         <View
-          style={StyleSheet.compose(styles.naviButton, styles.directionButton)}>
+          style={
+            waypointChecked[0]
+              ? StyleSheet.compose(styles.routeButton, styles.routeButtonActive)
+              : styles.routeButton
+          }>
           <Text
-            style={StyleSheet.compose(
-              styles.naviButtonText,
-              styles.directionButtonText,
-            )}
+            style={
+              waypointChecked[0]
+                ? StyleSheet.compose(
+                    styles.routeButtonText,
+                    styles.routeButtonTextActive,
+                  )
+                : styles.routeButtonText
+            }
             onPress={() => {
-              onDirection();
+              handleWaypoint('Blue');
             }}>
-            Fastest{'\n'}Route
+            Blue{'\n'}Route
           </Text>
         </View>
         <View
-          style={StyleSheet.compose(styles.naviButton, styles.directionButton)}>
+          style={
+            waypointChecked[1]
+              ? StyleSheet.compose(styles.routeButton, styles.routeButtonActive)
+              : styles.routeButton
+          }>
           <Text
-            style={StyleSheet.compose(
-              styles.naviButtonText,
-              styles.directionButtonText,
-            )}
+            style={
+              waypointChecked[1]
+                ? StyleSheet.compose(
+                    styles.routeButtonText,
+                    styles.routeButtonTextActive,
+                  )
+                : styles.routeButtonText
+            }
             onPress={() => {
-              onDirection();
+              handleWaypoint('Green');
             }}>
-            Shortest{'\n'}Route
+            Green{'\n'}Route
           </Text>
         </View>
         <View
-          style={StyleSheet.compose(styles.naviButton, styles.directionButton)}>
+          style={
+            waypointChecked[2]
+              ? StyleSheet.compose(styles.routeButton, styles.routeButtonActive)
+              : styles.routeButton
+          }>
           <Text
-            style={StyleSheet.compose(
-              styles.naviButtonText,
-              styles.directionButtonText,
-            )}
+            style={
+              waypointChecked[2]
+                ? StyleSheet.compose(
+                    styles.routeButtonText,
+                    styles.routeButtonTextActive,
+                  )
+                : styles.routeButtonText
+            }
             onPress={() => {
-              onDirection();
+              handleWaypoint('Orange');
             }}>
-            Default{'\n'}Route
+            Orange{'\n'}Route
+          </Text>
+        </View>
+        <View
+          style={
+            waypointChecked[3]
+              ? StyleSheet.compose(styles.routeButton, styles.routeButtonActive)
+              : styles.routeButton
+          }>
+          <Text
+            style={
+              waypointChecked[3]
+                ? StyleSheet.compose(
+                    styles.routeButtonText,
+                    styles.routeButtonTextActive,
+                  )
+                : styles.routeButtonText
+            }
+            onPress={() => {
+              handleWaypoint('Red');
+            }}>
+            Red{'\n'}Route
           </Text>
         </View>
         <Image source={require('../assets/line.png')} style={styles.line} />
@@ -95,7 +192,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-
+  headerText: {
+    marginHorizontal: 15,
+    fontSize: 15,
+  },
   buttonContainer: {
     width: '100%',
     height: 250,
@@ -104,12 +204,12 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'center',
   },
-  naviButton: {
+  routeButton: {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'center',
-    backgroundColor: '#4255FF',
-    width: 100,
+    backgroundColor: 'white',
+    width: 70,
     paddingVertical: 4,
     margin: 10,
     alignItems: 'center',
@@ -121,26 +221,21 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     shadowOpacity: 0.6,
   },
-  directionButton: {
-    backgroundColor: 'white',
+  routeButtonActive: {
+    backgroundColor: '#f4511e',
   },
-  naviButtonText: {
-    color: 'white',
+  routeButtonText: {
+    color: 'black',
     textAlign: 'center',
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: 'bold',
   },
-  directionButtonText: {
-    color: 'black',
+  routeButtonTextActive: {
+    color: 'white',
   },
   naviIcon: {
     width: 15,
     height: 18,
-    marginRight: 5,
-  },
-  directionIcon: {
-    width: 14,
-    height: 21,
     marginRight: 5,
   },
   line: {
