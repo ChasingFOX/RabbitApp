@@ -49,7 +49,7 @@ import way
 
 def uploadGoogle(userId_val):
     import socket
-    socket.setdefaulttimeout(60*3) # Graph upload time: 3 minutes limit
+    socket.setdefaulttimeout(60*10) # Graph upload time: 5 minutes limit
     
     folder_id = '1Pfj_Qaf8HBHqBQ9hNcIdPCf_dPhmGspY'
 
@@ -74,7 +74,7 @@ def calcCrime(crime_val, userId_val):
     st = userId_val + ' ' + st
 
     # Calculating the user's Graph of weight
-    val = "python3 dataAnalysis.py %s" % (st)
+    val = "python3 /var/www/rabbit/dataAnalysis.py %s" % (st)
     os.system(val)
 
     node_file_path = '/var/www/rabbit/admin/%s_node.pickle' % (userId_val)
@@ -116,7 +116,7 @@ def calcCrime(crime_val, userId_val):
     # get the mean of the start and end nodes's riskiness
     edges_v['risk score'] = (edges_v['risk score_u'] + edges_v['risk score_v'])/2
 
-    # Create the ratio in edge considering the length and riskiness 3:7 & 5:5 & 7:3
+    # Create the ratio in edge considering the length and riskiness 3:7 & 7:3
     transformer_length = RobustScaler()
     transformer_length.fit(np.reshape(list(edges_v['length']),(-1,1)))
 
@@ -127,7 +127,6 @@ def calcCrime(crime_val, userId_val):
     scaled_risk = transformer_risk.transform(np.reshape(list(edges_v['risk score']),(-1,1)))
 
     edges_v['l_r_3_7'] = (scaled_length * 0.3 + scaled_risk * 0.7) - min((scaled_length * 0.3 + scaled_risk * 0.7))
-    edges_v['l_r_5_5'] = (scaled_length * 0.5 + scaled_risk * 0.5) - min((scaled_length * 0.5 + scaled_risk * 0.5))
     edges_v['l_r_7_3'] = (scaled_length * 0.7 + scaled_risk * 0.3) - min((scaled_length * 0.7 + scaled_risk * 0.3))
 
     edges = edges_v
@@ -160,7 +159,7 @@ def apiNavi():
     p2 = Point(dest['longitude'], dest['latitude'])
 
     if (p1.within(poly) and p2.within(poly)):
-        return jsonify(way.wayNine(orig, dest, str(id))) # In this func, return 9 + 9 + 9 + 9 + 9 waypoints
+        return jsonify(way.wayNine(orig, dest, str(id))) # In this func, return 9 + 9 + 9 + 9 waypoints
     else: # Error 400
         return 'Error, Please enter correct Chicago Coordinates', status.HTTP_400_BAD_REQUEST
         

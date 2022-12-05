@@ -215,7 +215,6 @@ def analysis(userId_val, crime_val):
 
 if __name__ == "__main__":
     list_val = sys.argv
-    print(list_val)
     userId = str(list_val[1])
     crime_list = list_val[2:]
     analysis(userId, crime_list)
