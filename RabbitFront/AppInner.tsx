@@ -209,6 +209,7 @@ function AppInner() {
         options={{
           tabBarActiveTintColor: 'red',
           title: 'Profile',
+          unmountOnBlur: true,
           tabBarIcon: ({focused}) => {
             if (focused === false) {
               return (
