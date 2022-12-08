@@ -19,6 +19,8 @@ import axios, {AxiosError, AxiosResponse} from 'axios';
 import Config from 'react-native-config';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import {CommonActions} from '@react-navigation/native';
+import {NavigationProp, useNavigation} from '@react-navigation/native';
+import SignIn from './SignUp';
 
 type ProfileEditScreenProps = NativeStackScreenProps<
   ProfilePageParamList,
@@ -26,6 +28,7 @@ type ProfileEditScreenProps = NativeStackScreenProps<
 >;
 
 function ProfileEdit({navigation}: ProfileEditScreenProps) {
+  const navi = useNavigation<NavigationProp<RootStackParamList>>();
   const windowWidth = Dimensions.get('window').width;
   const windowHeight = Dimensions.get('window').height;
 
@@ -35,11 +38,11 @@ function ProfileEdit({navigation}: ProfileEditScreenProps) {
   const [nickName, setNickName] = useState<string>('');
   const [clickedCrime, setClickedCrime] = useState<string>('');
 
-  const [dd, setDd] = useState([]);
+  // const [dd, setDd] = useState([]);
+
+  let crimeIndex: number[] = [];
 
   const [isTrueNumber, setIsTrueNumber] = useState<Number>(0);
-
-  let a = [...dd];
 
   const crimetype = [
     {id: 1, type: 'Assualt'},
@@ -96,7 +99,9 @@ function ProfileEdit({navigation}: ProfileEditScreenProps) {
     }
   }, [nickName, crime]);
 
-  getUserInfo();
+  useEffect(() => {
+    getUserInfo();
+  }, []);
 
   useEffect(() => {
     let newArr = [...isClicked];
@@ -113,8 +118,9 @@ function ProfileEdit({navigation}: ProfileEditScreenProps) {
   const onChangeNickName = useCallback(
     text => {
       setNickName(text);
+      console.log(text);
     },
-    [nickName],
+    [setNickName],
   );
 
   useEffect(() => {
@@ -124,10 +130,6 @@ function ProfileEdit({navigation}: ProfileEditScreenProps) {
   const onChangeCrime = useCallback(
     (idx: Number) => {
       console.log(isTrueNumber);
-      // if (isTrueNumber > 6) {
-      //   Alert.alert('You can choose up to six.');
-      //   return;
-      // }
       console.log('isTri', isTrueNumber);
       console.log('isCl', isClicked);
       setIsClicked(prev =>
@@ -183,12 +185,12 @@ function ProfileEdit({navigation}: ProfileEditScreenProps) {
 
     isClicked.map((item, index) => {
       if (item === true) {
-        a.push(Number(index));
+        crimeIndex.push(Number(index));
       }
     });
 
     if (isClicked.filter(item => item == true).length > 6) {
-      Alert.alert('You can choose up to six.');
+      Alert.alert('You should choose up to six.');
       return;
     }
 
@@ -198,23 +200,26 @@ function ProfileEdit({navigation}: ProfileEditScreenProps) {
         const response = await axios.post(`${Config.API_URL}/api/user/update`, {
           id: userId,
           nickname: nickName,
-          crime: a.join(),
+          crime: crimeIndex.join(),
         });
 
-        // if (response.data.isCrimeUpdated == true) {
-        //   const response = await axios.put(
-        //     `${Config.DIRECTION_URL}/api/profile/calculate`,
-        //     {
-        //       crime: clickedCrime,
-        //       id: {userId},
-        //     },
-        //   );
-        // }
+        if (response.data.isCrimeUpdated == true) {
+          const respone = axios.put(
+            `${Config.DIRECTION_URL}/api/profile/calculate`,
+            {
+              crime: clickedCrime,
+              id: {userId},
+            },
+          );
+          Alert.alert('It will take about 30 minutes to analyze');
+        } else {
+          Alert.alert('NickName Edit Complete');
+        }
+        navigation.goBack();
         console.log(response);
       }
-      Alert.alert('Edit Complete');
+
       // navigation.goBack();
-      navigation.goBack();
     } catch (error) {
       const errorResponse = (error as AxiosError).response;
       if (errorResponse) {
@@ -222,7 +227,7 @@ function ProfileEdit({navigation}: ProfileEditScreenProps) {
       }
     } finally {
     }
-  }, [nickName, crime, isClicked, dd]);
+  }, [nickName, crime, isClicked]);
 
   // useEffect(() => {
   //   const dd: number[] = [];
@@ -248,7 +253,7 @@ function ProfileEdit({navigation}: ProfileEditScreenProps) {
           blurOnSubmit={false}
         />
         <Text style={styles.profileHead}>
-          | Dangers you want to avoid (Up to 6)
+          | Crimes you want to avoid (Up to 6)
         </Text>
 
         <View style={styles.crimeContainer}>
