@@ -41,6 +41,23 @@ const SearchSheet = (
 
   const dispatch = useAppDispatch();
 
+  const dispatchWaypont = useCallback(response => {
+    dispatch(
+      waypointSlice.actions.setWaypoint({
+        safeWaypoint: response.data.safe.waypoint,
+        safetestWaypoint: response.data.safetest.waypoint,
+        shortWaypoint: response.data.short.waypoint,
+        shortestWaypoint: response.data.shortest.waypoint,
+      }),
+    );
+    dispatch(
+      waypointSlice.actions.setWaypointChecked({
+        wayPointChecked: [true, true, true, true],
+      }),
+    );
+    console.log('---dispatchWaypoint---', response.data.short.waypoint);
+  }, []);
+
   const onNavigation = useCallback(() => {
     // if (true) {
     //   Geolocation.getdeparturePosition(
@@ -84,23 +101,26 @@ const SearchSheet = (
           },
         );
 
-        dispatch(
-          waypointSlice.actions.setWaypoint({
-            blueWaypoint: response.data.blue.waypoint,
-            greenWaypoint: response.data.green.waypoint,
-            orangeWaypoint: response.data.orange.waypoint,
-            redWaypoint: response.data.red.waypoint,
-            yellowWaypoint: response.data.yellow.waypoint,
-          }),
+        console.log('response', response);
+        console.log('response.data.short.waypoint', response.data);
+        console.log(
+          'response.data.shortest.waypoint',
+          response.data.shortest.waypoint,
+        );
+        console.log('response.data.safe.waypoint', response.data.safe.waypoint);
+        console.log(
+          'response.data.safetest.waypoint',
+          response.data.safetest.waypoint,
         );
 
+        dispatchWaypont(response);
         setLoading(false);
-        // console.log('searchsheet data', response.data);
-        // console.log('response.data.blue.waypoint', response.data.blue.waypoint);
+
         navigation.navigate('Direction');
       }
     } catch (error) {
       const errorResponse = (error as AxiosError).response;
+      console.log('error');
 
       if (errorResponse) {
         console.log('error', errorResponse);
@@ -109,7 +129,7 @@ const SearchSheet = (
       setLoading(false);
     } finally {
     }
-  }, []);
+  }, [loading, departurePosition, arrivalPosition]);
 
   return (
     <View style={styles.container}>

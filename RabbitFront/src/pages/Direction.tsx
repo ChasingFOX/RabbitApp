@@ -30,17 +30,15 @@ import {RouteProp, useRoute} from '@react-navigation/native';
 import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
 import {RootState} from '../store/reducer';
+import Config from 'react-native-config';
 
 type NaviScreenProps = NativeStackScreenProps<LoggedInParamList, 'Direction'>;
 
 export type Object = {
   navigation: object;
-  // safest: undefined;
-  // shortest: undefined;
 };
 
 function Direction({navigation}: Object) {
-  // const route2 = useRoute<RouteProp<NaviPageParamList, 'Direction'>>();
   const [latitude, setLatitude] = useState(Number);
   const [longitude, setLogitude] = useState(Number);
   const [currentLatitude, setCurrentLatitude] = useState(Number);
@@ -48,8 +46,24 @@ function Direction({navigation}: Object) {
   const [destinationCoordinates, setDestinationCoordinates] = useState([
     {latitude: latitude, longitude: longitude},
   ]);
-  // const route = useRoute<RouteProp<routeParamList>>();
-  // const routeInfo = route.params;
+  const bottomSheetRef = useRef<BottomSheetModal>(null);
+
+  useEffect(() => {
+    Geolocation.getCurrentPosition(
+      position => {
+        const latitude = JSON.stringify(position.coords.latitude);
+        const longitude = JSON.stringify(position.coords.longitude);
+        setLatitude(Number(latitude));
+        setLogitude(Number(longitude));
+        setCurrentLatitude(Number(latitude));
+        setCurrentLongitude(Number(longitude));
+      },
+      error => {
+        console.log(error.code, error.message);
+      },
+      {enableHighAccuracy: true, timeout: 50000, maximumAge: 10000},
+    );
+  }, []);
 
   const departurePosition = useSelector(
     (state: RootState) => state.direction.departurePosition,
@@ -60,27 +74,24 @@ function Direction({navigation}: Object) {
   const wayPointChecked = useSelector(
     (state: RootState) => state.waypoint.wayPointChecked,
   );
-  const blueWaypoint = useSelector(
-    (state: RootState) => state.waypoint.blueWaypoint,
+  const safeWaypoint = useSelector(
+    (state: RootState) => state.waypoint.safeWaypoint,
   );
-  const greenWaypoint = useSelector(
-    (state: RootState) => state.waypoint.greenWaypoint,
+  const safetestWaypoint = useSelector(
+    (state: RootState) => state.waypoint.safetestWaypoint,
   );
-  const orangeWaypoint = useSelector(
-    (state: RootState) => state.waypoint.orangeWaypoint,
+  const shortWaypoint = useSelector(
+    (state: RootState) => state.waypoint.shortWaypoint,
   );
-  const redWaypoint = useSelector(
-    (state: RootState) => state.waypoint.redWaypoint,
-  );
-  const yellowWaypoint = useSelector(
-    (state: RootState) => state.waypoint.yellowWaypoint,
+  const shortestWaypoint = useSelector(
+    (state: RootState) => state.waypoint.shortestWaypoint,
   );
 
-  console.log('direction-blueWaypoint', blueWaypoint);
-  console.log('direction-greenWaypoint', greenWaypoint);
-  console.log('direction-orangeWaypoint', orangeWaypoint);
-  console.log('direction-redWaypoint', redWaypoint);
-  console.log('direction-yellowWaypoint', yellowWaypoint);
+  console.log('direction-safeWaypoint', safeWaypoint);
+  console.log('direction-safetestWaypoint', safetestWaypoint);
+  console.log('direction-shortWaypoint', shortWaypoint);
+  console.log('direction-shortestWaypoint', shortestWaypoint);
+  console.log('waypointchecked', wayPointChecked);
 
   // if (routeInfo) {
   //   console.log(route.params.safetest);
@@ -89,39 +100,15 @@ function Direction({navigation}: Object) {
   // Mandatory coordinates to get a safery route
   // const safetestCoordinate = route?.params;
 
-  const bottomSheetRef = useRef<BottomSheetModal>(null);
-
   // callbacks
   const handleSheetChanges = useCallback((index: number) => {
     console.log('handleSheetChanges', index);
   }, []);
   // Code to get current location
-  Geolocation.getCurrentPosition(
-    position => {
-      const latitude = JSON.stringify(position.coords.latitude);
-      const longitude = JSON.stringify(position.coords.longitude);
-      setLatitude(Number(latitude));
-      setLogitude(Number(longitude));
-      setCurrentLatitude(Number(latitude));
-      setCurrentLongitude(Number(longitude));
-    },
-    error => {
-      console.log(error.code, error.message);
-    },
-    {enableHighAccuracy: true, timeout: 50000, maximumAge: 10000},
-  );
-
-  const origin = {latitude: 41.883118, longitude: -87.622917};
-  const destination = {
-    latitude: 41.894444,
-    longitude: -87.623703,
-  };
 
   const [destinationName, setDestinationName] = useState<string>('');
 
   bottomSheetRef.current?.present();
-
-  console.log('waypointchecked', wayPointChecked);
 
   return (
     <BottomSheetModalProvider>
@@ -129,7 +116,7 @@ function Direction({navigation}: Object) {
         <BottomSheetModal
           ref={bottomSheetRef}
           index={1}
-          snapPoints={['20%', '20%']}
+          snapPoints={['25%', '25%']}
           onChange={handleSheetChanges}
           style={{
             borderRadius: 25,
@@ -164,7 +151,7 @@ function Direction({navigation}: Object) {
 
           <Marker coordinate={arrivalPosition} title="Arrive" />
 
-          {/* {greenWaypoint.map((destinationCoordinates, index) => (
+          {/* {safetestWaypoint.map((destinationCoordinates, index) => (
             <Marker
               key={`coordinate_${index}`}
               coordinate={destinationCoordinates}
@@ -172,7 +159,7 @@ function Direction({navigation}: Object) {
               opacity={0.5}
             />
           ))} */}
-          {/* {redWaypoint.map((destinationCoordinates, index) => (
+          {/* {shortestWaypoint.map((destinationCoordinates, index) => (
             <View>
               <Marker
                 key={`coordinate_${index}`}
@@ -187,14 +174,15 @@ function Direction({navigation}: Object) {
             <MapViewDirections
               origin={departurePosition}
               destination={arrivalPosition}
-              waypoints={blueWaypoint}
-              apikey={'AIzaSyB_nbHi0KEhdlrM8ioBv_GpYCeVH2p1-08'}
+              waypoints={safeWaypoint}
+              apikey={Config.GOOGLE_API_URL}
               mode="WALKING"
               strokeWidth={3}
-              strokeColor="rgb(0,0,255)"
+              strokeColor="#50BCDF"
               precision="low"
               timePrecision="none"
               onReady={result => {
+                console.log('-d--d', safeWaypoint);
                 console.log(`Distance: ${result.distance} km`);
                 console.log(`Duration: ${result.duration} min.`);
               }}
@@ -204,11 +192,11 @@ function Direction({navigation}: Object) {
             <MapViewDirections
               origin={departurePosition}
               destination={arrivalPosition}
-              waypoints={greenWaypoint}
-              apikey={'AIzaSyB_nbHi0KEhdlrM8ioBv_GpYCeVH2p1-08'}
+              waypoints={safetestWaypoint}
+              apikey={Config.GOOGLE_API_URL}
               mode="WALKING"
               strokeWidth={3}
-              strokeColor="rgb(0,255,0)"
+              strokeColor="#008000"
               precision="low"
               timePrecision="none"
               onReady={result => {
@@ -221,11 +209,11 @@ function Direction({navigation}: Object) {
             <MapViewDirections
               origin={departurePosition}
               destination={arrivalPosition}
-              waypoints={orangeWaypoint}
-              apikey={'AIzaSyB_nbHi0KEhdlrM8ioBv_GpYCeVH2p1-08'}
+              waypoints={shortWaypoint}
+              apikey={Config.GOOGLE_API_URL}
               mode="WALKING"
               strokeWidth={3}
-              strokeColor="rgb(255,127,0)"
+              strokeColor="#FF7F00"
               precision="low"
               timePrecision="none"
               onReady={result => {
@@ -238,11 +226,11 @@ function Direction({navigation}: Object) {
             <MapViewDirections
               origin={departurePosition}
               destination={arrivalPosition}
-              waypoints={redWaypoint}
-              apikey={'AIzaSyB_nbHi0KEhdlrM8ioBv_GpYCeVH2p1-08'}
+              waypoints={shortestWaypoint}
+              apikey={Config.GOOGLE_API_URL}
               mode="WALKING"
               strokeWidth={3}
-              strokeColor="rgb(255,0,0)"
+              strokeColor="#FF0000"
               precision="low"
               timePrecision="none"
               onReady={result => {

@@ -58,6 +58,7 @@ function SignIn({navigation}: SignInScreenProps) {
   const isClickedIndex: number[] = [];
 
   const isTrueNumber = isClicked.filter(item => item == true);
+
   useEffect(() => {
     if (isTrueNumber.length == 7) {
       Alert.alert('You can choose up to six.');
@@ -208,7 +209,7 @@ function SignIn({navigation}: SignInScreenProps) {
               clearButtonMode={'while-editing'}></TextInput>
           </View>
           <Text style={style.profileHead}>
-            | Dangers you want to avoid (Maximum 6)
+            | Crimes you want to avoid (Maximum 6)
           </Text>
           <View style={style.profileContainer}>
             {crimetype.map((item, index) => {

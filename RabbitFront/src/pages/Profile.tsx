@@ -119,7 +119,7 @@ function Profile({navigation}: ProfileMainParamList) {
             <Text style={styles.emailText}>{email}</Text>
           </View>
         </View>
-        <Text style={styles.profileHead}>| Dangers you want to avoid</Text>
+        <Text style={styles.profileHead}>| Crimes you want to avoid</Text>
         <View style={styles.crimeContainer}>
           {crimetype.map((item, index) => {
             return (
