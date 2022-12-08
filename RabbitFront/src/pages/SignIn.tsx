@@ -66,6 +66,7 @@ function SignIn({navigation}: SignInScreenProps) {
             nickName: response.data.nickName,
           }),
         );
+
         Alert.alert(response.data.message);
       }
     } catch (error) {
