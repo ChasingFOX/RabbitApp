@@ -202,7 +202,7 @@ def apiCalc():
         fileId = calcCrime(crime, userId)
         cur.execute("INSERT INTO fileinfo (user_id, file_id) VALUES ('%s', '%s')" % (userId, fileId))
 
-    cur.execute("UPDATE user SET status = 0 WHERE id = '%s'" % (id)) # now_status update (done making user's graph)
+    cur.execute("UPDATE user SET status = 0 WHERE id = '%s'" % (userId)) # now_status update (done making user's graph)
     
     mysql.connection.commit()
     cur.close()
@@ -216,32 +216,33 @@ def apiDBUpdate():
     crime = str(request.json['crime'])
     userId = str(request.json['id'])
 
-    cur = mysql.connection.cursor()
-    cur.execute("UPDATE user SET status = 1 WHERE id = '%s'" % (id)) # now_status update (making user's graph)
-    mysql.connection.commit()
-    cur.close()
+    if len(crime) == 0:
+        return 'Error, Please input at least one crime option', status.HTTP_400_BAD_REQUEST
+    else:
+        cur = mysql.connection.cursor()
+        cur.execute("UPDATE user SET status = 1 WHERE id = '%s'" % (userId)) # now_status update (making user's graph)
+        mysql.connection.commit()
 
-    fileId = calcCrime(crime, userId)
-    
-    # Delete previous User Graph file in Google Drive
-    cur = mysql.connection.cursor()
-    cur.execute("SELECT file_id FROM fileinfo WHERE user_id = '%s'" % (userId))
-    pre_file_id = cur.fetchone()
-    pre_file_id = str(pre_file_id['file_id'])
-    service.files().delete(fileId=pre_file_id).execute()
-    
-    # Update new User Graph file id
-    cur.execute("UPDATE fileinfo SET file_id = '%s' WHERE user_id = '%s'" % (fileId, userId))
+        fileId = calcCrime(crime, userId)
+        
+        # Delete previous User Graph file in Google Drive
+        cur.execute("SELECT file_id FROM fileinfo WHERE user_id = '%s'" % (userId))
+        pre_file_id = cur.fetchone()
+        pre_file_id = str(pre_file_id['file_id'])
+        service.files().delete(fileId=pre_file_id).execute()
+        
+        # Update new User Graph file id
+        cur.execute("UPDATE fileinfo SET file_id = '%s' WHERE user_id = '%s'" % (fileId, userId))
 
-    # Change 'user' table crime value
-    cur.execute("UPDATE user SET crime = '%s' WHERE id = '%s'" % (crime, userId))
-    
-    cur.execute("UPDATE user SET status = 0 WHERE id = '%s'" % (id))
+        # Change 'user' table crime value
+        cur.execute("UPDATE user SET crime = '%s' WHERE id = '%s'" % (crime, userId))
+        
+        cur.execute("UPDATE user SET status = 0 WHERE id = '%s'" % (userId))
 
-    mysql.connection.commit()
-    cur.close()
+        mysql.connection.commit()
+        cur.close()
 
-    return "Done UPDATE crime DB"
+        return "Done UPDATE crime DB"
 
 
 if __name__=='__main__':
