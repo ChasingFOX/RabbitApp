@@ -10,6 +10,7 @@ import {
   StyleSheet,
   Linking,
   Image,
+  ScrollView,
 } from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {useCallback, useState, useEffect, useRef} from 'react';
@@ -19,6 +20,7 @@ import MapView, {
   PROVIDER_DEFAULT,
   Marker,
   Polygon,
+  LatLng,
 } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 import {LoggedInParamList} from '../../AppInner';
@@ -31,6 +33,9 @@ import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
 import {RootState} from '../store/reducer';
 import Config from 'react-native-config';
+import polygonData from '../constants/crime_polygon_vector_dict4.json';
+import {useAppDispatch} from '../store';
+import waypointSlice from '../slices/waypointSlice';
 
 type NaviScreenProps = NativeStackScreenProps<LoggedInParamList, 'Direction'>;
 
@@ -46,6 +51,37 @@ function Direction({navigation}: Object) {
   const [destinationCoordinates, setDestinationCoordinates] = useState([
     {latitude: latitude, longitude: longitude},
   ]);
+  const [polygonCoordinates, setPolygonCoordinates] = useState(
+    JSON.parse(String(polygonData)).Assualt,
+  );
+  const dispatch = useAppDispatch();
+  const crimetype = [
+    {id: 1, type: 'Assualt'},
+    {id: 2, type: 'Battery'},
+    {id: 3, type: 'Homicide'},
+    {id: 4, type: 'Human Tracking'},
+    {id: 5, type: 'Kidnapping'},
+    {id: 6, type: 'Narcotics'},
+    {id: 7, type: 'Public Indecency'},
+    {id: 8, type: 'Robbery'},
+    {id: 9, type: 'Sexual'},
+    {id: 10, type: 'Stalking'},
+    {id: 11, type: 'Weapon'},
+  ];
+  const [polygonButton, setPolygonButton] = useState([
+    true,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+  ]);
+
   const bottomSheetRef = useRef<BottomSheetModal>(null);
 
   useEffect(() => {
@@ -110,13 +146,63 @@ function Direction({navigation}: Object) {
 
   bottomSheetRef.current?.present();
 
+  const onPolygon = (crimeType: string) => {
+    switch (crimeType) {
+      case 'Assualt':
+        setPolygonCoordinates(JSON.parse(String(polygonData)).Assualt);
+        break;
+      case 'Battery':
+        setPolygonCoordinates(JSON.parse(String(polygonData)).Battery);
+        break;
+      case 'Homicide':
+        setPolygonCoordinates(JSON.parse(String(polygonData)).Homicide);
+        break;
+      case 'Human Tracking':
+        setPolygonCoordinates(JSON.parse(String(polygonData)).HumanTracking);
+        break;
+      case 'Kidnapping':
+        setPolygonCoordinates(JSON.parse(String(polygonData)).Kidnapping);
+        break;
+      case 'Narcotics':
+        setPolygonCoordinates(JSON.parse(String(polygonData)).Narcotics);
+        break;
+      case 'Public Indecency':
+        setPolygonCoordinates(JSON.parse(String(polygonData)).PublicIndecency);
+        break;
+      case 'Robbery':
+        setPolygonCoordinates(JSON.parse(String(polygonData)).Robbery);
+        break;
+      case 'Sexual':
+        setPolygonCoordinates(JSON.parse(String(polygonData)).Sexual);
+        break;
+      case 'Stalking':
+        setPolygonCoordinates(JSON.parse(String(polygonData)).Stalking);
+        break;
+      case 'Weapon':
+        setPolygonCoordinates(JSON.parse(String(polygonData)).Weapon);
+        break;
+    }
+  };
+
+  const polygonButtonClick = useCallback(
+    (idx: Number) => {
+      setPolygonButton(prev =>
+        prev.map((element, index) => {
+          return index === idx ? !element : false;
+        }),
+      );
+      console.log('polygonButton', polygonButton);
+    },
+    [polygonButton],
+  );
+
   return (
     <BottomSheetModalProvider>
       <View style={{height: '100%', flex: 1, justifyContent: 'flex-start'}}>
         <BottomSheetModal
           ref={bottomSheetRef}
           index={1}
-          snapPoints={['25%', '25%']}
+          snapPoints={['30%', '30%']}
           onChange={handleSheetChanges}
           style={{
             borderRadius: 25,
@@ -135,7 +221,8 @@ function Direction({navigation}: Object) {
         <MapView
           style={styles.map}
           provider={
-            Platform.OS === 'android' ? PROVIDER_GOOGLE : PROVIDER_DEFAULT
+            // Platform.OS === 'android' ? PROVIDER_GOOGLE : PROVIDER_DEFAULT
+            PROVIDER_GOOGLE
           }
           region={{
             latitude: arrivalPosition.latitude,
@@ -150,35 +237,16 @@ function Direction({navigation}: Object) {
           <Marker coordinate={departurePosition} title="Start" />
 
           <Marker coordinate={arrivalPosition} title="Arrive" />
-
-          {/* {safetestWaypoint.map((destinationCoordinates, index) => (
-            <Marker
-              key={`coordinate_${index}`}
-              coordinate={destinationCoordinates}
-              pinColor="blue"
-              opacity={0.5}
-            />
-          ))} */}
-          {/* {shortestWaypoint.map((destinationCoordinates, index) => (
-            <View>
-              <Marker
-                key={`coordinate_${index}`}
-                coordinate={destinationCoordinates}
-                opacity={0.5}
-                title={'1111'}
-              />
-              <Text>{index}</Text>
-            </View>
-          ))} */}
           {wayPointChecked[0] ? (
             <MapViewDirections
               origin={departurePosition}
               destination={arrivalPosition}
               waypoints={safeWaypoint}
+              optimizeWaypoints={true}
               apikey={Config.GOOGLE_API_URL}
               mode="WALKING"
               strokeWidth={3}
-              strokeColor="#50BCDF"
+              strokeColor="#00FFFF"
               precision="low"
               timePrecision="none"
               onReady={result => {
@@ -196,7 +264,7 @@ function Direction({navigation}: Object) {
               apikey={Config.GOOGLE_API_URL}
               mode="WALKING"
               strokeWidth={3}
-              strokeColor="#008000"
+              strokeColor="#74B72E"
               precision="low"
               timePrecision="none"
               onReady={result => {
@@ -213,7 +281,7 @@ function Direction({navigation}: Object) {
               apikey={Config.GOOGLE_API_URL}
               mode="WALKING"
               strokeWidth={3}
-              strokeColor="#FF7F00"
+              strokeColor="#FFFF00"
               precision="low"
               timePrecision="none"
               onReady={result => {
@@ -240,35 +308,53 @@ function Direction({navigation}: Object) {
             />
           ) : null}
 
-          {/* Code to make polygon area */}
-          {/* <Polygon
-            coordinates={polygonCoordinates[0]}
-            strokeColor="#000" // fallback for when `strokeColors` is not supported by the map-provider
-            fillColor="rgba(256,26,20,.3)"
-            strokeWidth={2}
-          />
-          <Polygon
-            coordinates={polygonCoordinates[1]}
-            strokeColor="#000" // fallback for when `strokeColors` is not supported by the map-provider
-            fillColor="rgba(256,26,20,.3)"
-            strokeWidth={2}
-          /> */}
+          {polygonCoordinates.map((item: LatLng[], index: number) => {
+            return (
+              <Polygon
+                key={index}
+                coordinates={item}
+                strokeColor="#000" // fallback for when `strokeColors` is not supported by the map-provider
+                fillColor="rgba(256,26,20,.3)"
+                strokeWidth={1}
+              />
+            );
+          })}
         </MapView>
         {/* Code to search direction location */}
-
         <View>
-          <Text>'안녕하세요'</Text>
+          <ScrollView horizontal={true} style={styles.polygonContainer}>
+            {crimetype.map((item, index) => {
+              return (
+                <View
+                  key={index}
+                  style={
+                    polygonButton[index]
+                      ? StyleSheet.compose(
+                          styles.crimeButton,
+                          styles.crimeButtonActive,
+                        )
+                      : styles.crimeButton
+                  }>
+                  <Text
+                    style={
+                      polygonButton[index]
+                        ? StyleSheet.compose(
+                            styles.crimeButtonText,
+                            styles.crimeButtonTextActive,
+                          )
+                        : styles.crimeButtonText
+                    }
+                    onPress={() => {
+                      onPolygon(item.type);
+                      polygonButtonClick(index);
+                    }}>
+                    {item.type}
+                  </Text>
+                </View>
+              );
+            })}
+          </ScrollView>
         </View>
-
-        {/* <TouchableOpacity
-          onPress={() => geoLocation()}
-          style={{backgroundColor: '#89B2E9'}}>
-          <Text style={{color: 'white', textAlign: 'center'}}>
-            Get GeoLocation Button
-          </Text>
-          <Text> latitude: {latitude} </Text>
-          <Text> longitude: {longitude} </Text>
-        </TouchableOpacity> */}
       </View>
     </BottomSheetModalProvider>
   );
@@ -289,6 +375,9 @@ const styles = StyleSheet.create({
 
     backgroundColor: 'white',
   },
+  polygonContainer: {
+    paddingBottom: 13,
+  },
 
   searchIcon: {
     marginTop: 3,
@@ -296,6 +385,37 @@ const styles = StyleSheet.create({
     height: 30,
     marginLeft: 7,
     marginRight: 1,
+  },
+  crimeButton: {
+    display: 'flex',
+    flexDirection: 'row',
+    backgroundColor: 'white',
+    width: 120,
+    height: 30,
+    paddingHorizontal: 4,
+    paddingVertical: 5,
+    margin: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 10,
+    borderWidth: 0.3,
+    borderColor: 'grey',
+    shadowOffset: {width: 1, height: 3},
+    shadowColor: 'black',
+    shadowRadius: 2,
+    shadowOpacity: 0.6,
+  },
+  crimeButtonActive: {
+    backgroundColor: '#f4511e',
+  },
+  crimeButtonText: {
+    color: 'black',
+    textAlign: 'center',
+    fontSize: 13,
+    fontWeight: 'bold',
+  },
+  crimeButtonTextActive: {
+    color: 'white',
   },
 });
 

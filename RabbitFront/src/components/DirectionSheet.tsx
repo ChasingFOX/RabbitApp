@@ -10,16 +10,6 @@ export interface DircetionSheetProps {
 }
 
 const DirectionSheet = ({route}: DircetionSheetProps) => {
-  //   const route2 = useRoute<RouteProp<NaviPageParamList, 'Direction'>>();
-  //   const navigation = useNavigation<NavigationProp<NaviPageParamList>>();
-  const onNavigation = useCallback(() => {
-    Linking.openURL(
-      'https://www.google.com/maps/dir/?api=1&origin=40.42489539482597,-86.91051411560053&destination=40.473360126380996,-86.94642755184898&travelmode=walking&waypoints=40.42119341508705,-86.91781885879092%7C40.42732532443506,-86.92463136381483%7C40.43249524031551,-86.9269298077754%7C40.446337675508566,-86.92821177376851%7C40.45851363603605,-86.93213657343334%7C40.46619283912356,-86.9486192066278%7C40.46716415540354,-86.95429476059878%7C40.47024506180284,-86.95576733520348%7C40.47034248927443,-86.9517606080918%7C40.46857485459526,-86.94694887644629%7C40.47062085295775,-86.939740426341',
-    );
-  }, []);
-
-  const onDirection = useCallback(() => {}, []);
-
   const dispatch = useAppDispatch();
 
   const handleWaypoint = (type: string) => {
@@ -73,9 +63,67 @@ const DirectionSheet = ({route}: DircetionSheetProps) => {
     (state: RootState) => state.direction.arrivalName,
   );
 
+  const arrivalPosition = useSelector(
+    (state: RootState) => state.direction.arrivalPosition,
+  );
+
   const departureName = useSelector(
     (state: RootState) => state.direction.departureName,
   );
+
+  const departurePosition = useSelector(
+    (state: RootState) => state.direction.departurePosition,
+  );
+
+  const safeWaypoint = useSelector(
+    (state: RootState) => state.waypoint.safeWaypoint,
+  );
+  const safetestWaypoint = useSelector(
+    (state: RootState) => state.waypoint.safetestWaypoint,
+  );
+  const shortWaypoint = useSelector(
+    (state: RootState) => state.waypoint.shortWaypoint,
+  );
+  const shortestWaypoint = useSelector(
+    (state: RootState) => state.waypoint.shortestWaypoint,
+  );
+  const safeWaypointRiskiness = useSelector(
+    (state: RootState) => state.waypoint.safeWaypointRiskiness,
+  );
+  const safetestWaypointRiskiness = useSelector(
+    (state: RootState) => state.waypoint.safetestWaypointRiskiness,
+  );
+  const shortWaypointRiskiness = useSelector(
+    (state: RootState) => state.waypoint.shortWaypointRiskiness,
+  );
+  const shortestWaypointRiskiness = useSelector(
+    (state: RootState) => state.waypoint.shortestWaypointRiskiness,
+  );
+
+  console.log('safeWaypointRiskiness', safeWaypointRiskiness);
+  console.log('safetestWaypointRiskiness', safetestWaypointRiskiness);
+  console.log('shortWaypointRiskiness', shortWaypointRiskiness);
+  console.log('shortestWaypointRiskiness', shortestWaypointRiskiness);
+
+  const onNavigation = useCallback(routeType => {
+    let naviWaypoint: (string | number)[] = [];
+    routeType.map((item: {latitude: number; longitude: number}) => {
+      naviWaypoint.push(item.latitude);
+      naviWaypoint.push(item.longitude);
+      naviWaypoint.push('%7C');
+    });
+
+    Linking.openURL(
+      `https://www.google.com/maps/dir/?api=1&origin=${
+        departurePosition.latitude
+      },${departurePosition.longitude}&destination=${
+        arrivalPosition.latitude
+      },${arrivalPosition.longitude}&travelmode=walking&waypoints=${naviWaypoint
+        .join()
+        .replace(/,%7C,/g, '%7C')
+        .replace(',%7C', '')}`,
+    );
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -106,7 +154,7 @@ const DirectionSheet = ({route}: DircetionSheetProps) => {
               onPress={() => {
                 handleWaypoint('Safe');
               }}>
-              Safe{'\n'}Route
+              Safe
             </Text>
           </View>
           <View style={styles.naviButton}>
@@ -117,9 +165,22 @@ const DirectionSheet = ({route}: DircetionSheetProps) => {
             <Text
               style={styles.naviButtonText}
               onPress={() => {
-                onNavigation();
+                onNavigation(safeWaypoint);
               }}>
               Navi
+            </Text>
+          </View>
+          <View style={styles.riskinessButton}>
+            <Image
+              source={require('../assets/riskiness.png')}
+              style={styles.naviIcon}
+            />
+            <Text
+              style={styles.riskinessButtonText}
+              onPress={() => {
+                onNavigation(safeWaypoint);
+              }}>
+              {safeWaypointRiskiness}
             </Text>
           </View>
         </View>
@@ -144,9 +205,9 @@ const DirectionSheet = ({route}: DircetionSheetProps) => {
                   : styles.routeButtonText
               }
               onPress={() => {
-                handleWaypoint('Safest');
+                handleWaypoint('Safetest');
               }}>
-              Safetest{'\n'}Route
+              Safetest
             </Text>
           </View>
           <View style={styles.naviButton}>
@@ -157,9 +218,22 @@ const DirectionSheet = ({route}: DircetionSheetProps) => {
             <Text
               style={styles.naviButtonText}
               onPress={() => {
-                onNavigation();
+                onNavigation(safetestWaypoint);
               }}>
               Navi
+            </Text>
+          </View>
+          <View style={styles.riskinessButton}>
+            <Image
+              source={require('../assets/riskiness.png')}
+              style={styles.naviIcon}
+            />
+            <Text
+              style={styles.riskinessButtonText}
+              onPress={() => {
+                onNavigation(safeWaypoint);
+              }}>
+              {safetestWaypointRiskiness}
             </Text>
           </View>
         </View>
@@ -185,7 +259,7 @@ const DirectionSheet = ({route}: DircetionSheetProps) => {
               onPress={() => {
                 handleWaypoint('Short');
               }}>
-              Short{'\n'}Route
+              Short
             </Text>
           </View>
           <View style={styles.naviButton}>
@@ -196,9 +270,22 @@ const DirectionSheet = ({route}: DircetionSheetProps) => {
             <Text
               style={styles.naviButtonText}
               onPress={() => {
-                onNavigation();
+                onNavigation(shortWaypoint);
               }}>
               Navi
+            </Text>
+          </View>
+          <View style={styles.riskinessButton}>
+            <Image
+              source={require('../assets/riskiness.png')}
+              style={styles.naviIcon}
+            />
+            <Text
+              style={styles.riskinessButtonText}
+              onPress={() => {
+                onNavigation(safeWaypoint);
+              }}>
+              {shortWaypointRiskiness}
             </Text>
           </View>
         </View>
@@ -224,7 +311,7 @@ const DirectionSheet = ({route}: DircetionSheetProps) => {
               onPress={() => {
                 handleWaypoint('Shortest');
               }}>
-              Shortest{'\n'}Route
+              Shortest
             </Text>
           </View>
           <View style={styles.naviButton}>
@@ -235,9 +322,22 @@ const DirectionSheet = ({route}: DircetionSheetProps) => {
             <Text
               style={styles.naviButtonText}
               onPress={() => {
-                onNavigation();
+                onNavigation(shortestWaypoint);
               }}>
               Navi
+            </Text>
+          </View>
+          <View style={styles.riskinessButton}>
+            <Image
+              source={require('../assets/riskiness.png')}
+              style={styles.naviIcon}
+            />
+            <Text
+              style={styles.riskinessButtonText}
+              onPress={() => {
+                onNavigation(safeWaypoint);
+              }}>
+              {shortestWaypointRiskiness}
             </Text>
           </View>
         </View>
@@ -264,6 +364,7 @@ const styles = StyleSheet.create({
   },
   naviContainer: {
     display: 'flex',
+    alignItems: 'center',
   },
   routeButton: {
     display: 'flex',
@@ -271,6 +372,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: 'white',
     width: 70,
+    height: 50,
     paddingVertical: 4,
     margin: 10,
     alignItems: 'center',
@@ -286,11 +388,30 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     backgroundColor: 'white',
+    borderRadius: 10,
+    borderWidth: 0.5,
+    borderColor: 'blue',
+    width: 60,
+    marginHorizontal: 10,
+    paddingVertical: 4,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  riskinessButton: {
+    display: 'flex',
+    flexDirection: 'row',
+    backgroundColor: 'white',
     width: 70,
     marginHorizontal: 10,
     paddingVertical: 4,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  riskinessButtonText: {
+    color: 'black',
+    textAlign: 'center',
+    fontSize: 14,
+    fontWeight: 'bold',
   },
   routeButtonActive: {
     backgroundColor: '#f4511e',
@@ -302,17 +423,17 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   naviButtonText: {
-    color: 'black',
+    color: 'blue',
     textAlign: 'center',
-    fontSize: 14,
+    fontSize: 10,
     fontWeight: 'bold',
   },
   routeButtonTextActive: {
     color: 'white',
   },
   naviIcon: {
-    width: 10,
-    height: 13,
+    width: 15,
+    height: 15,
     marginRight: 5,
   },
   line: {

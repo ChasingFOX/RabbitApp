@@ -55,7 +55,23 @@ const SearchSheet = (
         wayPointChecked: [true, true, true, true],
       }),
     );
-    console.log('---dispatchWaypoint---', response.data.short.waypoint);
+    dispatch(
+      waypointSlice.actions.setWaypointRiskiness({
+        safeWayPointRiskiness: response.data.safe.total_riskiness,
+        safetestWaypointRiskiness: response.data.safetest.total_riskiness,
+        shortWaypointRiskiness: response.data.short.total_riskiness,
+        shortestWaypointRiskiness: response.data.shortest.total_riskiness,
+      }),
+    );
+
+    console.log(
+      'response.data.safe.total_riskiness',
+      response.data.safe.total_riskiness,
+    );
+    console.log(
+      'response.data.safe.total_riskiness',
+      typeof response.data.safe.total_riskiness,
+    );
   }, []);
 
   const onNavigation = useCallback(() => {

@@ -238,7 +238,8 @@ function Search({navigation}: SearchScreenProps) {
         <MapView
           style={styles.map}
           provider={
-            Platform.OS === 'android' ? PROVIDER_GOOGLE : PROVIDER_DEFAULT
+            // Platform.OS === 'android' ? PROVIDER_GOOGLE : PROVIDER_DEFAULT
+            PROVIDER_GOOGLE
           }
           region={{
             latitude: destinationCoordinates[0].latitude,
@@ -431,16 +432,6 @@ function Search({navigation}: SearchScreenProps) {
             })}
           </ScrollView>
         </View>
-
-        {/* <TouchableOpacity
-          onPress={() => geoLocation()}
-          style={{backgroundColor: '#89B2E9'}}>
-          <Text style={{color: 'white', textAlign: 'center'}}>
-            Get GeoLocation Button
-          </Text>
-          <Text> latitude: {latitude} </Text>
-          <Text> longitude: {longitude} </Text>
-        </TouchableOpacity> */}
       </View>
     </BottomSheetModalProvider>
   );
