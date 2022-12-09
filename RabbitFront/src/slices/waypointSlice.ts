@@ -13,6 +13,10 @@ const data = [
 ];
 const initialState = {
   wayPointChecked: [false, false, false, false],
+  safeWaypointRiskiness: 0,
+  safetestWaypointRiskiness: 0,
+  shortWaypointRiskiness: 0,
+  shortestWaypointRiskiness: 0,
   safeWaypoint: data,
   safetestWaypoint: data,
   shortWaypoint: data,
@@ -30,6 +34,14 @@ const waypointSlice = createSlice({
     },
     setWaypointChecked(state, action) {
       state.wayPointChecked = action.payload.wayPointChecked;
+    },
+    setWaypointRiskiness(state, action) {
+      state.safeWaypointRiskiness = action.payload.safeWaypointRiskiness;
+      state.safetestWaypointRiskiness =
+        action.payload.safetestWaypointRiskiness;
+      state.shortWaypointRiskiness = action.payload.shortWaypointRiskiness;
+      state.shortestWaypointRiskiness =
+        action.payload.shortestWaypointRiskiness;
     },
   },
   extraReducers: builder => {},
