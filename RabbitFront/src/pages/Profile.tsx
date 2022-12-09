@@ -13,6 +13,7 @@ import {ProfilePageParamList} from './ProfilePage';
 import axios, {AxiosError, AxiosResponse} from 'axios';
 import Config from 'react-native-config';
 import EncryptedStorage from 'react-native-encrypted-storage';
+import {useIsFocused} from '@react-navigation/native';
 
 type ProfileMainParamList = NativeStackScreenProps<
   ProfilePageParamList,
@@ -51,6 +52,13 @@ function Profile({navigation}: ProfileMainParamList) {
 
   const [nickName, setNickName] = useState<String>('');
   const [email, setEmail] = useState([]);
+
+  const isFocused = useIsFocused();
+
+  useEffect(() => {
+    getUserInfo();
+  }, [isFocused]);
+
   // const [crime, setCrime] = useState([]);
 
   const onEdit = useCallback(async () => {
@@ -69,6 +77,7 @@ function Profile({navigation}: ProfileMainParamList) {
         setEmail(response.data.email);
         setNickName(response.data.nickname);
         setCrime(response.data.crime);
+        console.log('nick', nickName);
       }
     } catch (error) {
       const errorResponse = (error as AxiosError).response;
@@ -87,8 +96,6 @@ function Profile({navigation}: ProfileMainParamList) {
         console.log('newArr', newArr);
       }, []);
     }
-
-    console.log('isClicked', isClicked);
     setIsClicked(newArr);
   }, [crime]);
 
@@ -112,7 +119,7 @@ function Profile({navigation}: ProfileMainParamList) {
             <Text style={styles.emailText}>{email}</Text>
           </View>
         </View>
-        <Text style={styles.profileHead}>| Dangers you want to avoid</Text>
+        <Text style={styles.profileHead}>| Crimes you want to avoid</Text>
         <View style={styles.crimeContainer}>
           {crimetype.map((item, index) => {
             return (

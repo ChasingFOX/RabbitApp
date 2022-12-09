@@ -100,39 +100,7 @@ function AppInner() {
           },
         }}
       />
-      <Tab.Screen
-        name="Search"
-        component={Search}
-        options={{
-          tabBarActiveTintColor: 'red',
-          title: 'Search',
-          tabBarIcon: ({focused}) => {
-            if (focused === false) {
-              return (
-                <Image
-                  style={{width: 24, height: 24, tintColor: 'black'}}
-                  source={require('./src/assets/search.png')}
-                />
-              );
-            } else if (focused === true) {
-              return (
-                <Image
-                  style={{width: 24, height: 24, tintColor: 'red'}}
-                  source={require('./src/assets/search.png')}
-                />
-              );
-            }
-          },
-          headerStyle: {
-            backgroundColor: '#f4511e',
-          },
-          headerTintColor: '#fff',
-          headerTitleStyle: {
-            fontSize: 25,
-            fontWeight: 'bold',
-          },
-        }}
-      />
+
       <Tab.Screen
         name="Data"
         component={Data}
@@ -166,49 +134,14 @@ function AppInner() {
           },
         }}
       />
-      <Tab.Screen
-        name="Camera"
-        component={Camera}
-        options={{
-          tabBarActiveTintColor: 'red',
-          title: 'Camera',
-          tabBarIcon: ({focused}) => {
-            if (focused === false) {
-              return (
-                <Image
-                  style={{width: 24, height: 24, tintColor: 'black'}}
-                  source={require('./src/assets/camera.png')}
-                />
-              );
-            } else if (focused === true) {
-              return (
-                <Image
-                  style={{width: 24, height: 24, tintColor: 'red'}}
-                  source={require('./src/assets/camera.png')}
-                />
-              );
-            }
-          },
-          headerStyle: {
-            backgroundColor: '#f4511e',
-          },
-          headerTintColor: '#fff',
-          headerTitleStyle: {
-            fontSize: 25,
-            fontWeight: 'bold',
-          },
-        }}
-        tabBarOptions={{
-          activeTintColor: 'tomato', // 탭 활성
-          inactiveTintColor: 'gray', // 탭 비활성
-        }}
-      />
+
       <Tab.Screen
         name="Profile"
         component={ProfilePage}
         options={{
           tabBarActiveTintColor: 'red',
           title: 'Profile',
+          unmountOnBlur: true,
           tabBarIcon: ({focused}) => {
             if (focused === false) {
               return (
