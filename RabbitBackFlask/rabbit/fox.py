@@ -49,7 +49,7 @@ import way
 
 def uploadGoogle(userId_val):
     import socket
-    socket.setdefaulttimeout(60*10) # Graph upload time: 5 minutes limit
+    socket.setdefaulttimeout(60*15) # Graph upload time: 15 minutes limit
     
     folder_id = '1Pfj_Qaf8HBHqBQ9hNcIdPCf_dPhmGspY'
 
@@ -151,18 +151,28 @@ def calcCrime(crime_val, userId_val):
 
 @app.route('/api/navi/', methods=['POST'])
 def apiNavi():
-    orig = request.json['orig']
-    dest = request.json['dest']
     id = request.json['id']
-    
-    p1 = Point(orig['longitude'], orig['latitude'])
-    p2 = Point(dest['longitude'], dest['latitude'])
 
-    if (p1.within(poly) and p2.within(poly)):
-        return jsonify(way.wayNine(orig, dest, str(id))) # In this func, return 9 + 9 + 9 + 9 waypoints
-    else: # Error 400
-        return 'Error, Please enter correct Chicago Coordinates', status.HTTP_400_BAD_REQUEST
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT status FROM user WHERE id = '%s'" % (id))
+    status = cur.fetchone()
+    status = int(status['status'])
+    cur.close()
+
+    if status == 0:
+        orig = request.json['orig']
+        dest = request.json['dest']
         
+        p1 = Point(orig['longitude'], orig['latitude'])
+        p2 = Point(dest['longitude'], dest['latitude'])
+
+        if (p1.within(poly) and p2.within(poly)):
+            return jsonify(way.wayNine(orig, dest, str(id))) # In this func, return 9 + 9 + 9 + 9 waypoints
+        else: # Error 400
+            return 'Error, Please enter correct Chicago Coordinates', status.HTTP_400_BAD_REQUEST
+    else: # status == 1
+        return 'Error, Please wait until revising your graph.', status.HTTP_400_BAD_REQUEST
+
 
 @app.route('/api/signup/calculate/', methods=['POST'])  # not exist? then save. After Sign-Up process, user saved. Then this request can be used.
 def apiCalc():
@@ -192,6 +202,8 @@ def apiCalc():
         fileId = calcCrime(crime, userId)
         cur.execute("INSERT INTO fileinfo (user_id, file_id) VALUES ('%s', '%s')" % (userId, fileId))
 
+    cur.execute("UPDATE user SET status = 0 WHERE id = '%s'" % (id)) # now_status update (done making user's graph)
+    
     mysql.connection.commit()
     cur.close()
 
@@ -204,11 +216,15 @@ def apiDBUpdate():
     crime = str(request.json['crime'])
     userId = str(request.json['id'])
 
-    fileId = calcCrime(crime, userId)
-
     cur = mysql.connection.cursor()
+    cur.execute("UPDATE user SET status = 1 WHERE id = '%s'" % (id)) # now_status update (making user's graph)
+    mysql.connection.commit()
+    cur.close()
+
+    fileId = calcCrime(crime, userId)
     
     # Delete previous User Graph file in Google Drive
+    cur = mysql.connection.cursor()
     cur.execute("SELECT file_id FROM fileinfo WHERE user_id = '%s'" % (userId))
     pre_file_id = cur.fetchone()
     pre_file_id = str(pre_file_id['file_id'])
@@ -220,6 +236,8 @@ def apiDBUpdate():
     # Change 'user' table crime value
     cur.execute("UPDATE user SET crime = '%s' WHERE id = '%s'" % (crime, userId))
     
+    cur.execute("UPDATE user SET status = 0 WHERE id = '%s'" % (id))
+
     mysql.connection.commit()
     cur.close()
 
