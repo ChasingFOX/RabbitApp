@@ -154,12 +154,12 @@ def apiNavi():
     id = request.json['id']
 
     cur = mysql.connection.cursor()
-    cur.execute("SELECT nowStatus FROM user WHERE id = '%s'" % (id))
-    nowStatus = cur.fetchone()
-    nowStatus = int(nowStatus['nowStatus'])
+    cur.execute("SELECT makingStatus FROM user WHERE id = '%s'" % (id))
+    makingStatus = cur.fetchone()
+    makingStatus = int(makingStatus['makingStatus'])
     cur.close()
 
-    if nowStatus == 0:
+    if makingStatus == 0:
         orig = request.json['orig']
         dest = request.json['dest']
         
@@ -170,7 +170,7 @@ def apiNavi():
             return jsonify(way.wayNine(orig, dest, str(id))) # In this func, return 9 + 9 + 9 + 9 waypoints
         else: # Error 400
             return 'Error, Please enter correct Chicago Coordinates', status.HTTP_400_BAD_REQUEST
-    else: # nowStatus == 1
+    else: # makingStatus == 1
         return 'Error, Please wait until revising your graph.', status.HTTP_400_BAD_REQUEST
 
 
@@ -202,7 +202,7 @@ def apiCalc():
         fileId = calcCrime(crime, userId)
         cur.execute("INSERT INTO fileinfo (user_id, file_id) VALUES ('%s', '%s')" % (userId, fileId))
 
-    cur.execute("UPDATE user SET nowStatus = 0 WHERE id = '%s'" % (userId)) # nowStatus update (done making user's graph)
+    cur.execute("UPDATE user SET makingStatus = 0 WHERE id = '%s'" % (userId)) # makingStatus update (done making user's graph)
     
     mysql.connection.commit()
     cur.close()
@@ -216,34 +216,48 @@ def apiDBUpdate():
     crime = str(request.json['crime'])
     userId = str(request.json['id'])
 
-    if len(crime) == 0:
-        return 'Error, Please input at least one crime option', status.HTTP_400_BAD_REQUEST
+    cur = mysql.connection.cursor()
+
+    cur.execute("SELECT processing FROM user WHERE id = '%s'" % (userId))
+    processing = cur.fetchone()
+    processing = int(processing['processing'])
+
+    if (processing != 0): # already working making user's graph in profile page
+        return 'Sorry. Please wait because you already done profile edit once, you have to wait until making your graph.', status.HTTP_400_BAD_REQUEST
     else:
-        print('I am here')
-        cur = mysql.connection.cursor()
-        cur.execute("UPDATE user SET nowStatus = 1 WHERE id = '%s'" % (userId)) # nowStatus update (making user's graph)
-        mysql.connection.commit()
+        cur.execute("UPDATE user SET processing = 1 WHERE id = '%s'" % (userId))
 
-        fileId = calcCrime(crime, userId)
-        
-        # Delete previous User Graph file in Google Drive
-        cur.execute("SELECT file_id FROM fileinfo WHERE user_id = '%s'" % (userId))
-        pre_file_id = cur.fetchone()
-        pre_file_id = str(pre_file_id['file_id'])
-        service.files().delete(fileId=pre_file_id).execute()
-        
-        # Update new User Graph file id
-        cur.execute("UPDATE fileinfo SET file_id = '%s' WHERE user_id = '%s'" % (fileId, userId))
+        if len(crime) == 0:
+            return 'Error, Please input at least one crime option', status.HTTP_400_BAD_REQUEST
+        else:
+            print('I am here')
+            cur.execute("UPDATE user SET makingStatus = 1 WHERE id = '%s'" % (userId)) # makingStatus update (making user's graph)
+            mysql.connection.commit()
 
-        # Change 'user' table crime value
-        cur.execute("UPDATE user SET crime = '%s' WHERE id = '%s'" % (crime, userId))
-        
-        cur.execute("UPDATE user SET nowStatus = 0 WHERE id = '%s'" % (userId))
+            fileId = calcCrime(crime, userId)
+            
+            # Delete previous User Graph file in Google Drive
+            cur.execute("SELECT file_id FROM fileinfo WHERE user_id = '%s'" % (userId))
+            pre_file_id = cur.fetchone()
+            pre_file_id = str(pre_file_id['file_id'])
+            service.files().delete(fileId=pre_file_id).execute()
+            
+            # Update new User Graph file id
+            cur.execute("UPDATE fileinfo SET file_id = '%s' WHERE user_id = '%s'" % (fileId, userId))
 
-        mysql.connection.commit()
-        cur.close()
+            # Change 'user' table crime value
+            cur.execute("UPDATE user SET crime = '%s' WHERE id = '%s'" % (crime, userId))
+            
+            # Change 'user' table making status original
+            cur.execute("UPDATE user SET makingStatus = 0 WHERE id = '%s'" % (userId))
 
-        return "Done UPDATE crime DB"
+            # Change 'user' table processing status original
+            cur.execute("UPDATE user SET processing = 0 WHERE id = '%s'" % (userId))
+
+            mysql.connection.commit()
+            cur.close()
+
+            return "Done UPDATE crime DB"
 
 
 if __name__=='__main__':
