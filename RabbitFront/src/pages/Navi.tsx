@@ -10,6 +10,7 @@ import {
   StyleSheet,
   Linking,
   Image,
+  Alert,
 } from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {useCallback, useState, useEffect, useRef} from 'react';
@@ -116,6 +117,7 @@ function Search({navigation}: SearchScreenProps) {
   const handleSheetChanges = useCallback((index: number) => {
     console.log('handleSheetChanges', index);
     if (index == -1) {
+      Alert.alert('Please re-enter your Departure and Destination');
       setData();
     }
   }, []);
