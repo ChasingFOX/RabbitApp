@@ -205,10 +205,10 @@ function ProfileEdit({navigation}: ProfileEditScreenProps) {
 
         if (response.data.isCrimeUpdated == true) {
           const respone = axios.put(
-            `${Config.DIRECTION_URL}/api/profile/calculate`,
+            `${Config.DIRECTION_API_URL}/api/profile/calculate`,
             {
-              crime: clickedCrime,
-              id: {userId},
+              crime: crimeIndex.join(),
+              id: 88,
             },
           );
           Alert.alert('It will take about 30 minutes to analyze');

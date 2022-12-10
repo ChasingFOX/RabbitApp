@@ -17,8 +17,6 @@ import {
 } from 'react-native';
 import {useCallback, useState} from 'react';
 import Navi from './src/pages/Navi';
-import Search from './src/pages/Search';
-import Camera from './src/pages/Camera';
 import Data from './src/pages/DataAnalysis';
 import Profile from './src/pages/Profile';
 import SignUp from './src/pages/SignUp';
