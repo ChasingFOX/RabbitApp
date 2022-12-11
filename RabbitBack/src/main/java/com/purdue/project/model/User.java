@@ -28,6 +28,8 @@ public class User {
     @Column
     private String crime;
     @Column
+    private Boolean processing;
+    @Column
     private Date regdate;
 
     @Override

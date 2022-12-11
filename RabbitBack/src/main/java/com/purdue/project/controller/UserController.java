@@ -1,8 +1,8 @@
 package com.purdue.project.controller;
 
 import com.purdue.project.model.*;
-import com.purdue.project.dao.UserDAO;
 import com.purdue.project.exception.UserNotFoundException;
+import com.purdue.project.dao.UserDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,26 +20,26 @@ public class UserController {
     public ResponseEntity<SignupResponse> signUp(@RequestBody User userObj) {
         //  check if the email is valid
         if (userDAO.findByEmail(userObj.getEmail()).isPresent()) {
-            return ResponseEntity.badRequest().body(new SignupResponse("이미 존재하는 이메일입니다."));
+            return ResponseEntity.badRequest().body(new SignupResponse("Email already exists."));
         }
-        userDAO.save(userObj);
-        return ResponseEntity.ok(new SignupResponse("회원 가입이 완료되었습니다."));
+        Integer userId =  userDAO.save(userObj).getId();
+        return ResponseEntity.ok(new SignupResponse(userId, "Sign up succeed."));
     }
     @PostMapping("/signIn")
     public ResponseEntity<SigninResponse> signIn(@RequestBody User userObj) {
 
         //  check if the user is valid
         if (!userDAO.findByEmail(userObj.getEmail()).isPresent()) {
-            return ResponseEntity.badRequest().body(new SigninResponse("회원 가입을 진행해주세요."));
+            return ResponseEntity.badRequest().body(new SigninResponse("Please sign up first."));
         }
         User user = userDAO.findByEmail(userObj.getEmail()).orElseThrow(UserNotFoundException::new);
 
         //  check if the password is valid
         if (!user.getPassword().equals(userObj.getPassword())) {
-            return ResponseEntity.badRequest().body(new SigninResponse("비밀번호가 틀렸습니다."));
+            return ResponseEntity.badRequest().body(new SigninResponse("Your password is wrong."));
         }
 
-        SigninResponse response = new SigninResponse("로그인에 성공하였습니다.", user.getId(), user.getEmail(), user.getNickname(), user.getCrime());
+        SigninResponse response = new SigninResponse("Sign in succeed.", user.getId(), user.getEmail(), user.getNickname(), user.getCrime());
         return ResponseEntity.ok(response);
     }
     @GetMapping("/user")
@@ -58,10 +58,24 @@ public class UserController {
     }
 
     @PostMapping("/user/update")
-    public User update(@RequestBody User userObj) {
-        Optional<User> user = userDAO.findById(userObj.getId());
-        User updatedUser  = new User(user.get().getId(), user.get().getEmail(), user.get().getPassword(), userObj.getNickname(), userObj.getCrime(), user.get().getRegdate());
-        return userDAO.save(updatedUser);
+    public ResponseEntity<UpdateResponse> update(@RequestBody User userObj) {
+        User user = userDAO.findById(userObj.getId()).orElseThrow(UserNotFoundException::new);
+        UpdateResponse returnedUser = new UpdateResponse(user.getId(), userObj.getNickname(), userObj.getCrime(), Boolean.FALSE, "Crime is not processing");
+
+        //check if the crime is updating
+        if(user.getProcessing()) {
+            return ResponseEntity.badRequest().body(new UpdateResponse("Please wait until processing your previous request."));
+        }
+
+        //check if the crime has been changed
+        if(!userObj.getCrime().equals(user.getCrime())) {
+            returnedUser.setIsCrimeUpdated(Boolean.TRUE);
+        }
+
+        User updatedUser  = new User(user.getId(), user.getEmail(), user.getPassword(), userObj.getNickname(), userObj.getCrime(), user.getProcessing(), user.getRegdate());
+        userDAO.save(updatedUser);
+
+        return ResponseEntity.ok(returnedUser);
     }
 
     @DeleteMapping("/user/{id}")
