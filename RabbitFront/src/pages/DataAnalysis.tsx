@@ -146,11 +146,7 @@ function Data({navigation}: SearchScreenProps) {
 
   const renderLabel = () => {
     if (value || isFocus) {
-      return (
-        <Text style={[styles.label, isFocus && {color: 'blue'}]}>
-          Dropdown label
-        </Text>
-      );
+      return <Text style={[styles.label, isFocus && {color: 'blue'}]}></Text>;
     }
     return null;
   };
@@ -161,7 +157,7 @@ function Data({navigation}: SearchScreenProps) {
           2018 crime density with urban factor data, which is used to predict
           2019 crime density
         </Text>
-        {renderLabel()}
+
         <Dropdown
           style={[styles.dropdown, isFocus && {borderColor: 'blue'}]}
           placeholderStyle={styles.placeholderStyle}
@@ -209,9 +205,9 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
     marginVertical: 10,
     fontWeight: 'bold',
+    textAlign: 'left',
   },
   dataImage: {
-    marginTop: 20,
     width: '100%',
     height: 700,
   },
@@ -222,6 +218,7 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderRadius: 8,
     paddingHorizontal: 8,
+    marginBottom: 10,
   },
   icon: {
     marginRight: 5,
