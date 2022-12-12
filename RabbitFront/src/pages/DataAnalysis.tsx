@@ -208,6 +208,7 @@ const styles = StyleSheet.create({
     textAlign: 'left',
   },
   dataImage: {
+    marginTop: 20,
     width: '100%',
     height: 700,
   },
