@@ -122,7 +122,7 @@ function SignIn({navigation}: SignInScreenProps) {
           crime: String(isClickedIndex),
         });
 
-        Alert.alert('알림', '회원가입에 성공하였습니다.');
+        Alert.alert('Sign Up succeed.');
         setLoading(false);
         navigation.goBack();
       }
@@ -332,10 +332,10 @@ const style = StyleSheet.create({
     height: 250,
     display: 'flex',
     flexDirection: 'row',
+    justifyContent: 'space-around',
     backgroundColor: 'white',
     padding: 10,
     margin: 10,
-    marginBottom: 20,
     borderRadius: 10,
     borderWidth: 1,
     borderColor: 'grey',
@@ -349,9 +349,6 @@ const style = StyleSheet.create({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'white',
-    flexWrap: 'wrap',
-    flexGrow: 1,
   },
   crimeButton: {
     backgroundColor: 'white',
