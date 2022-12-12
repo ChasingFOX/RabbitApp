@@ -1,4 +1,4 @@
-package com.[rabbitfront]; // 패키지 이름 수정
+package com.rabbitfront; // 패키지 이름 수정
 
 import android.content.Intent;
 import android.os.Bundle;

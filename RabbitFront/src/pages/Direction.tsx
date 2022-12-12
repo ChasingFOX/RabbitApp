@@ -43,7 +43,7 @@ export type Object = {
   navigation: object;
 };
 
-function Direction({navigation}: Object) {
+function Direction({navigation}: NaviScreenProps) {
   const [latitude, setLatitude] = useState(Number);
   const [longitude, setLogitude] = useState(Number);
   const [currentLatitude, setCurrentLatitude] = useState(Number);
@@ -139,6 +139,9 @@ function Direction({navigation}: Object) {
   // callbacks
   const handleSheetChanges = useCallback((index: number) => {
     console.log('handleSheetChanges', index);
+    if (index == -1) {
+      navigation.goBack();
+    }
   }, []);
   // Code to get current location
 
@@ -202,7 +205,7 @@ function Direction({navigation}: Object) {
         <BottomSheetModal
           ref={bottomSheetRef}
           index={1}
-          snapPoints={['30%', '30%']}
+          snapPoints={['18%', '42%']}
           onChange={handleSheetChanges}
           style={{
             borderRadius: 25,
@@ -227,8 +230,8 @@ function Direction({navigation}: Object) {
           region={{
             latitude: arrivalPosition.latitude,
             longitude: arrivalPosition.longitude,
-            latitudeDelta: 0.01,
-            longitudeDelta: 0.01,
+            latitudeDelta: 0.05,
+            longitudeDelta: 0.05,
           }}
           onRegionChangeComplete={() => {}}
           showsUserLocation={true}>
@@ -246,7 +249,7 @@ function Direction({navigation}: Object) {
               apikey={Config.GOOGLE_API_URL}
               mode="WALKING"
               strokeWidth={3}
-              strokeColor="#00FFFF"
+              strokeColor="rgba(87, 148, 102, 1)"
               precision="low"
               timePrecision="none"
               onReady={result => {
@@ -264,7 +267,7 @@ function Direction({navigation}: Object) {
               apikey={Config.GOOGLE_API_URL}
               mode="WALKING"
               strokeWidth={3}
-              strokeColor="#74B72E"
+              strokeColor="rgba(239, 188, 5, 1)"
               precision="low"
               timePrecision="none"
               onReady={result => {
@@ -281,7 +284,7 @@ function Direction({navigation}: Object) {
               apikey={Config.GOOGLE_API_URL}
               mode="WALKING"
               strokeWidth={3}
-              strokeColor="#FFFF00"
+              strokeColor="rgba(255, 129, 57, 0.95)"
               precision="low"
               timePrecision="none"
               onReady={result => {
@@ -298,7 +301,7 @@ function Direction({navigation}: Object) {
               apikey={Config.GOOGLE_API_URL}
               mode="WALKING"
               strokeWidth={3}
-              strokeColor="#FF0000"
+              strokeColor="rgba(255, 9, 9, 0.95)"
               precision="low"
               timePrecision="none"
               onReady={result => {
@@ -367,12 +370,10 @@ const styles = StyleSheet.create({
   searchBox: {
     paddingTop: 10,
     paddingBottom: 5,
-
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'center',
     alignItem: 'center',
-
     backgroundColor: 'white',
   },
   polygonContainer: {
@@ -391,7 +392,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: 'white',
     width: 120,
-    height: 30,
+    height: 25,
     paddingHorizontal: 4,
     paddingVertical: 5,
     margin: 10,

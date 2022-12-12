@@ -145,41 +145,6 @@ function ProfileEdit({navigation}: ProfileEditScreenProps) {
     [isClicked],
   );
 
-  // const isClickedReSet = useCallback(() => {
-  //   isClicked.map((item, index) => {
-  //     if (item == true) {
-  //       a.push(Number(index));
-  //     }
-  //   });
-  //   setDd(a);
-  //   console.log('das', dd);
-  // }, [isClicked]);
-
-  // useEffect(() => {
-  //   const a = [...dd];
-  //   isClicked.map((item, index) => {
-  //     if (item == true) {
-  //       a.push(String(index));
-  //       console.log('aa', a.join());
-  //     }
-  //   });
-  //   // setDd(String(a));
-  //   console.log('das', dd);
-  // }, [isClicked]);
-
-  // const ButtonClick = useCallback(
-  //   (idx: Number) => {
-  //     setIsClicked(prev =>
-  //       prev.map((element, index) => {
-  //         return index === idx ? !element : element;
-  //       }),
-  //     );
-  //     isClicekdReSet();
-  //   },
-
-  //   [isClicked],
-  // );
-
   const onSubmit = useCallback(async () => {
     const userId = await EncryptedStorage.getItem('id');
 
@@ -195,8 +160,8 @@ function ProfileEdit({navigation}: ProfileEditScreenProps) {
     }
 
     try {
+      console.log('userId', userId);
       {
-        console.log('isClicked----', isClicked);
         const response = await axios.post(`${Config.API_URL}/api/user/update`, {
           id: userId,
           nickname: nickName,
@@ -208,9 +173,11 @@ function ProfileEdit({navigation}: ProfileEditScreenProps) {
             `${Config.DIRECTION_API_URL}/api/profile/calculate`,
             {
               crime: crimeIndex.join(),
-              id: 88,
+              id: userId,
             },
           );
+          console.log('crimeIndex.join()', crimeIndex.join());
+          console.log('userId', userId);
           Alert.alert('It will take about 30 minutes to analyze');
         } else {
           Alert.alert('NickName Edit Complete');
@@ -223,26 +190,14 @@ function ProfileEdit({navigation}: ProfileEditScreenProps) {
     } catch (error) {
       const errorResponse = (error as AxiosError).response;
       if (errorResponse) {
-        Alert.alert('error');
+        Alert.alert(errorResponse?.data?.message);
       }
     } finally {
     }
   }, [nickName, crime, isClicked]);
 
-  // useEffect(() => {
-  //   const dd: number[] = [];
-  //   isClicked.map((item, index) => {
-  //     if (item == true) {
-  //       dd.push(index);
-  //     }
-  //   });
-  //   setClickedCrime(String(dd));
-
-  //   console.log('use effecti clickedCrime', clickedCrime);
-  // }, [isClicked]);
-
   return (
-    <ScrollView>
+    <ScrollView style={{height: '100%', backgroundColor: 'white'}}>
       <View style={styles.container}>
         <Text style={styles.profileHead}>| Nickname</Text>
         <TextInput
@@ -288,40 +243,47 @@ function ProfileEdit({navigation}: ProfileEditScreenProps) {
             );
           })}
         </View>
-        <View style={styles.editButton}>
-          <Text
-            style={styles.editButtonText}
-            onPress={() => {
-              Alert.alert(
-                'Alert',
-                'If you change the crime type, it takes 30 minutes to analyze. Do you still want to change it?',
-                [
-                  {
-                    text: 'NO',
-                    onPress: () => {
-                      navigation.goBack();
+        <View style={styles.buttonContainer}>
+          <View style={styles.notNowButton}>
+            <Text style={styles.notNowButtonText} onPress={navigation.goBack}>
+              Not now
+            </Text>
+          </View>
+          <View style={styles.submitButton}>
+            <Text
+              style={styles.submitButtonText}
+              onPress={() => {
+                Alert.alert(
+                  'Alert',
+                  'If you change the crime type, it takes 30 minutes to analyze. Do you still want to change it?',
+                  [
+                    {
+                      text: 'NO',
+                      onPress: () => {
+                        navigation.goBack();
+                      },
+                      style: 'cancel',
                     },
-                    style: 'cancel',
-                  },
-                  {
-                    text: 'YES',
-                    onPress: () => {
-                      onSubmit();
+                    {
+                      text: 'YES',
+                      onPress: () => {
+                        onSubmit();
+                      },
+                      style: 'default',
                     },
-                    style: 'default',
+                  ],
+                  {
+                    cancelable: true,
+                    onDismiss: () =>
+                      Alert.alert(
+                        'This alert was dismissed by tapping outside of the alert dialog.',
+                      ),
                   },
-                ],
-                {
-                  cancelable: true,
-                  onDismiss: () =>
-                    Alert.alert(
-                      'This alert was dismissed by tapping outside of the alert dialog.',
-                    ),
-                },
-              );
-            }}>
-            Submit
-          </Text>
+                );
+              }}>
+              Submit
+            </Text>
+          </View>
         </View>
       </View>
     </ScrollView>
@@ -376,6 +338,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
   },
+  buttonContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+  },
   profileHead: {
     width: '90%',
     fontSize: 17,
@@ -415,6 +381,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 10,
     margin: 10,
+    marginBottom: 30,
   },
   optionButton: {
     backgroundColor: 'white',
@@ -436,12 +403,14 @@ const styles = StyleSheet.create({
   },
   crimeButtonContainer: {
     display: 'flex',
+
     width: 55,
     height: 90,
     backgroundColor: 'red',
   },
   crimeButton: {
     backgroundColor: 'white',
+    justifyContent: 'center',
     width: 90,
     paddingHorizontal: 4,
     paddingVertical: 5,
@@ -470,26 +439,46 @@ const styles = StyleSheet.create({
     color: 'black',
     fontSize: 13,
     fontWeight: 'bold',
+    textAlign: 'center',
   },
   crimeButtonTextActive: {
     color: 'white',
   },
-  editButton: {
-    backgroundColor: '#f4511e',
-    width: 150,
+  notNowButton: {
+    backgroundColor: 'white',
+    width: 100,
     paddingHorizontal: 4,
     paddingVertical: 5,
     margin: 10,
     alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 5,
+    borderColor: 'grey',
+    borderWidth: 0.5,
+  },
+  notNowButtonText: {
+    color: 'black',
+    textAlign: 'center',
+    fontSize: 15,
+  },
+  submitButton: {
+    backgroundColor: 'rgba(255, 129, 57, 0.95)',
+    width: 100,
+    height: 40,
+    paddingHorizontal: 4,
+    paddingVertical: 5,
+    margin: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
     borderRadius: 5,
     borderColor: 'grey',
     borderWidth: 1,
-    shadowOffset: {width: 1, height: 3},
-    shadowColor: 'black',
-    shadowRadius: 2,
-    shadowOpacity: 0.6,
+    // shadowOffset: {width: 1, height: 3},
+    // shadowColor: 'black',
+    // shadowRadius: 2,
+    // shadowOpacity: 0.6,
   },
-  editButtonText: {
+  submitButtonText: {
     color: 'white',
     textAlign: 'center',
     fontSize: 15,
