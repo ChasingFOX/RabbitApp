@@ -100,11 +100,6 @@ const DirectionSheet = ({route}: DircetionSheetProps) => {
     (state: RootState) => state.waypoint.shortestWaypointRiskiness,
   );
 
-  console.log('safeWaypointRiskiness', safeWaypointRiskiness);
-  console.log('safetestWaypointRiskiness', safetestWaypointRiskiness);
-  console.log('shortWaypointRiskiness', shortWaypointRiskiness);
-  console.log('shortestWaypointRiskiness', shortestWaypointRiskiness);
-
   const onNavigation = useCallback(routeType => {
     let naviWaypoint: (string | number)[] = [];
     routeType.map((item: {latitude: number; longitude: number}) => {
@@ -127,9 +122,12 @@ const DirectionSheet = ({route}: DircetionSheetProps) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.headerText}>
-        {`From: ${departureName}\nTo: ${arrivalName}`}
-      </Text>
+      <View style={styles.headerContainer}>
+        <Text style={styles.headerTitle}>{`From - \nTo -`}</Text>
+        <Text style={styles.headerText}>
+          {`${departureName}\n${arrivalName}`}
+        </Text>
+      </View>
       <Image source={require('../assets/line.png')} style={styles.line} />
       <View style={styles.buttonContainer}>
         <View style={styles.naviContainer}>
@@ -138,7 +136,7 @@ const DirectionSheet = ({route}: DircetionSheetProps) => {
               waypointChecked[0]
                 ? StyleSheet.compose(
                     styles.routeButton,
-                    styles.routeButtonActive,
+                    styles.safeButtonActive,
                   )
                 : styles.routeButton
             }>
@@ -154,7 +152,7 @@ const DirectionSheet = ({route}: DircetionSheetProps) => {
               onPress={() => {
                 handleWaypoint('Safe');
               }}>
-              Safe
+              Route 1
             </Text>
           </View>
           <View style={styles.naviButton}>
@@ -180,7 +178,16 @@ const DirectionSheet = ({route}: DircetionSheetProps) => {
               onPress={() => {
                 onNavigation(safeWaypoint);
               }}>
-              {safeWaypointRiskiness}
+              {safeWaypointRiskiness[0]}
+            </Text>
+          </View>
+          <View style={styles.riskinessButton}>
+            <Text
+              style={styles.riskinessButtonText}
+              onPress={() => {
+                onNavigation(safeWaypoint);
+              }}>
+              {safeWaypointRiskiness[1]}m
             </Text>
           </View>
         </View>
@@ -191,7 +198,7 @@ const DirectionSheet = ({route}: DircetionSheetProps) => {
               waypointChecked[1]
                 ? StyleSheet.compose(
                     styles.routeButton,
-                    styles.routeButtonActive,
+                    styles.safestButtonActive,
                   )
                 : styles.routeButton
             }>
@@ -207,7 +214,7 @@ const DirectionSheet = ({route}: DircetionSheetProps) => {
               onPress={() => {
                 handleWaypoint('Safetest');
               }}>
-              Safetest
+              Route 2
             </Text>
           </View>
           <View style={styles.naviButton}>
@@ -233,7 +240,16 @@ const DirectionSheet = ({route}: DircetionSheetProps) => {
               onPress={() => {
                 onNavigation(safeWaypoint);
               }}>
-              {safetestWaypointRiskiness}
+              {safetestWaypointRiskiness[0]}
+            </Text>
+          </View>
+          <View style={styles.riskinessButton}>
+            <Text
+              style={styles.riskinessButtonText}
+              onPress={() => {
+                onNavigation(safeWaypoint);
+              }}>
+              {safetestWaypointRiskiness[1]}m
             </Text>
           </View>
         </View>
@@ -243,7 +259,7 @@ const DirectionSheet = ({route}: DircetionSheetProps) => {
               waypointChecked[2]
                 ? StyleSheet.compose(
                     styles.routeButton,
-                    styles.routeButtonActive,
+                    styles.shortButtonActive,
                   )
                 : styles.routeButton
             }>
@@ -259,7 +275,7 @@ const DirectionSheet = ({route}: DircetionSheetProps) => {
               onPress={() => {
                 handleWaypoint('Short');
               }}>
-              Short
+              Route 3
             </Text>
           </View>
           <View style={styles.naviButton}>
@@ -285,7 +301,16 @@ const DirectionSheet = ({route}: DircetionSheetProps) => {
               onPress={() => {
                 onNavigation(safeWaypoint);
               }}>
-              {shortWaypointRiskiness}
+              {shortWaypointRiskiness[0]}
+            </Text>
+          </View>
+          <View style={styles.riskinessButton}>
+            <Text
+              style={styles.riskinessButtonText}
+              onPress={() => {
+                onNavigation(safeWaypoint);
+              }}>
+              {shortWaypointRiskiness[1]}m
             </Text>
           </View>
         </View>
@@ -295,7 +320,7 @@ const DirectionSheet = ({route}: DircetionSheetProps) => {
               waypointChecked[3]
                 ? StyleSheet.compose(
                     styles.routeButton,
-                    styles.routeButtonActive,
+                    styles.shortestButtonActive,
                   )
                 : styles.routeButton
             }>
@@ -311,7 +336,7 @@ const DirectionSheet = ({route}: DircetionSheetProps) => {
               onPress={() => {
                 handleWaypoint('Shortest');
               }}>
-              Shortest
+              Route 4
             </Text>
           </View>
           <View style={styles.naviButton}>
@@ -337,10 +362,23 @@ const DirectionSheet = ({route}: DircetionSheetProps) => {
               onPress={() => {
                 onNavigation(safeWaypoint);
               }}>
-              {shortestWaypointRiskiness}
+              {shortestWaypointRiskiness[0]}
+            </Text>
+          </View>
+          <View style={styles.riskinessButton}>
+            <Text
+              style={styles.riskinessButtonText}
+              onPress={() => {
+                onNavigation(safeWaypoint);
+              }}>
+              {shortestWaypointRiskiness[1]}m
             </Text>
           </View>
         </View>
+        <Image
+          source={require('../assets/spectrum.png')}
+          style={styles.spectrumIcon}
+        />
       </View>
     </View>
   );
@@ -350,13 +388,23 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  headerText: {
-    marginHorizontal: 15,
+  headerTitle: {
+    marginLeft: 20,
+    marginRight: 10,
     fontSize: 15,
+    fontWeight: 'bold',
+    textAlign: 'right',
+  },
+  headerText: {
+    fontSize: 15,
+  },
+  headerContainer: {
+    display: 'flex',
+    flexDirection: 'row',
   },
   buttonContainer: {
     width: '100%',
-    height: 250,
+    height: 300,
     display: 'flex',
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -372,7 +420,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: 'white',
     width: 70,
-    height: 50,
+    height: 40,
     paddingVertical: 4,
     margin: 10,
     alignItems: 'center',
@@ -413,8 +461,19 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: 'bold',
   },
-  routeButtonActive: {
-    backgroundColor: '#f4511e',
+  safeButtonActive: {
+    backgroundColor: 'rgba(87, 148, 102, 1)',
+    shadowOffset: {width: 0, height: 0},
+    shadowColor: 'black',
+  },
+  safestButtonActive: {
+    backgroundColor: 'rgba(239, 188, 5, 1)',
+  },
+  shortButtonActive: {
+    backgroundColor: 'rgba(255, 129, 57, 0.95)',
+  },
+  shortestButtonActive: {
+    backgroundColor: 'rgba(255, 9, 9, 0.95)',
   },
   routeButtonText: {
     color: 'black',
@@ -435,6 +494,11 @@ const styles = StyleSheet.create({
     width: 15,
     height: 15,
     marginRight: 5,
+  },
+  spectrumIcon: {
+    margin: 10,
+    width: 360,
+    height: 23,
   },
   line: {
     width: '100%',
