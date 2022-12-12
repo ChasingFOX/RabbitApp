@@ -10,57 +10,33 @@ export interface DircetionSheetProps {
 }
 
 const DirectionSheet = ({route}: DircetionSheetProps) => {
-  //   const route2 = useRoute<RouteProp<NaviPageParamList, 'Direction'>>();
-  //   const navigation = useNavigation<NavigationProp<NaviPageParamList>>();
-  const onNavigation = useCallback(() => {
-    // if (true) {
-    //   Geolocation.getCurrentPosition(
-    //     position => {
-    //       console.log(position);
-    //     },
-    //     error => {
-    //       // See error code charts below.
-    //       console.log(error.code, error.message);
-    //     },
-    //     {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
-    //   );
-    // }
-
-    Linking.openURL(
-      'https://www.google.com/maps/dir/?api=1&origin=40.42489539482597,-86.91051411560053&destination=40.473360126380996,-86.94642755184898&travelmode=walking&waypoints=40.42119341508705,-86.91781885879092%7C40.42732532443506,-86.92463136381483%7C40.43249524031551,-86.9269298077754%7C40.446337675508566,-86.92821177376851%7C40.45851363603605,-86.93213657343334%7C40.46619283912356,-86.9486192066278%7C40.46716415540354,-86.95429476059878%7C40.47024506180284,-86.95576733520348%7C40.47034248927443,-86.9517606080918%7C40.46857485459526,-86.94694887644629%7C40.47062085295775,-86.939740426341',
-    );
-  }, []);
-  //   console.log('route2.params', route2.params);
-
-  const onDirection = useCallback(() => {}, []);
-
   const dispatch = useAppDispatch();
 
-  const handleWaypoint = (color: string) => {
-    if (color == 'Blue') {
+  const handleWaypoint = (type: string) => {
+    if (type == 'Safe') {
       dispatch(
-        waypointSlice.actions.setWaypoint({
+        waypointSlice.actions.setWaypointChecked({
           wayPointChecked: [true, false, false, false],
         }),
       );
     }
-    if (color == 'Green') {
+    if (type == 'Safetest') {
       dispatch(
-        waypointSlice.actions.setWaypoint({
+        waypointSlice.actions.setWaypointChecked({
           wayPointChecked: [false, true, false, false],
         }),
       );
     }
-    if (color == 'Orange') {
+    if (type == 'Short') {
       dispatch(
-        waypointSlice.actions.setWaypoint({
+        waypointSlice.actions.setWaypointChecked({
           wayPointChecked: [false, false, true, false],
         }),
       );
     }
-    if (color == 'Red') {
+    if (type == 'Shortest') {
       dispatch(
-        waypointSlice.actions.setWaypoint({
+        waypointSlice.actions.setWaypointChecked({
           wayPointChecked: [false, false, false, true],
         }),
       );
@@ -87,102 +63,322 @@ const DirectionSheet = ({route}: DircetionSheetProps) => {
     (state: RootState) => state.direction.arrivalName,
   );
 
+  const arrivalPosition = useSelector(
+    (state: RootState) => state.direction.arrivalPosition,
+  );
+
   const departureName = useSelector(
     (state: RootState) => state.direction.departureName,
   );
 
+  const departurePosition = useSelector(
+    (state: RootState) => state.direction.departurePosition,
+  );
+
+  const safeWaypoint = useSelector(
+    (state: RootState) => state.waypoint.safeWaypoint,
+  );
+  const safetestWaypoint = useSelector(
+    (state: RootState) => state.waypoint.safetestWaypoint,
+  );
+  const shortWaypoint = useSelector(
+    (state: RootState) => state.waypoint.shortWaypoint,
+  );
+  const shortestWaypoint = useSelector(
+    (state: RootState) => state.waypoint.shortestWaypoint,
+  );
+  const safeWaypointRiskiness = useSelector(
+    (state: RootState) => state.waypoint.safeWaypointRiskiness,
+  );
+  const safetestWaypointRiskiness = useSelector(
+    (state: RootState) => state.waypoint.safetestWaypointRiskiness,
+  );
+  const shortWaypointRiskiness = useSelector(
+    (state: RootState) => state.waypoint.shortWaypointRiskiness,
+  );
+  const shortestWaypointRiskiness = useSelector(
+    (state: RootState) => state.waypoint.shortestWaypointRiskiness,
+  );
+
+  const onNavigation = useCallback(routeType => {
+    let naviWaypoint: (string | number)[] = [];
+    routeType.map((item: {latitude: number; longitude: number}) => {
+      naviWaypoint.push(item.latitude);
+      naviWaypoint.push(item.longitude);
+      naviWaypoint.push('%7C');
+    });
+
+    Linking.openURL(
+      `https://www.google.com/maps/dir/?api=1&origin=${
+        departurePosition.latitude
+      },${departurePosition.longitude}&destination=${
+        arrivalPosition.latitude
+      },${arrivalPosition.longitude}&travelmode=walking&waypoints=${naviWaypoint
+        .join()
+        .replace(/,%7C,/g, '%7C')
+        .replace(',%7C', '')}`,
+    );
+  }, []);
+
   return (
     <View style={styles.container}>
-      <Text
-        style={
-          styles.headerText
-        }>{`From: ${departureName}\nTo: ${arrivalName}`}</Text>
+      <View style={styles.headerContainer}>
+        <Text style={styles.headerTitle}>{`From - \nTo -`}</Text>
+        <Text style={styles.headerText}>
+          {`${departureName}\n${arrivalName}`}
+        </Text>
+      </View>
+      <Image source={require('../assets/line.png')} style={styles.line} />
       <View style={styles.buttonContainer}>
-        <View
-          style={
-            waypointChecked[0]
-              ? StyleSheet.compose(styles.routeButton, styles.routeButtonActive)
-              : styles.routeButton
-          }>
-          <Text
+        <View style={styles.naviContainer}>
+          <View
             style={
               waypointChecked[0]
                 ? StyleSheet.compose(
-                    styles.routeButtonText,
-                    styles.routeButtonTextActive,
+                    styles.routeButton,
+                    styles.safeButtonActive,
                   )
-                : styles.routeButtonText
-            }
-            onPress={() => {
-              handleWaypoint('Blue');
-            }}>
-            Blue{'\n'}Route
-          </Text>
+                : styles.routeButton
+            }>
+            <Text
+              style={
+                waypointChecked[0]
+                  ? StyleSheet.compose(
+                      styles.routeButtonText,
+                      styles.routeButtonTextActive,
+                    )
+                  : styles.routeButtonText
+              }
+              onPress={() => {
+                handleWaypoint('Safe');
+              }}>
+              Route 1
+            </Text>
+          </View>
+          <View style={styles.naviButton}>
+            <Image
+              source={require('../assets/naviColor.png')}
+              style={styles.naviIcon}
+            />
+            <Text
+              style={styles.naviButtonText}
+              onPress={() => {
+                onNavigation(safeWaypoint);
+              }}>
+              Navi
+            </Text>
+          </View>
+          <View style={styles.riskinessButton}>
+            <Image
+              source={require('../assets/riskiness.png')}
+              style={styles.naviIcon}
+            />
+            <Text
+              style={styles.riskinessButtonText}
+              onPress={() => {
+                onNavigation(safeWaypoint);
+              }}>
+              {safeWaypointRiskiness[0]}
+            </Text>
+          </View>
+          <View style={styles.riskinessButton}>
+            <Text
+              style={styles.riskinessButtonText}
+              onPress={() => {
+                onNavigation(safeWaypoint);
+              }}>
+              {safeWaypointRiskiness[1]}m
+            </Text>
+          </View>
         </View>
-        <View
-          style={
-            waypointChecked[1]
-              ? StyleSheet.compose(styles.routeButton, styles.routeButtonActive)
-              : styles.routeButton
-          }>
-          <Text
+
+        <View style={styles.naviContainer}>
+          <View
             style={
               waypointChecked[1]
                 ? StyleSheet.compose(
-                    styles.routeButtonText,
-                    styles.routeButtonTextActive,
+                    styles.routeButton,
+                    styles.safestButtonActive,
                   )
-                : styles.routeButtonText
-            }
-            onPress={() => {
-              handleWaypoint('Green');
-            }}>
-            Green{'\n'}Route
-          </Text>
+                : styles.routeButton
+            }>
+            <Text
+              style={
+                waypointChecked[1]
+                  ? StyleSheet.compose(
+                      styles.routeButtonText,
+                      styles.routeButtonTextActive,
+                    )
+                  : styles.routeButtonText
+              }
+              onPress={() => {
+                handleWaypoint('Safetest');
+              }}>
+              Route 2
+            </Text>
+          </View>
+          <View style={styles.naviButton}>
+            <Image
+              source={require('../assets/naviColor.png')}
+              style={styles.naviIcon}
+            />
+            <Text
+              style={styles.naviButtonText}
+              onPress={() => {
+                onNavigation(safetestWaypoint);
+              }}>
+              Navi
+            </Text>
+          </View>
+          <View style={styles.riskinessButton}>
+            <Image
+              source={require('../assets/riskiness.png')}
+              style={styles.naviIcon}
+            />
+            <Text
+              style={styles.riskinessButtonText}
+              onPress={() => {
+                onNavigation(safeWaypoint);
+              }}>
+              {safetestWaypointRiskiness[0]}
+            </Text>
+          </View>
+          <View style={styles.riskinessButton}>
+            <Text
+              style={styles.riskinessButtonText}
+              onPress={() => {
+                onNavigation(safeWaypoint);
+              }}>
+              {safetestWaypointRiskiness[1]}m
+            </Text>
+          </View>
         </View>
-        <View
-          style={
-            waypointChecked[2]
-              ? StyleSheet.compose(styles.routeButton, styles.routeButtonActive)
-              : styles.routeButton
-          }>
-          <Text
+        <View style={styles.naviContainer}>
+          <View
             style={
               waypointChecked[2]
                 ? StyleSheet.compose(
-                    styles.routeButtonText,
-                    styles.routeButtonTextActive,
+                    styles.routeButton,
+                    styles.shortButtonActive,
                   )
-                : styles.routeButtonText
-            }
-            onPress={() => {
-              handleWaypoint('Orange');
-            }}>
-            Orange{'\n'}Route
-          </Text>
+                : styles.routeButton
+            }>
+            <Text
+              style={
+                waypointChecked[2]
+                  ? StyleSheet.compose(
+                      styles.routeButtonText,
+                      styles.routeButtonTextActive,
+                    )
+                  : styles.routeButtonText
+              }
+              onPress={() => {
+                handleWaypoint('Short');
+              }}>
+              Route 3
+            </Text>
+          </View>
+          <View style={styles.naviButton}>
+            <Image
+              source={require('../assets/naviColor.png')}
+              style={styles.naviIcon}
+            />
+            <Text
+              style={styles.naviButtonText}
+              onPress={() => {
+                onNavigation(shortWaypoint);
+              }}>
+              Navi
+            </Text>
+          </View>
+          <View style={styles.riskinessButton}>
+            <Image
+              source={require('../assets/riskiness.png')}
+              style={styles.naviIcon}
+            />
+            <Text
+              style={styles.riskinessButtonText}
+              onPress={() => {
+                onNavigation(safeWaypoint);
+              }}>
+              {shortWaypointRiskiness[0]}
+            </Text>
+          </View>
+          <View style={styles.riskinessButton}>
+            <Text
+              style={styles.riskinessButtonText}
+              onPress={() => {
+                onNavigation(safeWaypoint);
+              }}>
+              {shortWaypointRiskiness[1]}m
+            </Text>
+          </View>
         </View>
-        <View
-          style={
-            waypointChecked[3]
-              ? StyleSheet.compose(styles.routeButton, styles.routeButtonActive)
-              : styles.routeButton
-          }>
-          <Text
+        <View style={styles.naviContainer}>
+          <View
             style={
               waypointChecked[3]
                 ? StyleSheet.compose(
-                    styles.routeButtonText,
-                    styles.routeButtonTextActive,
+                    styles.routeButton,
+                    styles.shortestButtonActive,
                   )
-                : styles.routeButtonText
-            }
-            onPress={() => {
-              handleWaypoint('Red');
-            }}>
-            Red{'\n'}Route
-          </Text>
+                : styles.routeButton
+            }>
+            <Text
+              style={
+                waypointChecked[3]
+                  ? StyleSheet.compose(
+                      styles.routeButtonText,
+                      styles.routeButtonTextActive,
+                    )
+                  : styles.routeButtonText
+              }
+              onPress={() => {
+                handleWaypoint('Shortest');
+              }}>
+              Route 4
+            </Text>
+          </View>
+          <View style={styles.naviButton}>
+            <Image
+              source={require('../assets/naviColor.png')}
+              style={styles.naviIcon}
+            />
+            <Text
+              style={styles.naviButtonText}
+              onPress={() => {
+                onNavigation(shortestWaypoint);
+              }}>
+              Navi
+            </Text>
+          </View>
+          <View style={styles.riskinessButton}>
+            <Image
+              source={require('../assets/riskiness.png')}
+              style={styles.naviIcon}
+            />
+            <Text
+              style={styles.riskinessButtonText}
+              onPress={() => {
+                onNavigation(safeWaypoint);
+              }}>
+              {shortestWaypointRiskiness[0]}
+            </Text>
+          </View>
+          <View style={styles.riskinessButton}>
+            <Text
+              style={styles.riskinessButtonText}
+              onPress={() => {
+                onNavigation(safeWaypoint);
+              }}>
+              {shortestWaypointRiskiness[1]}m
+            </Text>
+          </View>
         </View>
-        <Image source={require('../assets/line.png')} style={styles.line} />
+        <Image
+          source={require('../assets/spectrum.png')}
+          style={styles.spectrumIcon}
+        />
       </View>
     </View>
   );
@@ -192,17 +388,31 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  headerText: {
-    marginHorizontal: 15,
+  headerTitle: {
+    marginLeft: 20,
+    marginRight: 10,
     fontSize: 15,
+    fontWeight: 'bold',
+    textAlign: 'right',
+  },
+  headerText: {
+    fontSize: 15,
+  },
+  headerContainer: {
+    display: 'flex',
+    flexDirection: 'row',
   },
   buttonContainer: {
     width: '100%',
-    height: 250,
+    height: 300,
     display: 'flex',
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',
+  },
+  naviContainer: {
+    display: 'flex',
+    alignItems: 'center',
   },
   routeButton: {
     display: 'flex',
@@ -210,6 +420,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: 'white',
     width: 70,
+    height: 40,
     paddingVertical: 4,
     margin: 10,
     alignItems: 'center',
@@ -221,8 +432,48 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     shadowOpacity: 0.6,
   },
-  routeButtonActive: {
-    backgroundColor: '#f4511e',
+  naviButton: {
+    display: 'flex',
+    flexDirection: 'row',
+    backgroundColor: 'white',
+    borderRadius: 10,
+    borderWidth: 0.5,
+    borderColor: 'blue',
+    width: 60,
+    marginHorizontal: 10,
+    paddingVertical: 4,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  riskinessButton: {
+    display: 'flex',
+    flexDirection: 'row',
+    backgroundColor: 'white',
+    width: 70,
+    marginHorizontal: 10,
+    paddingVertical: 4,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  riskinessButtonText: {
+    color: 'black',
+    textAlign: 'center',
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  safeButtonActive: {
+    backgroundColor: 'rgba(87, 148, 102, 1)',
+    shadowOffset: {width: 0, height: 0},
+    shadowColor: 'black',
+  },
+  safestButtonActive: {
+    backgroundColor: 'rgba(239, 188, 5, 1)',
+  },
+  shortButtonActive: {
+    backgroundColor: 'rgba(255, 129, 57, 0.95)',
+  },
+  shortestButtonActive: {
+    backgroundColor: 'rgba(255, 9, 9, 0.95)',
   },
   routeButtonText: {
     color: 'black',
@@ -230,17 +481,28 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: 'bold',
   },
+  naviButtonText: {
+    color: 'blue',
+    textAlign: 'center',
+    fontSize: 10,
+    fontWeight: 'bold',
+  },
   routeButtonTextActive: {
     color: 'white',
   },
   naviIcon: {
     width: 15,
-    height: 18,
+    height: 15,
     marginRight: 5,
   },
+  spectrumIcon: {
+    margin: 10,
+    width: 360,
+    height: 23,
+  },
   line: {
-    width: 280,
-    margin: 15,
+    width: '100%',
+    marginVertical: 7,
   },
 });
 

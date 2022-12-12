@@ -41,26 +41,41 @@ const SearchSheet = (
 
   const dispatch = useAppDispatch();
 
-  const onNavigation = useCallback(() => {
-    // if (true) {
-    //   Geolocation.getdeparturePosition(
-    //     position => {
-    //       console.log(position);
-    //     },
-    //     error => {
-    //       // See error code charts below.
-    //       console.log(error.code, error.message);
-    //     },
-    //     {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
-    //   );
-    // }
-    // Linking.openURL(
-    //   'https://www.google.com/maps/dir/?api=1&origin=40.42489539482597,-86.91051411560053&destination=40.473360126380996,-86.94642755184898&travelmode=walking&waypoints=40.42119341508705,-86.91781885879092%7C40.42732532443506,-86.92463136381483%7C40.43249524031551,-86.9269298077754%7C40.446337675508566,-86.92821177376851%7C40.45851363603605,-86.93213657343334%7C40.46619283912356,-86.9486192066278%7C40.46716415540354,-86.95429476059878%7C40.47024506180284,-86.95576733520348%7C40.47034248927443,-86.9517606080918%7C40.46857485459526,-86.94694887644629%7C40.47062085295775,-86.939740426341',
-    // );
+  const dispatchWaypont = useCallback(response => {
+    dispatch(
+      waypointSlice.actions.setWaypoint({
+        safeWaypoint: response.data.safe.waypoint,
+        safetestWaypoint: response.data.safetest.waypoint,
+        shortWaypoint: response.data.short.waypoint,
+        shortestWaypoint: response.data.shortest.waypoint,
+      }),
+    );
+    dispatch(
+      waypointSlice.actions.setWaypointChecked({
+        wayPointChecked: [true, true, true, true],
+      }),
+    );
+    dispatch(
+      waypointSlice.actions.setWaypointRiskiness({
+        safeWaypointRiskiness: [
+          response.data.safe.total_riskiness,
+          response.data.safe.length,
+        ],
+        safetestWaypointRiskiness: [
+          response.data.safetest.total_riskiness,
+          response.data.safetest.length,
+        ],
+        shortWaypointRiskiness: [
+          response.data.short.total_riskiness,
+          response.data.short.length,
+        ],
+        shortestWaypointRiskiness: [
+          response.data.shortest.total_riskiness,
+          response.data.shortest.length,
+        ],
+      }),
+    );
   }, []);
-
-  console.log('departurePosition', departurePosition);
-  console.log('arrivalPosition', arrivalPosition);
 
   const onDirection = useCallback(async () => {
     const userId = await EncryptedStorage.getItem('id');
@@ -80,27 +95,30 @@ const SearchSheet = (
               latitude: arrivalPosition.latitude,
               longitude: arrivalPosition.longitude,
             },
-            id: 88,
+            id: userId,
           },
         );
 
-        dispatch(
-          waypointSlice.actions.setWaypoint({
-            blueWaypoint: response.data.blue.waypoint,
-            greenWaypoint: response.data.green.waypoint,
-            orangeWaypoint: response.data.orange.waypoint,
-            redWaypoint: response.data.red.waypoint,
-            yellowWaypoint: response.data.yellow.waypoint,
-          }),
+        console.log('response', response);
+        console.log('response.data.short.waypoint', response.data);
+        console.log(
+          'response.data.shortest.waypoint',
+          response.data.shortest.waypoint,
+        );
+        console.log('response.data.safe.waypoint', response.data.safe.waypoint);
+        console.log(
+          'response.data.safetest.waypoint',
+          response.data.safetest.waypoint,
         );
 
+        dispatchWaypont(response);
         setLoading(false);
-        // console.log('searchsheet data', response.data);
-        // console.log('response.data.blue.waypoint', response.data.blue.waypoint);
+
         navigation.navigate('Direction');
       }
     } catch (error) {
       const errorResponse = (error as AxiosError).response;
+      console.log('error');
 
       if (errorResponse) {
         console.log('error', errorResponse);
@@ -109,7 +127,7 @@ const SearchSheet = (
       setLoading(false);
     } finally {
     }
-  }, []);
+  }, [loading, departurePosition, arrivalPosition]);
 
   return (
     <View style={styles.container}>
@@ -118,19 +136,6 @@ const SearchSheet = (
       </TouchableHighlight>
 
       <View style={styles.buttonContainer}>
-        <View style={styles.naviButton}>
-          <Image
-            source={require('../assets/navigation.png')}
-            style={styles.naviIcon}
-          />
-          <Text
-            style={styles.naviButtonText}
-            onPress={() => {
-              onNavigation();
-            }}>
-            Navigation
-          </Text>
-        </View>
         <View
           style={StyleSheet.compose(styles.naviButton, styles.directionButton)}>
           <Image
@@ -152,7 +157,6 @@ const SearchSheet = (
             </Text>
           )}
         </View>
-        <Image source={require('../assets/line.png')} style={styles.line} />
       </View>
     </View>
   );
@@ -169,18 +173,14 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     width: 350,
-    height: 250,
+    height: 60,
     display: 'flex',
     backgroundColor: 'white',
-    marginTop: 10,
-    paddingTop: 10,
     borderRadius: 10,
     borderWidth: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: 'black',
-    shadowOffset: {width: 2, height: 7},
-    shadowOpacity: 0.3,
+
     flexDirection: 'row',
     flexWrap: 'wrap',
   },
@@ -188,11 +188,11 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: '#4255FF',
     width: 150,
     paddingVertical: 4,
     margin: 10,
-    alignItems: 'center',
     borderRadius: 5,
     borderColor: 'grey',
     borderWidth: 1,

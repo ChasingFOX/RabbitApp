@@ -10,6 +10,7 @@ import {
   StyleSheet,
   Linking,
   Image,
+  Alert,
 } from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {useCallback, useState, useEffect, useRef} from 'react';
@@ -30,6 +31,8 @@ import {useAppDispatch} from '../store';
 import directionSlice from '../slices/directionSlice';
 import polygonData from '../constants/crime_polygon_vector_dict4.json';
 import {ScrollView} from 'react-native-gesture-handler';
+import Config from 'react-native-config';
+import chicagoPolygonData from '../constants/chicagoBoundary.json';
 
 type SearchScreenProps = NativeStackScreenProps<NaviPageParamList, 'Search'>;
 
@@ -38,6 +41,9 @@ function Search({navigation}: SearchScreenProps) {
   const [longitude, setLongitude] = useState(Number);
   const [currentLatitude, setCurrentLatitude] = useState(Number);
   const [currentLongitude, setCurrentLongitude] = useState(Number);
+  const [arrivalCoordinates, setArrivalCoordinates] = useState([
+    {latitude: 0, longitude: 0},
+  ]);
   const [destinationCoordinates, setDestinationCoordinates] = useState([
     {latitude: 0, longitude: 0},
   ]);
@@ -78,6 +84,8 @@ function Search({navigation}: SearchScreenProps) {
     JSON.parse(String(polygonData)).Assualt,
   );
 
+  const [delta, setDelta] = useState(0.7);
+
   const crimetype = [
     {id: 1, type: 'Assualt'},
     {id: 2, type: 'Battery'},
@@ -111,69 +119,49 @@ function Search({navigation}: SearchScreenProps) {
   // callbacks
   const handleSheetChanges = useCallback((index: number) => {
     console.log('handleSheetChanges', index);
+    if (index == -1) {
+      Alert.alert('Please re-enter your Departure and Destination');
+      setData();
+    }
   }, []);
   // Code to get current location
-  Geolocation.getCurrentPosition(
-    position => {
-      const latitude = JSON.stringify(position.coords.latitude);
-      const longitude = JSON.stringify(position.coords.longitude);
-      setLatitude(Number(latitude));
-      setLongitude(Number(longitude));
-      // 해결해야됨 왜 무한 렌더링이 되지?
-
-      // setCurrentLatitude(Number(latitude));
-      // setCurrentLongitude(Number(longitude));
-    },
-    error => {
-      console.log(error.code, error.message);
-    },
-    {enableHighAccuracy: true, timeout: 50000, maximumAge: 10000},
-  );
 
   useEffect(() => {
-    dispatch(
-      directionSlice.actions.setDeparturePosition({
-        departurePosition: {
-          latitude: Number(latitude),
-          longitude: Number(longitude),
-        },
-      }),
-    );
+    setData();
+  }, []);
 
-    setDestinationCoordinates([
-      {
-        latitude: Number(latitude),
-        longitude: Number(longitude),
+  const setData = useCallback(() => {
+    Geolocation.getCurrentPosition(
+      position => {
+        const latitude = JSON.stringify(position.coords.latitude);
+        const longitude = JSON.stringify(position.coords.longitude);
+        setLatitude(Number(latitude));
+        setLongitude(Number(longitude));
+        // 해결해야됨 왜 무한 렌더링이 되지?
+
+        // setCurrentLatitude(Number(latitude));
+        // setCurrentLongitude(Number(longitude));
+        setDestinationCoordinates([
+          {
+            latitude: 41.860204751890926,
+            longitude: -87.6715530335327,
+          },
+        ]);
+        dispatch(
+          directionSlice.actions.setDeparturePosition({
+            departurePosition: {
+              latitude: Number(latitude),
+              longitude: Number(longitude),
+            },
+          }),
+        );
       },
-    ]);
-  }, [latitude]);
-
-  const origin = {latitude: latitude, longitude: longitude};
-  const destination = {
-    latitude: 40.47381839642305,
-    longitude: -86.94624699630066,
-  };
-
-  console.log('dsd');
-
-  // Link to obtain current coordinates will be modified later
-  // const geoLocation = () => {
-  //   if (true) {
-  //     Geolocation.getCurrentPosition(
-  //       position => {
-  //         return position;
-  //       },
-  //       error => {
-  //         // See error code charts below.
-  //         console.log(error.code, error.message);
-  //       },
-  //       {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
-  //     );
-  //   }
-  //   Linking.openURL(
-  //     'https://www.google.com/maps/dir/?api=1&origin=40.42489539482597,-86.91051411560053&destination=40.473360126380996,-86.94642755184898&travelmode=walking&waypoints=40.42119341508705,-86.91781885879092%7C40.42732532443506,-86.92463136381483%7C40.43249524031551,-86.9269298077754%7C40.446337675508566,-86.92821177376851%7C40.45851363603605,-86.93213657343334%7C40.46619283912356,-86.9486192066278%7C40.46716415540354,-86.95429476059878%7C40.47024506180284,-86.95576733520348%7C40.47034248927443,-86.9517606080918%7C40.46857485459526,-86.94694887644629%7C40.47062085295775,-86.939740426341',
-  //   );
-  // };
+      error => {
+        console.log(error.code, error.message);
+      },
+      {enableHighAccuracy: true, timeout: 50000, maximumAge: 10000},
+    );
+  }, [latitude, longitude, destinationCoordinates]);
 
   const [destinationName, setDestinationName] = useState<string>('');
 
@@ -233,7 +221,7 @@ function Search({navigation}: SearchScreenProps) {
         <BottomSheetModal
           ref={bottomSheetRef}
           index={1}
-          snapPoints={['25%', '50%']}
+          snapPoints={['25%', '25%']}
           onChange={handleSheetChanges}
           style={{
             borderRadius: 25,
@@ -254,36 +242,37 @@ function Search({navigation}: SearchScreenProps) {
         {/* Code to get Google Map on the Background*/}
         <MapView
           style={styles.map}
+          showsMyLocationButton={true}
+          showsUserLocation={true}
+          followsUserLocation
           provider={
-            Platform.OS === 'android' ? PROVIDER_GOOGLE : PROVIDER_DEFAULT
+            // Platform.OS === 'android' ? PROVIDER_GOOGLE : PROVIDER_DEFAULT
+            PROVIDER_GOOGLE
           }
           region={{
             latitude: destinationCoordinates[0].latitude,
             longitude: destinationCoordinates[0].longitude,
-            latitudeDelta: 0.07,
-            longitudeDelta: 0.001,
+            latitudeDelta: delta,
+            longitudeDelta: delta,
           }}
-          onRegionChangeComplete={() => {}}
-          showsUserLocation={true}>
+          onRegionChangeComplete={() => {}}>
           {}
-          {destinationCoordinates.map((destinationCoordinates, index) => (
-            <Marker
-              key={`coordinate_${index}`}
-              coordinate={destinationCoordinates}
-            />
-          ))}
-          {/* <Polygon
-                coordinates={[]}
-                strokeColor="#000" // fallback for when `strokeColors` is not supported by the map-provider
-                fillColor="rgba(256,26,20,.3)"
-                strokeWidth={1}
-              /> */}
-          {polygonCoordinates.map((item: LatLng[]) => {
+
+          <Marker coordinate={destinationCoordinates[0]} />
+
+          <Polygon
+            coordinates={chicagoPolygonData}
+            strokeColor="black" // fallback for when `strokeColors` is not supported by the map-provider
+            fillColor="rgba(0, 0, 0, 0.05)"
+            strokeWidth={1}
+          />
+          {polygonCoordinates.map((item: LatLng[], index: number) => {
             return (
               <Polygon
+                key={index}
                 coordinates={item}
                 strokeColor="#000" // fallback for when `strokeColors` is not supported by the map-provider
-                fillColor="rgba(256,26,20,.3)"
+                fillColor="rgba(256,26,20,.2)"
                 strokeWidth={1}
               />
             );
@@ -301,7 +290,7 @@ function Search({navigation}: SearchScreenProps) {
               fetchDetails={true}
               enablePoweredByContainer={false}
               query={{
-                key: 'AIzaSyB_nbHi0KEhdlrM8ioBv_GpYCeVH2p1-08',
+                key: Config.GOOGLE_API_URL,
                 language: 'en',
               }}
               placeholder="Current Position"
@@ -313,6 +302,10 @@ function Search({navigation}: SearchScreenProps) {
                     longitude: Number(details?.geometry?.location.lng),
                   },
                 ];
+
+                setDelta(0.005);
+
+                //출발지 테스트
 
                 setDestinationCoordinates(destinationLocation);
 
@@ -329,8 +322,8 @@ function Search({navigation}: SearchScreenProps) {
                     departureName: data.structured_formatting.main_text,
                   }),
                 );
-                console.log('----', details?.geometry?.location.lat);
-                console.log('----', details?.geometry?.location.lng);
+                // console.log('----', details?.geometry?.location.lat);
+                // console.log('----', details?.geometry?.location.lng);
               }}
               styles={{
                 textInputContainer: {
@@ -341,7 +334,6 @@ function Search({navigation}: SearchScreenProps) {
                 },
                 textInput: {
                   height: 38,
-
                   color: '#5d5d5d',
                   fontSize: 16,
                 },
@@ -371,6 +363,7 @@ function Search({navigation}: SearchScreenProps) {
 
                 setDestinationCoordinates(destinationLocation);
                 setDestinationName(data.description);
+                setDelta(0.005);
 
                 // Use current location and destination data for each page and store it in the reader's repository
                 dispatch(
@@ -387,15 +380,10 @@ function Search({navigation}: SearchScreenProps) {
                   }),
                 );
 
-                console.log('dsds', data.structured_formatting.main_text);
-
-                console.log('des--', desDetails?.geometry?.location.lat);
-                console.log('des--', desDetails?.geometry?.location.lng);
-
                 bottomSheetRef.current?.present();
               }}
               query={{
-                key: 'AIzaSyB_nbHi0KEhdlrM8ioBv_GpYCeVH2p1-08',
+                key: Config.GOOGLE_API_URL,
                 language: 'en',
               }}
               styles={{
@@ -421,6 +409,7 @@ function Search({navigation}: SearchScreenProps) {
             {crimetype.map((item, index) => {
               return (
                 <View
+                  key={index}
                   style={
                     polygonButton[index]
                       ? StyleSheet.compose(
@@ -449,16 +438,6 @@ function Search({navigation}: SearchScreenProps) {
             })}
           </ScrollView>
         </View>
-
-        {/* <TouchableOpacity
-          onPress={() => geoLocation()}
-          style={{backgroundColor: '#89B2E9'}}>
-          <Text style={{color: 'white', textAlign: 'center'}}>
-            Get GeoLocation Button
-          </Text>
-          <Text> latitude: {latitude} </Text>
-          <Text> longitude: {longitude} </Text>
-        </TouchableOpacity> */}
       </View>
     </BottomSheetModalProvider>
   );
@@ -496,7 +475,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: 'white',
     width: 120,
-    height: 30,
+    height: 25,
     paddingHorizontal: 4,
     paddingVertical: 5,
     margin: 10,

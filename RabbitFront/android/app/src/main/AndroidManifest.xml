@@ -2,7 +2,7 @@
   package="com.rabbitfront">
 
     <uses-permission android:name="android.permission.INTERNET" />
- F
+
     <application
       android:usesCleartextTraffic="true"
       android:name=".MainApplication"
@@ -11,9 +11,19 @@
       android:roundIcon="@mipmap/ic_launcher_round"
       android:allowBackup="false"
       android:theme="@style/AppTheme">
+      <activity
+          android:name=".SplashActivity"
+          android:theme="@style/SplashTheme"
+          android:label="@string/app_name"
+          android:exported="true">
+          <intent-filter>
+              <action android:name="android.intent.action.MAIN" />
+              <category android:name="android.intent.category.LAUNCHER" />
+          </intent-filter>
+      </activity>
       <meta-data
         android:name="com.google.android.geo.API_KEY"
-        android:value="AIzaSyDU4UUrM7H_FVNaVw4gwR4vXDQJ9W9WJ2o"/>
+        android:value="AIzaSyB_nbHi0KEhdlrM8ioBv_GpYCeVH2p1-08"/>
       <activity
         android:name=".MainActivity"
         android:label="@string/app_name"
@@ -21,10 +31,11 @@
         android:launchMode="singleTask"
         android:windowSoftInputMode="adjustResize"
         android:exported="true">
-        <intent-filter>
+        
+        <!-- <intent-filter>
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
+        </intent-filter> -->
       </activity>
     </application>
 </manifest>

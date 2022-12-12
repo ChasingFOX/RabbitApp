@@ -20,13 +20,14 @@ function ProfilePage({navigation}: ProfileScreenProps) {
       <Stack.Screen
         name="ProfileMain"
         component={ProfileMain}
-        options={{headerShown: true, headerTitle: 'Profile'}}
+        options={{headerShown: false, headerTitle: 'Profile'}}
       />
       <Stack.Screen
         name="ProfileEdit"
         component={ProfileEdit}
         options={{
-          headerShown: false,
+          headerShown: true,
+          headerTitle: 'Edit',
         }}
       />
     </Stack.Navigator>

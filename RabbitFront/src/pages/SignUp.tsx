@@ -58,6 +58,7 @@ function SignIn({navigation}: SignInScreenProps) {
   const isClickedIndex: number[] = [];
 
   const isTrueNumber = isClicked.filter(item => item == true);
+
   useEffect(() => {
     if (isTrueNumber.length == 7) {
       Alert.alert('You can choose up to six.');
@@ -121,7 +122,7 @@ function SignIn({navigation}: SignInScreenProps) {
           crime: String(isClickedIndex),
         });
 
-        Alert.alert('알림', '회원가입에 성공하였습니다.');
+        Alert.alert('Sign Up succeed.');
         setLoading(false);
         navigation.goBack();
       }
@@ -208,7 +209,7 @@ function SignIn({navigation}: SignInScreenProps) {
               clearButtonMode={'while-editing'}></TextInput>
           </View>
           <Text style={style.profileHead}>
-            | Dangers you want to avoid (Maximum 6)
+            | Crimes you want to avoid (Maximum 6)
           </Text>
           <View style={style.profileContainer}>
             {crimetype.map((item, index) => {
@@ -331,10 +332,10 @@ const style = StyleSheet.create({
     height: 250,
     display: 'flex',
     flexDirection: 'row',
+    justifyContent: 'space-around',
     backgroundColor: 'white',
     padding: 10,
     margin: 10,
-    marginBottom: 20,
     borderRadius: 10,
     borderWidth: 1,
     borderColor: 'grey',
@@ -348,9 +349,6 @@ const style = StyleSheet.create({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'white',
-    flexWrap: 'wrap',
-    flexGrow: 1,
   },
   crimeButton: {
     backgroundColor: 'white',
