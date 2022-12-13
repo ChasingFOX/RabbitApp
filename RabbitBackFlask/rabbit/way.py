@@ -214,32 +214,36 @@ def wayNine(orig, dest, id):
                 'longitude': float(result_num_route5.iloc[i, 1])
             })
     # ---------------------#
-    edges_risk = edges.iloc[:,[7]]
-    risk_score_edges = pd.DataFrame([route1_risk/len(route1), route2_risk/len(route2), route4_risk/len(route4), route5_risk/len(route5)], columns=['risk score'])
-    
-    # use MinMax Scaler
-    scaler = MinMaxScaler()
-    scaler.fit(edges_risk)
-    train_scaled_edges = scaler.transform(edges_risk)
-    test_scaled_edges = scaler.transform(risk_score_edges)
-    total_score = (test_scaled_edges * 10).round(1)
+        # edges_risk = edges.iloc[:,[7]]
+        # risk_score_edges = pd.DataFrame([route1_risk/len(route1), route2_risk/len(route2), route4_risk/len(route4), route5_risk/len(route5)], columns=['risk score'])
+        
+        # # use MinMax Scaler
+        # scaler = MinMaxScaler()
+        # scaler.fit(edges_risk)
+        # train_scaled_edges = scaler.transform(edges_risk)
+        # test_scaled_edges = scaler.transform(risk_score_edges)
+        # total_score = (test_scaled_edges * 10).round(1)
     # ---------------------#
 
     waypoints = {
         'safetest': { # safetest
-            'total_riskiness': float(total_score[0][0]),
+            'total_riskiness': int(route1_risk),
+            'length': route1_length,
             'waypoint': ways_one
         },
         'safe': {
-            'total_riskiness': float(total_score[1][0]),
+            'total_riskiness': int(route2_risk),
+            'length': route2_length,
             'waypoint': ways_two
         },
         'short': {
-            'total_riskiness': float(total_score[2][0]),
+            'total_riskiness': int(route4_risk),
+            'length': route4_length,
             'waypoint': ways_four
         },
         'shortest': { # shotest
-            'total_riskiness': float(total_score[3][0]),
+            'total_riskiness': int(route5_risk),
+            'length': route5_length,
             'waypoint': ways_five
         }
     }
