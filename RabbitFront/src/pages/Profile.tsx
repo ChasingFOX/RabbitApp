@@ -77,7 +77,6 @@ function Profile({navigation}: ProfileMainParamList) {
         setEmail(response.data.email);
         setNickName(response.data.nickname);
         setCrime(response.data.crime);
-        console.log('nick', nickName);
       }
     } catch (error) {
       const errorResponse = (error as AxiosError).response;
@@ -298,7 +297,7 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   editButton: {
-    backgroundColor: '#f4511e',
+    backgroundColor: 'rgba(255, 129, 57, 0.95)',
     width: 150,
     paddingHorizontal: 4,
     paddingVertical: 5,
@@ -308,9 +307,9 @@ const styles = StyleSheet.create({
     borderColor: 'grey',
     borderWidth: 1,
     shadowOffset: {width: 1, height: 3},
-    shadowColor: 'black',
-    shadowRadius: 2,
-    shadowOpacity: 0.6,
+    // shadowColor: 'black',
+    // shadowRadius: 2,
+    // shadowOpacity: 0.6,
   },
   editButtonText: {
     color: 'white',

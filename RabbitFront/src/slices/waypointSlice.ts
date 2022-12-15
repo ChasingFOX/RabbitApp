@@ -13,10 +13,10 @@ const data = [
 ];
 const initialState = {
   wayPointChecked: [false, false, false, false],
-  safeWaypointRiskiness: 0,
-  safetestWaypointRiskiness: 0,
-  shortWaypointRiskiness: 0,
-  shortestWaypointRiskiness: 0,
+  safeWaypointRiskiness: [0, 0],
+  safetestWaypointRiskiness: [0, 0],
+  shortWaypointRiskiness: [0, 0],
+  shortestWaypointRiskiness: [0, 0],
   safeWaypoint: data,
   safetestWaypoint: data,
   shortWaypoint: data,

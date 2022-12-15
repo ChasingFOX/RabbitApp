@@ -10,6 +10,7 @@ import {
   StyleSheet,
   Linking,
   Image,
+  Alert,
 } from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {useCallback, useState, useEffect, useRef} from 'react';
@@ -31,6 +32,7 @@ import directionSlice from '../slices/directionSlice';
 import polygonData from '../constants/crime_polygon_vector_dict4.json';
 import {ScrollView} from 'react-native-gesture-handler';
 import Config from 'react-native-config';
+import chicagoPolygonData from '../constants/chicagoBoundary.json';
 
 type SearchScreenProps = NativeStackScreenProps<NaviPageParamList, 'Search'>;
 
@@ -82,6 +84,8 @@ function Search({navigation}: SearchScreenProps) {
     JSON.parse(String(polygonData)).Assualt,
   );
 
+  const [delta, setDelta] = useState(0.7);
+
   const crimetype = [
     {id: 1, type: 'Assualt'},
     {id: 2, type: 'Battery'},
@@ -116,6 +120,7 @@ function Search({navigation}: SearchScreenProps) {
   const handleSheetChanges = useCallback((index: number) => {
     console.log('handleSheetChanges', index);
     if (index == -1) {
+      Alert.alert('Please re-enter your Departure and Destination');
       setData();
     }
   }, []);
@@ -138,8 +143,8 @@ function Search({navigation}: SearchScreenProps) {
         // setCurrentLongitude(Number(longitude));
         setDestinationCoordinates([
           {
-            latitude: Number(latitude),
-            longitude: Number(longitude),
+            latitude: 41.860204751890926,
+            longitude: -87.6715530335327,
           },
         ]);
         dispatch(
@@ -237,6 +242,9 @@ function Search({navigation}: SearchScreenProps) {
         {/* Code to get Google Map on the Background*/}
         <MapView
           style={styles.map}
+          showsMyLocationButton={true}
+          showsUserLocation={true}
+          followsUserLocation
           provider={
             // Platform.OS === 'android' ? PROVIDER_GOOGLE : PROVIDER_DEFAULT
             PROVIDER_GOOGLE
@@ -244,28 +252,27 @@ function Search({navigation}: SearchScreenProps) {
           region={{
             latitude: destinationCoordinates[0].latitude,
             longitude: destinationCoordinates[0].longitude,
-            latitudeDelta: 0.07,
-            longitudeDelta: 0.001,
+            latitudeDelta: delta,
+            longitudeDelta: delta,
           }}
-          onRegionChangeComplete={() => {}}
-          showsUserLocation={true}>
+          onRegionChangeComplete={() => {}}>
           {}
 
           <Marker coordinate={destinationCoordinates[0]} />
 
-          {/* <Polygon
-                coordinates={[]}
-                strokeColor="#000" // fallback for when `strokeColors` is not supported by the map-provider
-                fillColor="rgba(256,26,20,.3)"
-                strokeWidth={1}
-              /> */}
+          <Polygon
+            coordinates={chicagoPolygonData}
+            strokeColor="black" // fallback for when `strokeColors` is not supported by the map-provider
+            fillColor="rgba(0, 0, 0, 0.05)"
+            strokeWidth={1}
+          />
           {polygonCoordinates.map((item: LatLng[], index: number) => {
             return (
               <Polygon
                 key={index}
                 coordinates={item}
                 strokeColor="#000" // fallback for when `strokeColors` is not supported by the map-provider
-                fillColor="rgba(256,26,20,.3)"
+                fillColor="rgba(256,26,20,.2)"
                 strokeWidth={1}
               />
             );
@@ -296,13 +303,11 @@ function Search({navigation}: SearchScreenProps) {
                   },
                 ];
 
-                console.log('----', details?.geometry?.location.lat);
-                console.log('----', details?.geometry?.location.lng);
+                setDelta(0.005);
 
                 //출발지 테스트
 
                 setDestinationCoordinates(destinationLocation);
-                console.log('destCoord', destinationCoordinates);
 
                 dispatch(
                   directionSlice.actions.setDeparturePosition({
@@ -358,6 +363,7 @@ function Search({navigation}: SearchScreenProps) {
 
                 setDestinationCoordinates(destinationLocation);
                 setDestinationName(data.description);
+                setDelta(0.005);
 
                 // Use current location and destination data for each page and store it in the reader's repository
                 dispatch(
@@ -469,7 +475,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: 'white',
     width: 120,
-    height: 30,
+    height: 25,
     paddingHorizontal: 4,
     paddingVertical: 5,
     margin: 10,
