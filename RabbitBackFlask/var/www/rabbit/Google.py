@@ -1,3 +1,4 @@
+### For Google Drive API
 import pickle
 import os
 from google_auth_oauthlib.flow import Flow, InstalledAppFlow
@@ -6,6 +7,7 @@ from googleapiclient.http import MediaFileUpload, MediaIoBaseDownload
 from google.auth.transport.requests import Request
 
 
+### Google Drive API for Create Service (about client_secret.json)
 def Create_Service(client_secret_file, api_name, api_version, *scopes):
     print(client_secret_file, api_name, api_version, scopes, sep='-')
     CLIENT_SECRET_FILE = client_secret_file
@@ -28,7 +30,7 @@ def Create_Service(client_secret_file, api_name, api_version, *scopes):
             cred.refresh(Request())
         else:
             flow = InstalledAppFlow.from_client_secrets_file(CLIENT_SECRET_FILE, SCOPES)
-            cred = flow.run_local_server(host='localhost', port=2000)
+            cred = flow.run_local_server(host='localhost', port=2000) # Temporarily open 2000 port for this
 
         with open(pickle_file, 'wb') as token:
             pickle.dump(cred, token)

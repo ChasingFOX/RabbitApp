@@ -17,6 +17,7 @@ from googleapiclient.http import MediaIoBaseDownload
 from fox import mysql, service
 
 
+# Download pickle file from Google Drive
 def downGoogle(fileIdVal, userIdVal):
     file_id = fileIdVal
     file_name = userIdVal + ".pickle"
@@ -39,6 +40,7 @@ def downGoogle(fileIdVal, userIdVal):
         f.close()
 
 
+# Algorithm part, Return 9 waypoints of each route
 def wayNine(orig, dest, id):
     # Get user_id, after that, DB access, Figure out the file_id of Graph
     user_id = id
@@ -50,12 +52,12 @@ def wayNine(orig, dest, id):
     file_id = str(file_id['file_id'])
     cur.close()
 
-    # File Download at Google Drive
+    # File Download from Google Drive
     downGoogle(file_id, user_id)
 
     # Load a file that was saved from local
     with open("/var/www/rabbit/userData/%s.pickle" % (user_id), "rb") as fr:
-        G2 = pkl.load(fr) # G2 = ox.graph_from_gdfs(nodes, edges)
+        G2 = pkl.load(fr) # G2 is the user's personal risk graph
 
     nodes, edges = ox.graph_to_gdfs(G2)
 
@@ -214,32 +216,36 @@ def wayNine(orig, dest, id):
                 'longitude': float(result_num_route5.iloc[i, 1])
             })
     # ---------------------#
-    edges_risk = edges.iloc[:,[7]]
-    risk_score_edges = pd.DataFrame([route1_risk/len(route1), route2_risk/len(route2), route4_risk/len(route4), route5_risk/len(route5)], columns=['risk score'])
-    
-    # use MinMax Scaler
-    scaler = MinMaxScaler()
-    scaler.fit(edges_risk)
-    train_scaled_edges = scaler.transform(edges_risk)
-    test_scaled_edges = scaler.transform(risk_score_edges)
-    total_score = (test_scaled_edges * 10).round(1)
+        # edges_risk = edges.iloc[:,[7]]
+        # risk_score_edges = pd.DataFrame([route1_risk/len(route1), route2_risk/len(route2), route4_risk/len(route4), route5_risk/len(route5)], columns=['risk score'])
+        
+        # # use MinMax Scaler
+        # scaler = MinMaxScaler()
+        # scaler.fit(edges_risk)
+        # train_scaled_edges = scaler.transform(edges_risk)
+        # test_scaled_edges = scaler.transform(risk_score_edges)
+        # total_score = (test_scaled_edges * 10).round(1)
     # ---------------------#
 
     waypoints = {
         'safetest': { # safetest
-            'total_riskiness': float(total_score[0][0]),
+            'total_riskiness': int(route1_risk),
+            'length': route1_length,
             'waypoint': ways_one
         },
         'safe': {
-            'total_riskiness': float(total_score[1][0]),
+            'total_riskiness': int(route2_risk),
+            'length': route2_length,
             'waypoint': ways_two
         },
         'short': {
-            'total_riskiness': float(total_score[2][0]),
+            'total_riskiness': int(route4_risk),
+            'length': route4_length,
             'waypoint': ways_four
         },
         'shortest': { # shotest
-            'total_riskiness': float(total_score[3][0]),
+            'total_riskiness': int(route5_risk),
+            'length': route5_length,
             'waypoint': ways_five
         }
     }
