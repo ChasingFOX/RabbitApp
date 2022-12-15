@@ -28,6 +28,7 @@ Public safety is one of the most significant concerns in the United States since
 
 <img align="center" width="500" alt="196250447-9df4550a-6066-4f6e-8414-6f93e017a336" src="https://user-images.githubusercontent.com/74031620/204821506-0b70f00b-4b19-4a2d-bde3-0406f78514ca.png">
 
+
 ## Tech Stack
 
 | Division        | Stack                                                                                                                                                                                                                                                                                                                                       |
@@ -37,6 +38,15 @@ Public safety is one of the most significant concerns in the United States since
 | Code Management | <img src="https://img.shields.io/badge/git-F05032?style=for-the-badge&logo=git&logoColor=black"> <img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white">                                                                                                                                     |
 | Formatting      | <img src="https://img.shields.io/badge/prettier-F7B93E?style=for-the-badge&logo=prettier&logoColor=black">                                                                                                                                                                                                                                  |
 | DB              | <img src="https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=black">                                                                                                                                                                                                                                        |
+
+
+## Overall Process
+
+![process](https://user-images.githubusercontent.com/74031620/207963817-bdff0864-4bd4-4309-bf68-06de9bdf9646.png)
+
+## Database ERD
+
+![rabbit_db](https://user-images.githubusercontent.com/74031620/207962969-4af52e4d-d64f-4d7e-b505-5d731c49f773.png)
 
 ## Environment
 
