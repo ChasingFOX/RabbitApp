@@ -28,7 +28,9 @@ public class User {
     @Column
     private String crime;
     @Column
-    private Boolean processing;
+    private int making;
+    @Column
+    private int processing;
     @Column
     private Date regdate;
 
@@ -40,6 +42,7 @@ public class User {
                 ", password='" + password + '\'' +
                 ", nickname='" + nickname + '\'' +
                 ", crime='" + crime + '\'' +
+                ", processing=" + processing +
                 ", regdate=" + regdate +
                 '}';
     }

@@ -17,6 +17,7 @@ public class UpdateResponse {
     private String nickname;
     private String crime;
     private Boolean isCrimeUpdated;
+    private int processing;
     private String message;
 
     public UpdateResponse(String message) {

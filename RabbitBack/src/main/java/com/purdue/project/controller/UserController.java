@@ -18,10 +18,13 @@ public class UserController {
 
     @PostMapping("/signUp")
     public ResponseEntity<SignupResponse> signUp(@RequestBody User userObj) {
+
         //  check if the email is valid
         if (userDAO.findByEmail(userObj.getEmail()).isPresent()) {
             return ResponseEntity.badRequest().body(new SignupResponse("Email already exists."));
         }
+        userObj.setMaking(1);
+
         Integer userId =  userDAO.save(userObj).getId();
         return ResponseEntity.ok(new SignupResponse(userId, "Sign up succeed."));
     }
@@ -59,21 +62,23 @@ public class UserController {
 
     @PostMapping("/user/update")
     public ResponseEntity<UpdateResponse> update(@RequestBody User userObj) {
-        User user = userDAO.findById(userObj.getId()).orElseThrow(UserNotFoundException::new);
-        UpdateResponse returnedUser = new UpdateResponse(user.getId(), userObj.getNickname(), userObj.getCrime(), Boolean.FALSE, "Crime is not processing");
+        Optional<User> user = userDAO.findById(userObj.getId());
+        UpdateResponse returnedUser = new UpdateResponse(user.get().getId(), userObj.getNickname(), userObj.getCrime(), Boolean.FALSE, user.get().getProcessing(),"Crime is not processing.");
 
         //check if the crime is updating
-        if(user.getProcessing()) {
+        if(user.get().getProcessing() == 1) {
             return ResponseEntity.badRequest().body(new UpdateResponse("Please wait until processing your previous request."));
         }
 
         //check if the crime has been changed
-        if(!userObj.getCrime().equals(user.getCrime())) {
+        if(!userObj.getCrime().equals(user.get().getCrime())) {
             returnedUser.setIsCrimeUpdated(Boolean.TRUE);
+            User updatedUser  = new User(user.get().getId(), user.get().getEmail(), user.get().getPassword(), userObj.getNickname(), userObj.getCrime(), user.get().getMaking(), 1, user.get().getRegdate());
+            userDAO.save(updatedUser);
+        } else {
+            User updatedUser  = new User(user.get().getId(), user.get().getEmail(), user.get().getPassword(), userObj.getNickname(), userObj.getCrime(), user.get().getMaking(), user.get().getProcessing(), user.get().getRegdate());
+            userDAO.save(updatedUser);
         }
-
-        User updatedUser  = new User(user.getId(), user.getEmail(), user.getPassword(), userObj.getNickname(), userObj.getCrime(), user.getProcessing(), user.getRegdate());
-        userDAO.save(updatedUser);
 
         return ResponseEntity.ok(returnedUser);
     }
