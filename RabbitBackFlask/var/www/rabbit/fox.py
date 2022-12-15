@@ -37,16 +37,17 @@ coordinates = list(gdf.iloc[0]['geometry'].exterior.coords)
 poly = Polygon(coordinates) # Chicago City Polygon
 
 # To connect with Google Drive API
-CLIENT_SECRET_FILE = 'client_secret.json'
+CLIENT_SECRET_FILE = 'client_secret.json' # This file is not uploaded on GitHub for security
 API_NAME = 'drive'
 API_VERSION = 'v3'
 SCOPES = ['https://www.googleapis.com/auth/drive']
 
 service = Create_Service(CLIENT_SECRET_FILE, API_NAME, API_VERSION, SCOPES)
 
-import way
+import way # way.py file
 
 
+# Upload each user's risk graph pickle file to Google Drive
 def uploadGoogle(userId_val):
     import socket
     socket.setdefaulttimeout(60*15) # Graph upload time: 15 minutes limit
@@ -62,7 +63,7 @@ def uploadGoogle(userId_val):
 
     file = service.files().create(body=file_metadata, media_body=media, fields='id').execute()
     
-    return file.get("id") # uploaded file Id return
+    return file.get("id") # Return the uploaded file Id to write it at DB
 
 
 def calcCrime(crime_val, userId_val):
@@ -74,6 +75,7 @@ def calcCrime(crime_val, userId_val):
     st = userId_val + ' ' + st
 
     # Calculating the user's Graph of weight
+    ## Because of Apapche2 issue, this py file is run on terminal
     val = "python3 /var/www/rabbit/dataAnalysis.py %s" % (st)
     os.system(val)
 
@@ -149,6 +151,7 @@ def calcCrime(crime_val, userId_val):
     return fileId
 
 
+# Direction Recommendation & Navigation page API
 @app.route('/api/navi/', methods=['POST'])
 def apiNavi():
     id = request.json['id']
@@ -156,25 +159,26 @@ def apiNavi():
     cur = mysql.connection.cursor()
     cur.execute("SELECT making FROM user WHERE id = '%s'" % (id))
     making = cur.fetchone()
-    making = int(making['making'])
+    making = int(making['making']) # bool type, Is user's graph making or not from sign up/profile edit
     cur.close()
 
-    if making == 0:
+    if making == 0: # User's risk graph is not making now
         orig = request.json['orig']
         dest = request.json['dest']
         
         p1 = Point(orig['longitude'], orig['latitude'])
         p2 = Point(dest['longitude'], dest['latitude'])
 
-        if (p1.within(poly) and p2.within(poly)):
+        if (p1.within(poly) and p2.within(poly)): # Check the lat and lon, Are they in Chicago or not
             return jsonify(way.wayNine(orig, dest, str(id))) # In this func, return 9 + 9 + 9 + 9 waypoints
-        else: # Error 400
+        else: # Not in Chicago, Error 400
             return 'Error, Please enter correct Chicago Coordinates', status.HTTP_400_BAD_REQUEST
-    else: # making == 1
+    else: # making == 1, User's risk graph is now making, User can't access to the navi page
         return 'Please wait until processing your previous request.', status.HTTP_400_BAD_REQUEST
 
 
-@app.route('/api/signup/calculate/', methods=['POST'])  # not exist? then save. After Sign-Up process, user saved. Then this request can be used.
+# After call Spring API, this API will be called to make new user's risk graph
+@app.route('/api/signup/calculate/', methods=['POST'])
 def apiCalc():
     userId = str(request.json['id'])
 
@@ -184,7 +188,7 @@ def apiCalc():
     crime = cur.fetchone()
     crime = str(crime['crime'])
 
-    if crime == 'None': # case 1: user didn't select crime types, so in DB, crime col value is Null
+    if crime == 'None': # case 1: user didn't select crime types, so in DB, crime col value is Null, then use default risk graph
         folder_id = '1Pfj_Qaf8HBHqBQ9hNcIdPCf_dPhmGspY'
 
         mime_type = 'application/octet-stream' # .pickle file's mime type
@@ -198,7 +202,7 @@ def apiCalc():
         fileId = file.get("id") # uploaded file Id return
         cur.execute("INSERT INTO fileinfo (user_id, file_id) VALUES ('%s', '%s')" % (userId, fileId))
 
-    else: # case 2: user selected crime types
+    else: # case 2: user selected crime types, then make new user's risk graph
         fileId = calcCrime(crime, userId)
         cur.execute("INSERT INTO fileinfo (user_id, file_id) VALUES ('%s', '%s')" % (userId, fileId))
 
@@ -210,17 +214,37 @@ def apiCalc():
     return "Done POST crime DB"
 
 
-# DB Update
-@app.route('/api/profile/calculate/', methods=['PUT']) # exist? then revise.
+# In Profile edit page, user requested to edit crime lists that user want to avoid, then this API will be called
+@app.route('/api/profile/calculate/', methods=['PUT'])
 def apiDBUpdate():
-    crime = str(request.json['crime'])
     userId = str(request.json['id'])
 
-    if len(crime) == 0:
-        return 'Error, Please input at least one crime option', status.HTTP_400_BAD_REQUEST
-    else:
-        print('I am here')
-        cur = mysql.connection.cursor()
+    cur = mysql.connection.cursor()
+
+    cur.execute("SELECT crime FROM user WHERE id = '%s'" % (userId))
+    crime = cur.fetchone()
+    crime = str(crime['crime'])
+
+    if crime == 'None': # case 1: If the user edit their crime type non click
+        cur.execute("UPDATE user SET making = 1 WHERE id = '%s'" % (userId)) # making Status update (making user's graph)
+        mysql.connection.commit()
+
+        folder_id = '1Pfj_Qaf8HBHqBQ9hNcIdPCf_dPhmGspY'
+
+        mime_type = 'application/octet-stream' # .pickle file's mime type
+
+        media = MediaFileUpload('/var/www/rabbit/userData/default.pickle', mimetype=mime_type)
+        
+        file_name = '%s.pickle' % (userId)
+        file_metadata = {'name': file_name, 'parents': [folder_id]}
+        
+        file = service.files().create(body=file_metadata, media_body=media, fields='id').execute()
+        fileId = file.get("id") # uploaded file Id return
+
+        # Update User new Graph file id
+        cur.execute("UPDATE fileinfo SET file_id = '%s' WHERE user_id = '%s'" % (fileId, userId))
+
+    else: # case 2: user normally edit their crime list that they want to avoid in profile page
         cur.execute("UPDATE user SET making = 1 WHERE id = '%s'" % (userId)) # making Status update (making user's graph)
         mysql.connection.commit()
 
@@ -232,23 +256,20 @@ def apiDBUpdate():
         pre_file_id = str(pre_file_id['file_id'])
         service.files().delete(fileId=pre_file_id).execute()
         
-        # Update new User Graph file id
+        # Update User new Graph file id
         cur.execute("UPDATE fileinfo SET file_id = '%s' WHERE user_id = '%s'" % (fileId, userId))
-
-        # Change 'user' table crime value
-        cur.execute("UPDATE user SET crime = '%s' WHERE id = '%s'" % (crime, userId))
         
-        # Change 'user' table making status original
-        cur.execute("UPDATE user SET making = 0 WHERE id = '%s'" % (userId))
+    # Change 'user' table making status original
+    cur.execute("UPDATE user SET making = 0 WHERE id = '%s'" % (userId))
 
-        # Change 'user' table processing status original
-        cur.execute("UPDATE user SET processing = 0 WHERE id = '%s'" % (userId))
+    # Change 'user' table processing status original
+    cur.execute("UPDATE user SET processing = 0 WHERE id = '%s'" % (userId))
 
-        mysql.connection.commit()
-        cur.close()
+    mysql.connection.commit()
+    cur.close()
 
-        return "Done UPDATE crime DB"
+    return "Done UPDATE crime DB"
 
 
 if __name__=='__main__':
-    app.run(debug=True)
+    app.run(debug=True) # Flask Debug mode True

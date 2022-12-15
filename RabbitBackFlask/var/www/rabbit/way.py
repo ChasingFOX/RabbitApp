@@ -17,6 +17,7 @@ from googleapiclient.http import MediaIoBaseDownload
 from fox import mysql, service
 
 
+# Download pickle file from Google Drive
 def downGoogle(fileIdVal, userIdVal):
     file_id = fileIdVal
     file_name = userIdVal + ".pickle"
@@ -39,6 +40,7 @@ def downGoogle(fileIdVal, userIdVal):
         f.close()
 
 
+# Algorithm part, Return 9 waypoints of each route
 def wayNine(orig, dest, id):
     # Get user_id, after that, DB access, Figure out the file_id of Graph
     user_id = id
@@ -50,12 +52,12 @@ def wayNine(orig, dest, id):
     file_id = str(file_id['file_id'])
     cur.close()
 
-    # File Download at Google Drive
+    # File Download from Google Drive
     downGoogle(file_id, user_id)
 
     # Load a file that was saved from local
     with open("/var/www/rabbit/userData/%s.pickle" % (user_id), "rb") as fr:
-        G2 = pkl.load(fr) # G2 = ox.graph_from_gdfs(nodes, edges)
+        G2 = pkl.load(fr) # G2 is the user's personal risk graph
 
     nodes, edges = ox.graph_to_gdfs(G2)
 
