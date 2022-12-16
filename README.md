@@ -8,10 +8,10 @@ Navigation Algorithm & Service that guides you to avoid dangerous area
 | :----------------------------------------: | :-------------------------------------------: | :--------------------------------: | :----------------------------------: | :-----------------------------------: | :----------------------------------: |
 |                **Daye Kim**                |                **Juwon Baek**                 |           **Jihu Yang**            |             **Hyun Roh**             |            **Heewon Jeong**            |           **Bryanna Ruiz**           |
 |          **Kyunghee University**           |         **Handong Global University**         |   **Handong Global University**    |       **Kyunghee University**        |        **Chungbuk National University**        |        **Purdue University**         |
-|          **rlaek4793@khu.ac.kr**           |         **21700340@handong.ac.kr**         |   **zihooy@handong.ac.kr**    |       **yeshyun@khu.ac.kr**        |        **jhjmo0719h@cbnu.ac.kr**        |        **ruiz114@purdue.edu**         |
+|          <a href="mailto:rlaek4793@khu.ac.kr"><img src="https://img.shields.io/badge/EMAIL-F0F0F0?style=flat-square&logo=Gmail&logoColor=orange&link=mailto:rlaek4793@khu.ac.kr"/></a>           |         <a href="mailto:21700340@handong.ac.kr"><img src="https://img.shields.io/badge/EMAIL-F0F0F0?style=flat-square&logo=Gmail&logoColor=orange&link=mailto:21700340@handong.ac.kr"/></a>         |   <a href="mailto:zihooy@handong.ac.kr"><img src="https://img.shields.io/badge/EMAIL-F0F0F0?style=flat-square&logo=Gmail&logoColor=orange&link=mailto:zihooy@handong.ac.kr"/></a>    |       <a href="mailto:yeshyun@khu.ac.kr"><img src="https://img.shields.io/badge/EMAIL-F0F0F0?style=flat-square&logo=Gmail&logoColor=orange&link=mailto:yeshyun@khu.ac.kr"/></a>        |        <a href="mailto:jhjmo0719h@cbnu.ac.kr"><img src="https://img.shields.io/badge/EMAIL-F0F0F0?style=flat-square&logo=Gmail&logoColor=orange&link=mailto:jhjmo0719h@cbnu.ac.kr"/></a>        |        <a href="mailto:ruiz114@purdue.edu"><img src="https://img.shields.io/badge/EMAIL-F0F0F0?style=flat-square&logo=Gmail&logoColor=orange&link=mailto:ruiz114@purdue.edu"/></a>        |
 
 ## Result of This Project
-
+![resultApp](https://user-images.githubusercontent.com/74031620/208192875-ecd1cf6d-b72c-4903-932c-3ef964c04afc.png)
 
 ## Goal of Rabbit
 
