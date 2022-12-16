@@ -1,6 +1,4 @@
-# (TBD - In progress)
-
-## Project Rabbit
+# Project Rabbit
 
 Navigation Algorithm & Service that guides you to avoid dangerous area
 
@@ -10,6 +8,10 @@ Navigation Algorithm & Service that guides you to avoid dangerous area
 | :----------------------------------------: | :-------------------------------------------: | :--------------------------------: | :----------------------------------: | :-----------------------------------: | :----------------------------------: |
 |                **Daye Kim**                |                **Juwon Baek**                 |           **Jihu Yang**            |             **Hyun Roh**             |            **Heewon Jeong**            |           **Bryanna Ruiz**           |
 |          **Kyunghee University**           |         **Handong Global University**         |   **Handong Global University**    |       **Kyunghee University**        |        **Chungbuk National University**        |        **Purdue University**         |
+|          **rlaek4793@khu.ac.kr**           |         **21700340@handong.ac.kr**         |   **zihooy@handong.ac.kr**    |       **yeshyun@khu.ac.kr**        |        **jhjmo0719h@cbnu.ac.kr**        |        **ruiz114@purdue.edu**         |
+
+## Result of This Project
+
 
 ## Goal of Rabbit
 
@@ -17,16 +19,12 @@ Team FOX wanted to make the application that can recommend the safe route to the
 
 ## Research Problem Statements
 
-Public safety is one of the most significant concerns in the United States since crime rates in the United States are higher than other OECD countries. According to the [OECD Better Life Index](https://www.bbc.com/news/57581270), the homicide rate (the number of murders per 100,000 inhabitants) of United States is 6, which is 2.6 higher than the average of the OECD countries. Since major map applications, such as Google Map or Apple Map, recommend the route based on the distance from starting point to destination, we, the team Chasing FOX made the application that recommend the route based on distance and safety of the road.
+Public safety is one of the most significant concerns in the United States since crime rates in the United States are higher than other OECD countries. According to the [OECD Better Life Index](https://www.oecdbetterlifeindex.org/countries/united-states/), the homicide rate (the number of murders per 100,000 inhabitants) of United States is 6, which is 2.6 higher than the average of the OECD countries. Since major map applications, such as Google Map or Apple Map, recommend the route based on the distance from starting point to destination, we, the team Chasing FOX made the application that recommend the route based on distance and safety of the road.
 
 ## Research Novelty
 
 (1) To predict the safe area, not only crime data but also the city facilities data were used in data analysis, and analyzed by various data analysis method.  
 (2) Based on the result from (1), it is possible to explain the weight in the shortest-path algorithm, which was used to calculate the riskiness and safety score of the edge.
-
-## Overview
-
-<img align="center" width="500" alt="196250447-9df4550a-6066-4f6e-8414-6f93e017a336" src="https://user-images.githubusercontent.com/74031620/204821506-0b70f00b-4b19-4a2d-bde3-0406f78514ca.png">
 
 
 ## Tech Stack
@@ -65,6 +63,7 @@ JDK(Java): 11
 ffi
 ```
 Back-end
+
 ```
 Java: 1.8.0
 Tomcat: 9.0
@@ -81,9 +80,19 @@ apache2: 2.4.41(Ubuntu)
 
 <details>
 <summary>
-Route API manual
+Sign-up / Sign-in API manual
 </summary>
 <div markdown="1">
+~~~Jihoo~~~
+</div>
+</details>
+
+
+<details>
+<summary>
+Route API manual
+</summary>
+<div markdown="2">
 
 - File Path
 
