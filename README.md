@@ -42,11 +42,11 @@ Public safety is one of the most significant concerns in the United States since
 
 ## Overall Process
 
-<img align="center" width="500" src="https://user-images.githubusercontent.com/74031620/207963817-bdff0864-4bd4-4309-bf68-06de9bdf9646.png">
+<img align="center" width="500" src="https://user-images.githubusercontent.com/74031620/208148703-aa06b616-de77-451c-9d6a-a7f276b8f639.png">
 
 ## Database ERD
 
-<img align="center" width="400" src="https://user-images.githubusercontent.com/74031620/207965874-5abef254-e317-4dbd-978e-cf9c38cecdc9.png">
+<img align="center" width="400" src="https://user-images.githubusercontent.com/74031620/208148714-40b624bf-4ec7-45c1-8e94-6c407df79236.png">
 
 ## Environment
 
@@ -72,8 +72,112 @@ Spring boot: 2.7.3
 ```
 
 ```
+Ubuntu 20.04.3
 Python: 3.8.10
 Flask: 2.2.2
 Werkzeug 2.2.2
 apache2: 2.4.41(Ubuntu)
 ```
+
+<details>
+<summary>
+Route API manual
+</summary>
+<div markdown="1">
+
+- File Path
+
+    <pre>
+    📂/
+      └📂etc
+        └📂apache2
+          └📂sites-available
+              └📄rabbit.conf ✅
+              └📄000-default.conf
+              └📄default-ssl.conf
+      └📂var
+        └📂www
+          └📂rabbit
+            └📄fox.py ✅
+            └📄way.py ✅
+            └📄Google.py ✅
+            └📄dataAnalysis.py ✅
+            └📄httpd.wsgi ✅
+            └📂admin
+               └🧾2018_ped_raw_data.pkl
+               └🧾al_riskscore_graph.pkl
+               └🧾chicago_polygon_ratio.pkl
+               └🧾crime_weight_info.pkl
+               └🧾graph_edges.pickle
+               └🧾r_c_f_ET_0.99996.pkl
+               └🧾urban_5_dataset.pkl
+            └📂userData
+            └🧾default.pickle
+            └📄client_secret.json
+    </pre>
+
+- To install apache2
+
+    ```
+    sudo apt-get update
+    sudo apt-get install apache2
+    ```
+
+- To set rabbit.conf file to main conf
+
+    ```
+    sudo a2dissite 000-default
+    sudo a2ensite rabbit
+    ```
+
+- To open port 80
+
+    ```
+    iptables -I INPUT 1 -p tcp --dport 80 -j ACCEPT
+    sudo ufw allow 80/tcp
+    ```
+
+- To run code, install python packages
+
+    ```
+    pip install flask
+    pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib
+    pip install oauth2client
+    pip install pandas
+    pip install numpy
+    pip install osmnx
+    pip install networkx
+    pip install matplotlib==3.1.3
+    pip install plot
+    pip install plotly
+    pip install -U scikit-learn
+    sudo apt-get install python-dev default-libmysqlclient-dev libssl-dev
+    pip install flask-mysqldb
+    pip install shapely
+    pip install geopandas
+    pip install Flask-API
+    pip install pycaret
+    ```
+
+- To get Google Drive API credentials file
+
+    [How to get credentials file](https://developers.google.com/drive/api/quickstart/python)
+    
+    → From this, you can get a credentials file. Then rename the file to 'client_secret.json'<br>
+    → After you run this code once, you can get the token_drive_v3.pickle file. Then run again to start normally.
+
+
+- For new generated token_drive_v3.pickle file
+
+    ```
+    sudo chmod token_drive_v3.pickle 777
+    ```
+
+- To (re)start apache2
+
+    ```
+    sudo systemctl restart apache2
+    ```
+
+</div>
+</details>
