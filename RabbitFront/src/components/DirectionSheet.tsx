@@ -43,18 +43,6 @@ const DirectionSheet = ({route}: DircetionSheetProps) => {
     }
   };
 
-  // const waypointButtonClick = useCallback(
-  //   (idx: Number) => {
-  //     setPolygonButton(prev =>
-  //       prev.map((element, index) => {
-  //         return index === idx ? !element : false;
-  //       }),
-  //     );
-  //     console.log('polygonButton', polygonButton);
-  //   },
-  //   [polygonButton],
-  // );
-
   const waypointChecked = useSelector(
     (state: RootState) => state.waypoint.wayPointChecked,
   );
@@ -133,6 +121,68 @@ const DirectionSheet = ({route}: DircetionSheetProps) => {
         <View style={styles.naviContainer}>
           <View
             style={
+              waypointChecked[1]
+                ? StyleSheet.compose(
+                    styles.routeButton,
+                    styles.safestButtonActive,
+                  )
+                : styles.routeButton
+            }>
+            <Text
+              style={
+                waypointChecked[1]
+                  ? StyleSheet.compose(
+                      styles.routeButtonText,
+                      styles.routeButtonTextActive,
+                    )
+                  : styles.routeButtonText
+              }
+              onPress={() => {
+                handleWaypoint('Safetest');
+              }}>
+              Route 1
+            </Text>
+          </View>
+          <View style={styles.naviButton}>
+            <Image
+              source={require('../assets/naviColor.png')}
+              style={styles.naviIcon}
+            />
+            <Text
+              style={styles.naviButtonText}
+              onPress={() => {
+                onNavigation(safetestWaypoint);
+              }}>
+              Navi
+            </Text>
+          </View>
+          <View style={styles.riskinessButton}>
+            <Image
+              source={require('../assets/warning.png')}
+              style={styles.naviIcon}
+            />
+            <Text
+              style={styles.riskinessButtonText}
+              onPress={() => {
+                onNavigation(safeWaypoint);
+              }}>
+              {safetestWaypointRiskiness[0]}
+            </Text>
+          </View>
+          <View style={styles.riskinessButton}>
+            <Text
+              style={styles.riskinessButtonText}
+              onPress={() => {
+                onNavigation(safeWaypoint);
+              }}>
+              {safetestWaypointRiskiness[1]}m
+            </Text>
+          </View>
+        </View>
+
+        <View style={styles.naviContainer}>
+          <View
+            style={
               waypointChecked[0]
                 ? StyleSheet.compose(
                     styles.routeButton,
@@ -152,7 +202,7 @@ const DirectionSheet = ({route}: DircetionSheetProps) => {
               onPress={() => {
                 handleWaypoint('Safe');
               }}>
-              Route 1
+              Route 2
             </Text>
           </View>
           <View style={styles.naviButton}>
@@ -170,7 +220,7 @@ const DirectionSheet = ({route}: DircetionSheetProps) => {
           </View>
           <View style={styles.riskinessButton}>
             <Image
-              source={require('../assets/riskiness.png')}
+              source={require('../assets/warning.png')}
               style={styles.naviIcon}
             />
             <Text
@@ -192,67 +242,6 @@ const DirectionSheet = ({route}: DircetionSheetProps) => {
           </View>
         </View>
 
-        <View style={styles.naviContainer}>
-          <View
-            style={
-              waypointChecked[1]
-                ? StyleSheet.compose(
-                    styles.routeButton,
-                    styles.safestButtonActive,
-                  )
-                : styles.routeButton
-            }>
-            <Text
-              style={
-                waypointChecked[1]
-                  ? StyleSheet.compose(
-                      styles.routeButtonText,
-                      styles.routeButtonTextActive,
-                    )
-                  : styles.routeButtonText
-              }
-              onPress={() => {
-                handleWaypoint('Safetest');
-              }}>
-              Route 2
-            </Text>
-          </View>
-          <View style={styles.naviButton}>
-            <Image
-              source={require('../assets/naviColor.png')}
-              style={styles.naviIcon}
-            />
-            <Text
-              style={styles.naviButtonText}
-              onPress={() => {
-                onNavigation(safetestWaypoint);
-              }}>
-              Navi
-            </Text>
-          </View>
-          <View style={styles.riskinessButton}>
-            <Image
-              source={require('../assets/riskiness.png')}
-              style={styles.naviIcon}
-            />
-            <Text
-              style={styles.riskinessButtonText}
-              onPress={() => {
-                onNavigation(safeWaypoint);
-              }}>
-              {safetestWaypointRiskiness[0]}
-            </Text>
-          </View>
-          <View style={styles.riskinessButton}>
-            <Text
-              style={styles.riskinessButtonText}
-              onPress={() => {
-                onNavigation(safeWaypoint);
-              }}>
-              {safetestWaypointRiskiness[1]}m
-            </Text>
-          </View>
-        </View>
         <View style={styles.naviContainer}>
           <View
             style={
@@ -293,7 +282,7 @@ const DirectionSheet = ({route}: DircetionSheetProps) => {
           </View>
           <View style={styles.riskinessButton}>
             <Image
-              source={require('../assets/riskiness.png')}
+              source={require('../assets/warning.png')}
               style={styles.naviIcon}
             />
             <Text
@@ -354,7 +343,7 @@ const DirectionSheet = ({route}: DircetionSheetProps) => {
           </View>
           <View style={styles.riskinessButton}>
             <Image
-              source={require('../assets/riskiness.png')}
+              source={require('../assets/warning.png')}
               style={styles.naviIcon}
             />
             <Text
@@ -462,12 +451,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   safeButtonActive: {
-    backgroundColor: 'rgba(87, 148, 102, 1)',
+    backgroundColor: 'rgba(239, 188, 5, 1)',
     shadowOffset: {width: 0, height: 0},
     shadowColor: 'black',
   },
   safestButtonActive: {
-    backgroundColor: 'rgba(239, 188, 5, 1)',
+    backgroundColor: 'rgba(87, 148, 102, 1)',
   },
   shortButtonActive: {
     backgroundColor: 'rgba(255, 129, 57, 0.95)',
