@@ -42,11 +42,11 @@ Public safety is one of the most significant concerns in the United States since
 
 ## Overall Process
 
-![process](https://user-images.githubusercontent.com/74031620/207963817-bdff0864-4bd4-4309-bf68-06de9bdf9646.png)
+<img align="center" width="500" src="https://user-images.githubusercontent.com/74031620/207963817-bdff0864-4bd4-4309-bf68-06de9bdf9646.png">
 
 ## Database ERD
 
-![rabbit_db](https://user-images.githubusercontent.com/74031620/207962969-4af52e4d-d64f-4d7e-b505-5d731c49f773.png)
+<img align="center" width="400" src="https://user-images.githubusercontent.com/74031620/207965874-5abef254-e317-4dbd-978e-cf9c38cecdc9.png">
 
 ## Environment
 
