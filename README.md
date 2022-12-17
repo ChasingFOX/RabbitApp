@@ -11,7 +11,7 @@ Navigation Algorithm & Service that guides you to avoid dangerous area
 |          <a href="mailto:rlaek4793@khu.ac.kr"><img src="https://img.shields.io/badge/EMAIL-F0F0F0?style=flat-square&logo=Gmail&logoColor=orange&link=mailto:rlaek4793@khu.ac.kr"/></a>           |         <a href="mailto:21700340@handong.ac.kr"><img src="https://img.shields.io/badge/EMAIL-F0F0F0?style=flat-square&logo=Gmail&logoColor=orange&link=mailto:21700340@handong.ac.kr"/></a>         |   <a href="mailto:zihooy@handong.ac.kr"><img src="https://img.shields.io/badge/EMAIL-F0F0F0?style=flat-square&logo=Gmail&logoColor=orange&link=mailto:zihooy@handong.ac.kr"/></a>    |       <a href="mailto:yeshyun@khu.ac.kr"><img src="https://img.shields.io/badge/EMAIL-F0F0F0?style=flat-square&logo=Gmail&logoColor=orange&link=mailto:yeshyun@khu.ac.kr"/></a>        |        <a href="mailto:jhjmo0719h@cbnu.ac.kr"><img src="https://img.shields.io/badge/EMAIL-F0F0F0?style=flat-square&logo=Gmail&logoColor=orange&link=mailto:jhjmo0719h@cbnu.ac.kr"/></a>        |        <a href="mailto:ruiz114@purdue.edu"><img src="https://img.shields.io/badge/EMAIL-F0F0F0?style=flat-square&logo=Gmail&logoColor=orange&link=mailto:ruiz114@purdue.edu"/></a>        |
 
 ## Result of This Project
-![resultApp](https://user-images.githubusercontent.com/74031620/208192875-ecd1cf6d-b72c-4903-932c-3ef964c04afc.png)
+![resultApp](https://user-images.githubusercontent.com/74031620/208217084-8373ec6c-0d0b-4eaf-be46-bde740060fe5.png)
 
 ## Goal of Rabbit
 
@@ -80,17 +80,40 @@ apache2: 2.4.41(Ubuntu)
 
 <details>
 <summary>
-Sign-up / Sign-in API manual
+⚙ Sign-up / Sign-in API manual
 </summary>
 <div markdown="1">
-~~~Jihoo~~~
+
+Before you run the code, Java 1.8 and IntelliJ are required. And the database is needed. The schema of the database is as follows:
+1. Install Java 8
+You can download Java 8 here (https://www.oracle.com/java/technologies/downloads/).
+
+2. git clone https://github.com/ChasingFOX/RabbitApp.git
+
+3. Open IntelliJ
+You can download IntelliJ here (https://www.jetbrains.com/idea/download/#section=mac).
+
+4. Open your git folder as a new project.
+
+5. Edit the database configuration file. Enter your database information in the ‘application.properties’ file. <br> path: RabbitApp/RabbitBack/src/main/resources/application.properties
+    ```
+        spring.datasource.url=CHANGE TO YOUR OWN DB URL
+        spring.datasource.username=CHANGE TO YOUR USERNAME
+        spring.datasource.password=CHANGE TO YOUR PASSWORD
+    ```
+
+6. Add ‘Run Configuration’.
+In this process, you have to set the module to ‘Java 1.8’ and main class as ‘com.purdue.project.RabbitBackApplication’.
+
+7. Run the code.
+
 </div>
 </details>
 
 
 <details>
 <summary>
-Route API manual
+⚙ Route API manual
 </summary>
 <div markdown="2">
 
