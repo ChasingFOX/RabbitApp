@@ -1,8 +1,8 @@
-# (TBD - In progress)
-
 ## Project Rabbit
-
-Navigation Algorithm & Service that guides you to avoid dangerous area
+Since crime rates in United States increases, the importance of protecting public safety is growing today.
+To solve this problem, team ChasingFOX proposes the Rabbit.
+The application that recommends a safe route for pedestrian by predicting the riskiness of the roads. 
+The Rabbit complements the vulnerability of existing route recommendation apps, making people safer. 
 
 ## Team ChasingFox
 
@@ -13,7 +13,7 @@ Navigation Algorithm & Service that guides you to avoid dangerous area
 
 ## Goal of Rabbit
 
-Team FOX wanted to make the application that can recommend the safe route to the destination. Definition of safe route is ‘The route that has less probability to experience crime’. The Rabbit App is based on an safety route recommendation algorithm that considers the distance and crime occurence rate, as well as factor which shows high association with the crime occurence rate. The boundary of the Rabbit App is limited in Chicago.
+Team FOX wanted to make the application that can recommend the safe route to the destination. Definition of safe route is ‘The route that has less probability to experience crime’. The Rabbit App is based on an safety route recommendation algorithm that considers the distance and crime density, as well as urban factor which shows high association with the crime density. The boundary of the Rabbit App is limited in Chicago.
 
 ## Research Problem Statements
 
