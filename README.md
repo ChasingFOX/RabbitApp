@@ -23,11 +23,11 @@ Public safety is one of the most significant concerns in the United States since
 
 ## Research Novelty
 
-(1) To predict the safe area, not only crime data but also the city facilities data were used in data analysis, and analyzed by various data analysis method.
+(1) Not only for the crime data, but also service request and city facility data were used and analyzed to define the road riskiness score.
 
-(2) In the research, a model that can predict crime density was developed.
+(2) Road riskiness score is defined based on predicted crime density, and therefore, user can prevent the future crime.
 
-(3) The personal risk perception was applied in the process of making the user's personal risk graph. (User-customized Destination(or Route) Recommendation Service)
+(3) The personal risk perception to the type of crime was considered to define the road riskiness score. This can make application to recommend the personal safety route. It was applied in the direction(or route) recommendation service of the application.
 
 ## Tech Stack
 
