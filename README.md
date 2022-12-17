@@ -23,9 +23,11 @@ Public safety is one of the most significant concerns in the United States since
 
 ## Research Novelty
 
-(1) To predict the safe area, not only crime data but also the city facilities data were used in data analysis, and analyzed by various data analysis method.  
-(2) Based on the result from (1), it is possible to explain the weight in the shortest-path algorithm, which was used to calculate the riskiness and safety score of the edge.
+(1) To predict the safe area, not only crime data but also the city facilities data were used in data analysis, and analyzed by various data analysis method.
 
+(2) In the research, a model that can predict crime density was developed.
+
+(3) The personal risk perception was applied in the process of making the user's personal risk graph. (User-customized Destination(or Route) Recommendation Service)
 
 ## Tech Stack
 
@@ -117,6 +119,18 @@ In this process, you have to set the module to ‘Java 1.8’ and main class as 
 </summary>
 <div markdown="2">
 
+You should follow the below instructions.
+
+1. Install ubuntu, python3, flask, apache2.
+2. Get Google Drive API credentials file.
+3. Download all code files from GitHub(RabbitBackFlask). And download all pickle files from [here](https://drive.google.com/drive/folders/1dEzDcpUyoP_Ez0LBw91PIL_B53y5vyFH?usp=sharing).
+4. In Ubuntu, install python packages that I wrote below.
+5. Do some apache2 environment settings that I wrote below.
+6. In fox.py, change from original to `app.config['MYSQL_HOST'] = 'YOUR_LOCAL_HOST_IP'`, `folder_id = 'YOUR_OWN_GDRIVE_FOLDER_ID'`
+7. In rabbit.conf, change from original to `ServerName YOUR_LOCAL_HOST_IP`
+8. Start apache2, and request the API once. Then you can get the API key token. You need to do this. `sudo chmod 777 token_drive_v3.pickle`
+9. After that, restart apache2, and request the API anytime!
+
 - File Path
 
     <pre>
@@ -126,7 +140,7 @@ In this process, you have to set the module to ‘Java 1.8’ and main class as 
           └📂sites-available
               └📄rabbit.conf ✅
               └📄000-default.conf
-              └📄default-ssl.conf
+              └...
       └📂var
         └📂www
           └📂rabbit
@@ -136,15 +150,15 @@ In this process, you have to set the module to ‘Java 1.8’ and main class as 
             └📄dataAnalysis.py ✅
             └📄httpd.wsgi ✅
             └📂admin
-               └🧾2018_ped_raw_data.pkl
-               └🧾al_riskscore_graph.pkl
-               └🧾chicago_polygon_ratio.pkl
-               └🧾crime_weight_info.pkl
-               └🧾graph_edges.pickle
-               └🧾r_c_f_ET_0.99996.pkl
-               └🧾urban_5_dataset.pkl
+               └📖2018_ped_raw_data.pkl
+               └📖al_riskscore_graph.pkl
+               └📖chicago_polygon_ratio.pkl
+               └📖crime_weight_info.pkl
+               └📖graph_edges.pickle
+               └📖r_c_f_ET_0.99996.pkl
+               └📖urban_5_dataset.pkl
             └📂userData
-            └🧾default.pickle
+               └📖default.pickle
             └📄client_secret.json
     </pre>
 
@@ -155,7 +169,7 @@ In this process, you have to set the module to ‘Java 1.8’ and main class as 
     sudo apt-get install apache2
     ```
 
-- To set rabbit.conf file to main conf
+- To set rabbit.conf file to main conf in '/etc/apache2/sites-available'
 
     ```
     sudo a2dissite 000-default
