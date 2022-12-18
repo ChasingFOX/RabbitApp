@@ -81,9 +81,9 @@ cd ./RabbitFront/ios && pod install
 ```
 
 ```shell
-cd RabbitFront # 폴더로 이동
-npm run android # 안드로이드 실행 명령어
-npm run ios # 아이폰 실행 명령어
+cd RabbitFront # Move to Project Folder
+npm run android # Android Run Commands
+npm run ios # iOS Run Commands
 ```
 
 If you write this code, the Metro server will appear.
