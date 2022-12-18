@@ -66,24 +66,24 @@ JDK(Java): 11
 ffi
 ```
 
-## First setting
+<summary>First setting</summary>
 
 [Official Document] (https://reactative.dev/)
 
-- Initial setting: [must follow] (https://reactative.dev/docs/environment-setup)
-- java 17 version should not be installed (11 version should be installed), and environmental variables should be set well (JAVA_HOME)
-- Must have Android SDK 30. Receive virtual machines with Nexus 5
-- [adb](https://developer.android.com/studio/releases/platform-tools) install
-- [m1 mac setting](https://qnrjs42.blog/react-native/m1-arm64-setting)
+1. Initial setting: [must follow] (https://reactative.dev/docs/environment-setup)
+2. java 17 version should not be installed (11 version should be installed), and environmental variables should be set well (JAVA_HOME)
+3. Must have Android SDK 30. Receive virtual machines with Nexus 5
+4. [adb](https://developer.android.com/studio/releases/platform-tools) install
+5. [m1 mac setting](https://qnrjs42.blog/react-native/m1-arm64-setting)
 
 If the following error occurs during installation, you have to type
 
 ```shell
-cd ./FoodDeliveryApp/ios && pod install
+cd ./RabbitFront/ios && pod install
 ```
 
 ```shell
-cd FoodDeliveryApp # 폴더로 이동
+cd RabbitFront # 폴더로 이동
 npm run android # 안드로이드 실행 명령어
 npm run ios # 아이폰 실행 명령어
 ```
@@ -100,24 +100,24 @@ npm start
 <summary>
 Folder Structure
 </summary>
-- android: android native folder
-- ios: ios native folder
-- node_modules: node library
-- babel.config.js: barbell settings
-- index.js: main file
-- App.tsx: Default App Components
-- metro.config.js: metro settings file (use instead of webpack)
-- tscconfig.json: TypeScript settings
-- Android/app/src/main/java/com/fooddeliveryapp/mainActivity.java: Android activity to execute react code via js engine + bridge
+1. android: android native folder
+2. ios: ios native folder
+3. node_modules: node library
+4. babel.config.js: barbell settings
+5. index.js: main file
+6. App.tsx: Default App Components
+7. metro.config.js: metro settings file (use instead of webpack)
+8. tscconfig.json: TypeScript settings
+9. Android/app/src/main/java/com/fooddeliveryapp/mainActivity.java: Android activity to execute react code via js engine + bridge
 
 <summary>
 After load an application
 </summary>
-- Reloading with cmd + R
-- Debug menu with cmd + D
-- Developer tools available with Debugging with Chrome
-- Configure Bundler allows you to change the metro server port
-- Show Perf Monitor lets you measure frames
+1. Reloading with cmd + R
+2. Debug menu with cmd + D
+3. Developer tools available with Debugging with Chrome
+4. Configure Bundler allows you to change the metro server port
+5. Show Perf Monitor lets you measure frames
 
 Back-end
 
