@@ -12,7 +12,8 @@ Navigation Algorithm & Service that guides you to avoid dangerous area
 
 ## Result of This Project
 
-Video</n>
+Video
+
 [Application Activation Video](https://youtu.be/Z5gqHrr86ao)
 
 Image
