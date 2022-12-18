@@ -76,7 +76,14 @@ ffi
 4. [adb](https://developer.android.com/studio/releases/platform-tools) install
 5. [m1 mac setting](https://qnrjs42.blog/react-native/m1-arm64-setting)
 
-If the following error occurs during installation, you have to type
+If the following error occurs during installation
+
+```
+error Error: Failed to install CocoaPods dependencies for iOS project, which is required by this template.
+Please try again manually: "cd ./FoodDeliveryApp/ios && pod install".
+```
+
+You have to enter the command below.
 
 ```shell
 cd ./RabbitFront/ios && pod install
