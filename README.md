@@ -75,7 +75,9 @@ ffi
 ⚙ Front-end manual
 </summary>
 
-- First setting <br> [Official Document](https://reactnative.dev/)
+- First setting
+
+[Official Document](https://reactnative.dev/)
 
 1. Initial setting: [must follow](https://reactnative.dev/docs/environment-setup)
 2. java 17 version should not be installed (11 version should be installed), and environmental variables should be set well (JAVA_HOME)
@@ -131,6 +133,67 @@ android:value="Google Map API Key"
 [GMSServices provideAPIKey:@"Google Map API Key"]
 ```
 
+- Folder & File Structure Overview
+
+<pre>
+├───📄babel.config
+├───📄index.js
+├───📄App.tsx
+├───📄metro.config.js
+├───📄tscconfig.json
+├───📂.bundle
+├───📂.expo
+├───📂android
+│   ├───📂app
+│   │   └───📂src
+│   │       ├───📂debug
+│   │       │   └───📂java
+│   │       │       └───📂com
+│   │       │           └───📂rabbitfront
+│   │       └───📂main
+│   │           ├───📂java
+│   │           │   └───📂com
+│   │           │       └───📂rabbitfront
+│   │           │           └───📄MainActivity.java
+│   │           │           └───📂newarchitecture
+│   │           │               ├───📂components
+│   │           │               └───📂modules
+│   │           ├───📂jni
+│   │           └───📂res
+│   │               ├───📂drawable
+│   │               ├───📂layout
+│   │               ├───📂mipmap-hdpi
+│   │               ├───📂mipmap-mdpi
+│   │               ├───📂mipmap-xhdpi
+│   │               ├───📂mipmap-xxhdpi
+│   │               ├───📂mipmap-xxxhdpi
+│   │               └───📂values
+│   └───📂gradle
+│       └───📂wrapper
+├───📂ios
+│   ├───📂RabbitFront
+│   │   └───📂Images.xcassets
+│   │       ├───📂AppIcon.appiconset
+│   │       └───📂Image.imageset
+│   ├───📂RabbitFront.xcodeproj
+│   │   ├───📂project.xcworkspace
+│   │   │   └───📂xcshareddata
+│   │   └───📂xcshareddata
+│   │       └───📂xcschemes
+│   ├───📂RabbitFront.xcworkspace
+│   │   └───📂xcshareddata
+│   └───📂RabbitFrontTests
+├───📂src
+│   ├───📂assets
+│   │   └───📂dataPage
+│   ├───📂components
+│   ├───📂constants
+│   ├───📂pages
+│   ├───📂slices
+│   └───📂store
+└───📂__tests__
+</pre>
+
 - Folder Structure
 
 1. android: android native folder
@@ -141,7 +204,7 @@ android:value="Google Map API Key"
 6. App.tsx: Default App Components
 7. metro.config.js: metro settings file (use instead of webpack)
 8. tscconfig.json: TypeScript settings
-9. Android/app/src/main/java/com/fooddeliveryapp/mainActivity.java: Android activity to execute react code via js engine + bridge
+9. Android/app/src/main/java/com/rabbitfront/MainActivity.java: Android activity to execute react code via js engine + bridge
 
 
 - React Native Folder Structure
