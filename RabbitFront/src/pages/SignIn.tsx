@@ -1,10 +1,9 @@
-// SignIn Screen Code
+// The SignIn Screen Code
 import React, {useCallback, useRef, useState} from 'react';
 import {
   View,
   Text,
   TextInput,
-  Touchable,
   Pressable,
   Alert,
   StyleSheet,
@@ -20,13 +19,17 @@ import EncryptedStorage from 'react-native-encrypted-storage';
 
 type SignInScreenProps = NativeStackScreenProps<RootStackParamList, 'SignIn'>;
 
+// The main function of SignIn page
 function SignIn({navigation}: SignInScreenProps) {
+  // Codes to store status values
   const [email, setEmail] = useState('');
   const [passWord, setPassWord] = useState('');
   const [loading, setLoading] = useState(false);
 
+  // Code to communicate with global repository(Redux)
   const dispatch = useAppDispatch();
 
+  // The function that works when user clicks the Submit button
   const onSubmit = useCallback(async () => {
     if (loading) {
       return;
@@ -51,6 +54,7 @@ function SignIn({navigation}: SignInScreenProps) {
       );
     }
 
+    // Code that uses axios to communicate with the server to post Signin information
     try {
       {
         setLoading(true);
@@ -58,8 +62,10 @@ function SignIn({navigation}: SignInScreenProps) {
           email: email,
           password: passWord,
         });
+        // Code that stores the user's ID value in the local storage when logged in.
         await EncryptedStorage.setItem('id', String(response.data.id));
         setLoading(false);
+        // Code Store user's information in a global storage
         dispatch(
           userSlice.actions.setUser({
             email: response.data.email,
@@ -77,21 +83,26 @@ function SignIn({navigation}: SignInScreenProps) {
     }
   }, [loading, email, passWord]);
 
+  // The function that moves to the SignUp page when the SignUp button is clicked.
   const onSignUp = useCallback(() => {
     navigation.navigate('SignUp');
   }, [navigation]);
 
+  // The function that recognizes an Email change and stores it in a state value
   const onChangeEmail = useCallback(text => {
     setEmail(text);
   }, []);
 
+  // The function that recognizes a Password change and stores it in a state value
   const onChangePassword = useCallback(text => {
     setPassWord(text);
   }, []);
 
+  // Code that stores the address value of the text input
   const emailRef = useRef<TextInput | null>(null);
   const passwordRef = useRef<TextInput | null>(null);
 
+  // Code to activate the SignIn button
   const canGoNext = email && passWord;
 
   return (
@@ -144,7 +155,6 @@ function SignIn({navigation}: SignInScreenProps) {
           disabled={!canGoNext}>
           <Text style={style.loginButtonText}>Sign In</Text>
         </Pressable>
-
         <Pressable onPress={onSignUp}>
           <Text
             style={StyleSheet.compose(
@@ -159,6 +169,7 @@ function SignIn({navigation}: SignInScreenProps) {
   );
 }
 
+//  Css apply Code
 const style = StyleSheet.create({
   container: {
     height: '100%',

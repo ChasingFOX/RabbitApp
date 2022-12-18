@@ -1,48 +1,33 @@
+// The Profile Edit Tab Code
+
 import * as React from 'react';
 import {
   Text,
-  TouchableHighlight,
   View,
   StyleSheet,
   ScrollView,
-  Image,
   TextInput,
-  Pressable,
   Alert,
 } from 'react-native';
 import {useCallback, useState, useEffect} from 'react';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {RootStackParamList} from '../../AppInner';
-import {Dimensions} from 'react-native';
 import {ProfilePageParamList} from './ProfilePage';
-import axios, {AxiosError, AxiosResponse} from 'axios';
+import axios, {AxiosError} from 'axios';
 import Config from 'react-native-config';
 import EncryptedStorage from 'react-native-encrypted-storage';
-import {CommonActions} from '@react-navigation/native';
-import {NavigationProp, useNavigation} from '@react-navigation/native';
-import SignIn from './SignUp';
 
 type ProfileEditScreenProps = NativeStackScreenProps<
   ProfilePageParamList,
   'ProfileEdit'
 >;
 
+// The main function of Profile Edit page
 function ProfileEdit({navigation}: ProfileEditScreenProps) {
-  const navi = useNavigation<NavigationProp<RootStackParamList>>();
-  const windowWidth = Dimensions.get('window').width;
-  const windowHeight = Dimensions.get('window').height;
-
-  const [btnActive, setBtnActive] = useState(false);
+  // Codes to store status values
   const [crime, setCrime] = useState<String>('');
-  const [prevNickName, setPrevNickName] = useState<string>('');
   const [nickName, setNickName] = useState<string>('');
-  const [clickedCrime, setClickedCrime] = useState<string>('');
-
-  // const [dd, setDd] = useState([]);
 
   let crimeIndex: number[] = [];
-
-  const [isTrueNumber, setIsTrueNumber] = useState<Number>(0);
 
   const crimetype = [
     {id: 1, type: 'Assualt'},
@@ -71,16 +56,7 @@ function ProfileEdit({navigation}: ProfileEditScreenProps) {
     false,
   ]);
 
-  // const setIsCrimeClicked = useCallback(() => {
-  //   let newArr = [...isClicked];
-  //   if (crime !== '') {
-  //     crime.split(',').map((item: String) => {
-  //       newArr[Number(item)] = true;
-  //     }, []);
-  //   }
-  //   setIsClicked(newArr);
-  // }, [crime, isClicked]);
-
+  // The function that get the user's information from DB and stores it in the state value.
   const getUserInfo = useCallback(async () => {
     const userId = await EncryptedStorage.getItem('id');
     try {
@@ -95,10 +71,10 @@ function ProfileEdit({navigation}: ProfileEditScreenProps) {
       const errorResponse = (error as AxiosError).response;
       if (errorResponse) {
       }
-    } finally {
     }
   }, [nickName, crime]);
 
+  // Code to get the user's information from DB each time the page is loaded
   useEffect(() => {
     getUserInfo();
   }, []);
@@ -108,46 +84,37 @@ function ProfileEdit({navigation}: ProfileEditScreenProps) {
     if (crime !== '') {
       crime.split(',').map((item: String) => {
         newArr[Number(item)] = true;
-        console.log('newArr', newArr);
       }, []);
     }
     setIsClicked(newArr);
-    console.log(newArr);
   }, [crime]);
 
+  // The function that recognizes a nickname change and stores it in a state value
   const onChangeNickName = useCallback(
     text => {
       setNickName(text);
-      console.log(text);
     },
     [setNickName],
   );
 
-  useEffect(() => {
-    setIsTrueNumber(isClicked.filter(item => item == true).length);
-  }, [isClicked]);
-
+  // The function that recognizes a crime change and stores it in a state value
   const onChangeCrime = useCallback(
     (idx: Number) => {
-      console.log(isTrueNumber);
-      console.log('isTri', isTrueNumber);
-      console.log('isCl', isClicked);
       setIsClicked(prev =>
         prev.map((element, index) => {
           return index === idx ? !element : element;
         }),
       );
-
-      // isClickedReSet();
-      console.log('isClicked', isClicked);
     },
 
     [isClicked],
   );
 
+  // The function that works when you click the Submit button
   const onSubmit = useCallback(async () => {
     const userId = await EncryptedStorage.getItem('id');
 
+    // Code that preprocesses data before sending crime data to the server
     isClicked.map((item, index) => {
       if (item === true) {
         crimeIndex.push(Number(index));
@@ -158,9 +125,8 @@ function ProfileEdit({navigation}: ProfileEditScreenProps) {
       Alert.alert('You should choose up to six.');
       return;
     }
-
+    // Code that uses axios to communicate with the server to post profile change information
     try {
-      console.log('userId', userId);
       {
         const response = await axios.post(`${Config.API_URL}/api/user/update`, {
           id: userId,
@@ -168,25 +134,20 @@ function ProfileEdit({navigation}: ProfileEditScreenProps) {
           crime: crimeIndex.join(),
         });
 
+        // Code that uses axios to communicate with the server to put crime change information
         if (response.data.isCrimeUpdated == true) {
           const respone = axios.put(
             `${Config.DIRECTION_API_URL}/api/profile/calculate`,
             {
-              crime: crimeIndex.join(),
               id: userId,
             },
           );
-          console.log('crimeIndex.join()', crimeIndex.join());
-          console.log('userId', userId);
           Alert.alert('It will take about 30 minutes to analyze');
         } else {
           Alert.alert('NickName Edit Complete');
         }
         navigation.goBack();
-        console.log(response);
       }
-
-      // navigation.goBack();
     } catch (error) {
       const errorResponse = (error as AxiosError).response;
       if (errorResponse) {
@@ -197,7 +158,7 @@ function ProfileEdit({navigation}: ProfileEditScreenProps) {
   }, [nickName, crime, isClicked]);
 
   return (
-    <ScrollView style={{height: '100%', backgroundColor: 'white'}}>
+    <ScrollView style={styles.scrollView}>
       <View style={styles.container}>
         <Text style={styles.profileHead}>| Nickname</Text>
         <TextInput
@@ -210,7 +171,7 @@ function ProfileEdit({navigation}: ProfileEditScreenProps) {
         <Text style={styles.profileHead}>
           | Crimes you want to avoid (Up to 6)
         </Text>
-
+        {/* Code to generate a button in the Crime Container */}
         <View style={styles.crimeContainer}>
           {crimetype.map((item, index) => {
             return (
@@ -290,13 +251,15 @@ function ProfileEdit({navigation}: ProfileEditScreenProps) {
   );
 }
 
+//  Css apply Code
 const styles = StyleSheet.create({
+  scrollView: {height: '100%', backgroundColor: 'white'},
   container: {
     backgroundColor: 'white',
     height: '100%',
     width: '100%',
     display: 'flex',
-    paddingVertical: 50,
+    paddingVertical: 70,
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
@@ -473,10 +436,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     borderColor: 'grey',
     borderWidth: 1,
-    // shadowOffset: {width: 1, height: 3},
-    // shadowColor: 'black',
-    // shadowRadius: 2,
-    // shadowOpacity: 0.6,
   },
   submitButtonText: {
     color: 'white',

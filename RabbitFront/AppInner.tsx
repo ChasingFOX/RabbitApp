@@ -1,31 +1,13 @@
 // React Native Entry Point Code
 import * as React from 'react';
-import {
-  createNativeStackNavigator,
-  NativeStackScreenProps,
-} from '@react-navigation/native-stack';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {
-  Text,
-  TouchableHighlight,
-  View,
-  TouchableOpacity,
-  Platform,
-  StyleSheet,
-  Image,
-  ColorPropType,
-} from 'react-native';
-import {useCallback, useState} from 'react';
-import Navi from './src/pages/Navi';
+import {Image} from 'react-native';
 import Data from './src/pages/DataAnalysis';
-import Profile from './src/pages/Profile';
 import SignUp from './src/pages/SignUp';
 import SignIn from './src/pages/SignIn';
-import ProfileEdit from './src/pages/ProfileEdit';
 import ProfilePage from './src/pages/ProfilePage';
 import NaviPage from './src/pages/NaviPage';
-import Config from 'react-native-config';
-import axios, {AxiosError} from 'axios';
 import {useSelector} from 'react-redux';
 import {RootState} from './src/store/reducer';
 
@@ -43,13 +25,13 @@ export type RootStackParamList = {
   SignUp: undefined;
 };
 
+// Code to load the library for page navigation configuration
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
 function AppInner() {
   const isLoggedIn = useSelector((state: RootState) => !!state.user.email);
-  console.log('isLoggedIn', isLoggedIn);
-
+  // Code to branch out the page entering by determining whether you are logged in or not
   return !isLoggedIn ? (
     <Stack.Navigator>
       <Stack.Screen

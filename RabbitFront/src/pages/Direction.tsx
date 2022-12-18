@@ -1,41 +1,24 @@
-// Navigation Tab Code
+// The Direction Recommend Tab Code
 
 import * as React from 'react';
-import {
-  Text,
-  TouchableHighlight,
-  View,
-  TouchableOpacity,
-  Platform,
-  StyleSheet,
-  Linking,
-  Image,
-  ScrollView,
-} from 'react-native';
+import {Text, View, StyleSheet, ScrollView} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {useCallback, useState, useEffect, useRef} from 'react';
-import Geolocation from '@react-native-community/geolocation';
+import {useCallback, useState, useRef, useEffect} from 'react';
 import MapView, {
   PROVIDER_GOOGLE,
-  PROVIDER_DEFAULT,
   Marker,
   Polygon,
   LatLng,
 } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 import {LoggedInParamList} from '../../AppInner';
-import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 import {BottomSheetModal, BottomSheetModalProvider} from '@gorhom/bottom-sheet';
 import DirectionSheet from '../components/DirectionSheet';
-import {NaviPageParamList} from '../pages/NaviPage';
-import {RouteProp, useRoute} from '@react-navigation/native';
-import {NavigationProp, useNavigation} from '@react-navigation/native';
+import Geolocation from '@react-native-community/geolocation';
 import {useSelector} from 'react-redux';
 import {RootState} from '../store/reducer';
 import Config from 'react-native-config';
-import polygonData from '../constants/crime_polygon_vector_dict4.json';
-import {useAppDispatch} from '../store';
-import waypointSlice from '../slices/waypointSlice';
+import polygonData from '../constants/chicagoCrimeBoundary.json';
 
 type NaviScreenProps = NativeStackScreenProps<LoggedInParamList, 'Direction'>;
 
@@ -43,7 +26,9 @@ export type Object = {
   navigation: object;
 };
 
+// The main function of Direction page
 function Direction({navigation}: NaviScreenProps) {
+  // Codes to store status values
   const [latitude, setLatitude] = useState(Number);
   const [longitude, setLogitude] = useState(Number);
   const [currentLatitude, setCurrentLatitude] = useState(Number);
@@ -51,23 +36,10 @@ function Direction({navigation}: NaviScreenProps) {
   const [destinationCoordinates, setDestinationCoordinates] = useState([
     {latitude: latitude, longitude: longitude},
   ]);
+
   const [polygonCoordinates, setPolygonCoordinates] = useState(
     JSON.parse(String(polygonData)).Assualt,
   );
-  const dispatch = useAppDispatch();
-  const crimetype = [
-    {id: 1, type: 'Assualt'},
-    {id: 2, type: 'Battery'},
-    {id: 3, type: 'Homicide'},
-    {id: 4, type: 'Human Tracking'},
-    {id: 5, type: 'Kidnapping'},
-    {id: 6, type: 'Narcotics'},
-    {id: 7, type: 'Public Indecency'},
-    {id: 8, type: 'Robbery'},
-    {id: 9, type: 'Sexual'},
-    {id: 10, type: 'Stalking'},
-    {id: 11, type: 'Weapon'},
-  ];
   const [polygonButton, setPolygonButton] = useState([
     true,
     false,
@@ -82,7 +54,19 @@ function Direction({navigation}: NaviScreenProps) {
     false,
   ]);
 
-  const bottomSheetRef = useRef<BottomSheetModal>(null);
+  const crimetype = [
+    {id: 1, type: 'Assualt'},
+    {id: 2, type: 'Battery'},
+    {id: 3, type: 'Homicide'},
+    {id: 4, type: 'Human Tracking'},
+    {id: 5, type: 'Kidnapping'},
+    {id: 6, type: 'Narcotics'},
+    {id: 7, type: 'Public Indecency'},
+    {id: 8, type: 'Robbery'},
+    {id: 9, type: 'Sexual'},
+    {id: 10, type: 'Stalking'},
+    {id: 11, type: 'Weapon'},
+  ];
 
   useEffect(() => {
     Geolocation.getCurrentPosition(
@@ -101,6 +85,9 @@ function Direction({navigation}: NaviScreenProps) {
     );
   }, []);
 
+  const bottomSheetRef = useRef<BottomSheetModal>(null);
+
+  // Code to fetch status values stored in the global repository.
   const departurePosition = useSelector(
     (state: RootState) => state.direction.departurePosition,
   );
@@ -123,32 +110,16 @@ function Direction({navigation}: NaviScreenProps) {
     (state: RootState) => state.waypoint.shortestWaypoint,
   );
 
-  console.log('direction-safeWaypoint', safeWaypoint);
-  console.log('direction-safetestWaypoint', safetestWaypoint);
-  console.log('direction-shortWaypoint', shortWaypoint);
-  console.log('direction-shortestWaypoint', shortestWaypoint);
-  console.log('waypointchecked', wayPointChecked);
-
-  // if (routeInfo) {
-  //   console.log(route.params.safetest);
-  // }
-  // route.params;
-  // Mandatory coordinates to get a safery route
-  // const safetestCoordinate = route?.params;
-
-  // callbacks
+  // The callbacks function that tells you if the bottom sheet is loaded.
   const handleSheetChanges = useCallback((index: number) => {
-    console.log('handleSheetChanges', index);
     if (index == -1) {
       navigation.goBack();
     }
   }, []);
-  // Code to get current location
-
-  const [destinationName, setDestinationName] = useState<string>('');
 
   bottomSheetRef.current?.present();
 
+  // Code to draw a crime risk polygon
   const onPolygon = (crimeType: string) => {
     switch (crimeType) {
       case 'Assualt':
@@ -187,6 +158,7 @@ function Direction({navigation}: NaviScreenProps) {
     }
   };
 
+  // Code to change the polygon range when you click the polygon button.
   const polygonButtonClick = useCallback(
     (idx: Number) => {
       setPolygonButton(prev =>
@@ -194,7 +166,6 @@ function Direction({navigation}: NaviScreenProps) {
           return index === idx ? !element : false;
         }),
       );
-      console.log('polygonButton', polygonButton);
     },
     [polygonButton],
   );
@@ -205,7 +176,7 @@ function Direction({navigation}: NaviScreenProps) {
         <BottomSheetModal
           ref={bottomSheetRef}
           index={1}
-          snapPoints={['18%', '42%']}
+          snapPoints={['18%', '38%']}
           onChange={handleSheetChanges}
           style={{
             borderRadius: 25,
@@ -248,15 +219,10 @@ function Direction({navigation}: NaviScreenProps) {
               optimizeWaypoints={true}
               apikey={Config.GOOGLE_API_URL}
               mode="WALKING"
-              strokeWidth={3}
-              strokeColor="rgba(87, 148, 102, 1)"
+              strokeWidth={7}
+              strokeColor="rgba(239, 188, 5, 1)"
               precision="low"
               timePrecision="none"
-              onReady={result => {
-                console.log('-d--d', safeWaypoint);
-                console.log(`Distance: ${result.distance} km`);
-                console.log(`Duration: ${result.duration} min.`);
-              }}
             />
           ) : null}
           {wayPointChecked[1] ? (
@@ -266,14 +232,10 @@ function Direction({navigation}: NaviScreenProps) {
               waypoints={safetestWaypoint}
               apikey={Config.GOOGLE_API_URL}
               mode="WALKING"
-              strokeWidth={3}
-              strokeColor="rgba(239, 188, 5, 1)"
+              strokeWidth={7}
+              strokeColor="rgba(87, 148, 102, 1)"
               precision="low"
               timePrecision="none"
-              onReady={result => {
-                console.log(`Distance: ${result.distance} km`);
-                console.log(`Duration: ${result.duration} min.`);
-              }}
             />
           ) : null}
           {wayPointChecked[2] ? (
@@ -283,14 +245,10 @@ function Direction({navigation}: NaviScreenProps) {
               waypoints={shortWaypoint}
               apikey={Config.GOOGLE_API_URL}
               mode="WALKING"
-              strokeWidth={3}
+              strokeWidth={7}
               strokeColor="rgba(255, 129, 57, 0.95)"
               precision="low"
               timePrecision="none"
-              onReady={result => {
-                console.log(`Distance: ${result.distance} km`);
-                console.log(`Duration: ${result.duration} min.`);
-              }}
             />
           ) : null}
           {wayPointChecked[3] ? (
@@ -300,14 +258,10 @@ function Direction({navigation}: NaviScreenProps) {
               waypoints={shortestWaypoint}
               apikey={Config.GOOGLE_API_URL}
               mode="WALKING"
-              strokeWidth={3}
+              strokeWidth={7}
               strokeColor="rgba(255, 9, 9, 0.95)"
               precision="low"
               timePrecision="none"
-              onReady={result => {
-                console.log(`Distance: ${result.distance} km`);
-                console.log(`Duration: ${result.duration} min.`);
-              }}
             />
           ) : null}
 
