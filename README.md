@@ -1,6 +1,6 @@
 # Project Rabbit
 
-Navigation Algorithm & Service that guides you to avoid dangerous area
+The application that recommends a safe route for pedestrian by predicting the riskiness of the roads. 
 
 ## Team ChasingFox
 
