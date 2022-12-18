@@ -48,9 +48,7 @@ Public safety is one of the most significant concerns in the United States since
 
 <img align="center" width="400" src="https://user-images.githubusercontent.com/74031620/208148714-40b624bf-4ec7-45c1-8e94-6c407df79236.png">
 
-## Environment
-
-Front-end
+## Front-end
 
 ```
 Xcode: 13.3.1
@@ -121,7 +119,7 @@ After load an application
 4. Configure Bundler allows you to change the metro server port
 5. Show Perf Monitor lets you measure frames
 
-Back-end
+## Back-end
 
 ```
 Java: 1.8.0
