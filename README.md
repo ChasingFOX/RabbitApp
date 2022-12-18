@@ -4,13 +4,14 @@ Navigation Algorithm & Service that guides you to avoid dangerous area
 
 ## Team ChasingFox
 
-| ![](https://github.com/chersiakingdom.png) | ![](https://github.com/21700340JuwonBaek.png) | ![](https://github.com/zihooy.png) | ![](https://github.com/YesHyeon.png) | ![](https://github.com/heewoneha.png) | ![](https://github.com/bruiz114.png) |
-| :----------------------------------------: | :-------------------------------------------: | :--------------------------------: | :----------------------------------: | :-----------------------------------: | :----------------------------------: |
-|                **Daye Kim**                |                **Juwon Baek**                 |           **Jihu Yang**            |             **Hyun Roh**             |            **Heewon Jeong**            |           **Bryanna Ruiz**           |
-|          **Kyunghee University**           |         **Handong Global University**         |   **Handong Global University**    |       **Kyunghee University**        |        **Chungbuk National University**        |        **Purdue University**         |
-|          <a href="mailto:rlaek4793@khu.ac.kr"><img src="https://img.shields.io/badge/EMAIL-F0F0F0?style=flat-square&logo=Gmail&logoColor=orange&link=mailto:rlaek4793@khu.ac.kr"/></a>           |         <a href="mailto:21700340@handong.ac.kr"><img src="https://img.shields.io/badge/EMAIL-F0F0F0?style=flat-square&logo=Gmail&logoColor=orange&link=mailto:21700340@handong.ac.kr"/></a>         |   <a href="mailto:zihooy@handong.ac.kr"><img src="https://img.shields.io/badge/EMAIL-F0F0F0?style=flat-square&logo=Gmail&logoColor=orange&link=mailto:zihooy@handong.ac.kr"/></a>    |       <a href="mailto:yeshyun@khu.ac.kr"><img src="https://img.shields.io/badge/EMAIL-F0F0F0?style=flat-square&logo=Gmail&logoColor=orange&link=mailto:yeshyun@khu.ac.kr"/></a>        |        <a href="mailto:jhjmo0719h@cbnu.ac.kr"><img src="https://img.shields.io/badge/EMAIL-F0F0F0?style=flat-square&logo=Gmail&logoColor=orange&link=mailto:jhjmo0719h@cbnu.ac.kr"/></a>        |        <a href="mailto:ruiz114@purdue.edu"><img src="https://img.shields.io/badge/EMAIL-F0F0F0?style=flat-square&logo=Gmail&logoColor=orange&link=mailto:ruiz114@purdue.edu"/></a>        |
+|                                                                  ![](https://github.com/chersiakingdom.png)                                                                   |                                                                    ![](https://github.com/21700340JuwonBaek.png)                                                                    |                                                                       ![](https://github.com/zihooy.png)                                                                        |                                                                   ![](https://github.com/YesHyeon.png)                                                                    |                                                                       ![](https://github.com/heewoneha.png)                                                                       |                                                                    ![](https://github.com/bruiz114.png)                                                                     |
+| :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+|                                                                                 **Daye Kim**                                                                                  |                                                                                   **Juwon Baek**                                                                                    |                                                                                  **Jihu Yang**                                                                                  |                                                                               **Hyun Roh**                                                                                |                                                                                 **Heewon Jeong**                                                                                  |                                                                              **Bryanna Ruiz**                                                                               |
+|                                                                            **Kyunghee University**                                                                            |                                                                            **Handong Global University**                                                                            |                                                                          **Handong Global University**                                                                          |                                                                          **Kyunghee University**                                                                          |                                                                         **Chungbuk National University**                                                                          |                                                                            **Purdue University**                                                                            |
+| <a href="mailto:rlaek4793@khu.ac.kr"><img src="https://img.shields.io/badge/EMAIL-F0F0F0?style=flat-square&logo=Gmail&logoColor=orange&link=mailto:rlaek4793@khu.ac.kr"/></a> | <a href="mailto:21700340@handong.ac.kr"><img src="https://img.shields.io/badge/EMAIL-F0F0F0?style=flat-square&logo=Gmail&logoColor=orange&link=mailto:21700340@handong.ac.kr"/></a> | <a href="mailto:zihooy@handong.ac.kr"><img src="https://img.shields.io/badge/EMAIL-F0F0F0?style=flat-square&logo=Gmail&logoColor=orange&link=mailto:zihooy@handong.ac.kr"/></a> | <a href="mailto:yeshyun@khu.ac.kr"><img src="https://img.shields.io/badge/EMAIL-F0F0F0?style=flat-square&logo=Gmail&logoColor=orange&link=mailto:yeshyun@khu.ac.kr"/></a> | <a href="mailto:jhjmo0719h@cbnu.ac.kr"><img src="https://img.shields.io/badge/EMAIL-F0F0F0?style=flat-square&logo=Gmail&logoColor=orange&link=mailto:jhjmo0719h@cbnu.ac.kr"/></a> | <a href="mailto:ruiz114@purdue.edu"><img src="https://img.shields.io/badge/EMAIL-F0F0F0?style=flat-square&logo=Gmail&logoColor=orange&link=mailto:ruiz114@purdue.edu"/></a> |
 
 ## Result of This Project
+
 ![resultApp](https://user-images.githubusercontent.com/74031620/208217084-8373ec6c-0d0b-4eaf-be46-bde740060fe5.png)
 
 ## Goal of Rabbit
@@ -31,14 +32,13 @@ Public safety is one of the most significant concerns in the United States since
 
 ## Tech Stack
 
-| Division        | Stack                                                                                                                                                                                                                                                                                                                                       |
-| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Front-end       | <img src="https://img.shields.io/badge/react native-61DAFB?style=for-the-badge&logo=react&logoColor=black"> <img src="https://img.shields.io/badge/type script-007acc?style=for-the-badge&logo=typescript&logoColor=black"> <img src="https://img.shields.io/badge/Google Map API-1EA362?style=for-the-badge&logo=google&logoColor=DD4B3E"> |
-| Back-end        | <img src="https://img.shields.io/badge/springboot-6DB33F?style=for-the-badge&logo=springboot&logoColor=black"> <img src="https://img.shields.io/badge/jpa-6DB33F?style=for-the-badge&logo=springboot&logoColor=black"> <img src="https://img.shields.io/badge/FLASK-181717?style=for-the-badge&logo=flask&logoColor=white">   <img src="https://img.shields.io/badge/Google Drive API-D9D9D9?style=for-the-badge&logo=googleDrive&logoColor=blue">                                                                                                                     |
-| Code Management | <img src="https://img.shields.io/badge/git-F05032?style=for-the-badge&logo=git&logoColor=black"> <img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white">                                                                                                                                     |
-| Formatting      | <img src="https://img.shields.io/badge/prettier-F7B93E?style=for-the-badge&logo=prettier&logoColor=black">                                                                                                                                                                                                                                  |
-| DB              | <img src="https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=black">                                                                                                                                                                                                                                        |
-
+| Division        | Stack                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Front-end       | <img src="https://img.shields.io/badge/react native-61DAFB?style=for-the-badge&logo=react&logoColor=black"> <img src="https://img.shields.io/badge/type script-007acc?style=for-the-badge&logo=typescript&logoColor=black"> <img src="https://img.shields.io/badge/Google Map API-1EA362?style=for-the-badge&logo=google&logoColor=DD4B3E">                                                                                                      |
+| Back-end        | <img src="https://img.shields.io/badge/springboot-6DB33F?style=for-the-badge&logo=springboot&logoColor=black"> <img src="https://img.shields.io/badge/jpa-6DB33F?style=for-the-badge&logo=springboot&logoColor=black"> <img src="https://img.shields.io/badge/FLASK-181717?style=for-the-badge&logo=flask&logoColor=white"> <img src="https://img.shields.io/badge/Google Drive API-D9D9D9?style=for-the-badge&logo=googleDrive&logoColor=blue"> |
+| Code Management | <img src="https://img.shields.io/badge/git-F05032?style=for-the-badge&logo=git&logoColor=black"> <img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white">                                                                                                                                                                                                                                          |
+| Formatting      | <img src="https://img.shields.io/badge/prettier-F7B93E?style=for-the-badge&logo=prettier&logoColor=black">                                                                                                                                                                                                                                                                                                                                       |
+| DB              | <img src="https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=black">                                                                                                                                                                                                                                                                                                                                             |
 
 ## Overall Process
 
@@ -51,6 +51,7 @@ Public safety is one of the most significant concerns in the United States since
 ## Environment
 
 Front-end
+
 ```
 Xcode: 13.3.1
 react-native-cli: 7.0.4
@@ -64,6 +65,60 @@ cocoapods: 1.11.3
 JDK(Java): 11
 ffi
 ```
+
+<summary>
+ First setting
+ </summary>
+[Official Document] (https://reactative.dev/)
+- Initial setting: [must follow] (https://reactative.dev/docs/environment-setup)
+- java 17 version should not be installed (11 version should be installed), and environmental variables should be set well (JAVA_HOME)
+- Must have Android SDK 30. Receive virtual machines with Nexus 5
+- - [adb](https://developer.android.com/studio/releases/platform-tools) install
+- - [m1 mac setting](https://qnrjs42.blog/react-native/m1-arm64-setting)
+
+If the following error occurs during installation, you have to type
+
+```shell
+cd ./FoodDeliveryApp/ios && pod install
+```
+
+```shell
+cd FoodDeliveryApp # 폴더로 이동
+npm run android # 안드로이드 실행 명령어
+npm run ios # 아이폰 실행 명령어
+```
+
+If you write this code, the Metro server will appear.
+If the server does not pop up and an error message appears, enter the command again while running the emulator.
+It compiles the source code from the Metro server and sends it to the app.
+If the Metro server is turned off, open another terminal.
+
+```shell
+npm start
+```
+
+<summary>
+Folder Structure
+</summary>
+- android: android native folder
+- ios: ios native folder
+- node_modules: node library
+- babel.config.js: barbell settings
+- index.js: main file
+- App.tsx: Default App Components
+- metro.config.js: metro settings file (use instead of webpack)
+- tscconfig.json: TypeScript settings
+- Android/app/src/main/java/com/fooddeliveryapp/mainActivity.java: Android activity to execute react code via js engine + bridge
+
+<summary>
+After load an application
+</summary>
+- Reloading with cmd + R
+- Debug menu with cmd + D
+- Developer tools available with Debugging with Chrome
+- Configure Bundler allows you to change the metro server port
+- Show Perf Monitor lets you measure frames
+
 Back-end
 
 ```
@@ -87,31 +142,32 @@ apache2: 2.4.41(Ubuntu)
 <div markdown="1">
 
 Before you run the code, Java 1.8 and IntelliJ are required. And the database is needed. The schema of the database is as follows:
+
 1. Install Java 8
-You can download Java 8 here (https://www.oracle.com/java/technologies/downloads/).
+   You can download Java 8 here (https://www.oracle.com/java/technologies/downloads/).
 
 2. git clone https://github.com/ChasingFOX/RabbitApp.git
 
 3. Open IntelliJ
-You can download IntelliJ here (https://www.jetbrains.com/idea/download/#section=mac).
+   You can download IntelliJ here (https://www.jetbrains.com/idea/download/#section=mac).
 
 4. Open your git folder as a new project.
 
 5. Edit the database configuration file. Enter your database information in the ‘application.properties’ file. <br> path: RabbitApp/RabbitBack/src/main/resources/application.properties
-    ```
-        spring.datasource.url=CHANGE TO YOUR OWN DB URL
-        spring.datasource.username=CHANGE TO YOUR USERNAME
-        spring.datasource.password=CHANGE TO YOUR PASSWORD
-    ```
+
+   ```
+       spring.datasource.url=CHANGE TO YOUR OWN DB URL
+       spring.datasource.username=CHANGE TO YOUR USERNAME
+       spring.datasource.password=CHANGE TO YOUR PASSWORD
+   ```
 
 6. Add ‘Run Configuration’.
-In this process, you have to set the module to ‘Java 1.8’ and main class as ‘com.purdue.project.RabbitBackApplication’.
+   In this process, you have to set the module to ‘Java 1.8’ and main class as ‘com.purdue.project.RabbitBackApplication’.
 
 7. Run the code.
 
 </div>
 </details>
-
 
 <details>
 <summary>
@@ -164,66 +220,65 @@ You should follow the below instructions.
 
 - To install apache2
 
-    ```
-    sudo apt-get update
-    sudo apt-get install apache2
-    ```
+  ```
+  sudo apt-get update
+  sudo apt-get install apache2
+  ```
 
 - To set rabbit.conf file to main conf in '/etc/apache2/sites-available'
 
-    ```
-    sudo a2dissite 000-default
-    sudo a2ensite rabbit
-    ```
+  ```
+  sudo a2dissite 000-default
+  sudo a2ensite rabbit
+  ```
 
 - To open port 80
 
-    ```
-    iptables -I INPUT 1 -p tcp --dport 80 -j ACCEPT
-    sudo ufw allow 80/tcp
-    ```
+  ```
+  iptables -I INPUT 1 -p tcp --dport 80 -j ACCEPT
+  sudo ufw allow 80/tcp
+  ```
 
 - To run code, install python packages
 
-    ```
-    pip install flask
-    pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib
-    pip install oauth2client
-    pip install pandas
-    pip install numpy
-    pip install osmnx
-    pip install networkx
-    pip install matplotlib==3.1.3
-    pip install plot
-    pip install plotly
-    pip install -U scikit-learn
-    sudo apt-get install python-dev default-libmysqlclient-dev libssl-dev
-    pip install flask-mysqldb
-    pip install shapely
-    pip install geopandas
-    pip install Flask-API
-    pip install pycaret
-    ```
+  ```
+  pip install flask
+  pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib
+  pip install oauth2client
+  pip install pandas
+  pip install numpy
+  pip install osmnx
+  pip install networkx
+  pip install matplotlib==3.1.3
+  pip install plot
+  pip install plotly
+  pip install -U scikit-learn
+  sudo apt-get install python-dev default-libmysqlclient-dev libssl-dev
+  pip install flask-mysqldb
+  pip install shapely
+  pip install geopandas
+  pip install Flask-API
+  pip install pycaret
+  ```
 
 - To get Google Drive API credentials file
 
-    [How to get credentials file](https://developers.google.com/drive/api/quickstart/python)
-    
-    → From this, you can get a credentials file. Then rename the file to 'client_secret.json'<br>
-    → After you run this code once, you can get the token_drive_v3.pickle file. Then run again to start normally.
+  [How to get credentials file](https://developers.google.com/drive/api/quickstart/python)
 
+  → From this, you can get a credentials file. Then rename the file to 'client_secret.json'<br>
+  → After you run this code once, you can get the token_drive_v3.pickle file. Then run again to start normally.
 
 - For new generated token_drive_v3.pickle file
 
-    ```
-    sudo chmod token_drive_v3.pickle 777
-    ```
+  ```
+  sudo chmod token_drive_v3.pickle 777
+  ```
 
 - To (re)start apache2
 
-    ```
-    sudo systemctl restart apache2
-    ```
+  ```
+  sudo systemctl restart apache2
+  ```
 
 </div>
 </details>
