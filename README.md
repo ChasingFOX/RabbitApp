@@ -100,6 +100,7 @@ npm start
 <summary>
 Folder Structure
 </summary>
+
 1. android: android native folder
 2. ios: ios native folder
 3. node_modules: node library
@@ -113,6 +114,7 @@ Folder Structure
 <summary>
 After load an application
 </summary>
+
 1. Reloading with cmd + R
 2. Debug menu with cmd + D
 3. Developer tools available with Debugging with Chrome
