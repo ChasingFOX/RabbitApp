@@ -122,6 +122,19 @@ Folder Structure
 9. Android/app/src/main/java/com/fooddeliveryapp/mainActivity.java: Android activity to execute react code via js engine + bridge
 
 <summary>
+React Native Folder Structure
+</summary>
+
+1. src/assets: images, fonts, etc
+2. src/pages: components per page
+3. src/components: Other components
+4. src/constants: polygon data
+5. src/modules: native module
+6. src/store: redux store setting
+7. src/slices: redux slice
+8. types:type definition
+
+<summary>
 After load an application
 </summary>
 
