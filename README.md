@@ -66,15 +66,15 @@ JDK(Java): 11
 ffi
 ```
 
-<summary>
- First setting
- </summary>
+## First setting
+
 [Official Document] (https://reactative.dev/)
+
 - Initial setting: [must follow] (https://reactative.dev/docs/environment-setup)
 - java 17 version should not be installed (11 version should be installed), and environmental variables should be set well (JAVA_HOME)
 - Must have Android SDK 30. Receive virtual machines with Nexus 5
-- - [adb](https://developer.android.com/studio/releases/platform-tools) install
-- - [m1 mac setting](https://qnrjs42.blog/react-native/m1-arm64-setting)
+- [adb](https://developer.android.com/studio/releases/platform-tools) install
+- [m1 mac setting](https://qnrjs42.blog/react-native/m1-arm64-setting)
 
 If the following error occurs during installation, you have to type
 
