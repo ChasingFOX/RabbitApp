@@ -12,13 +12,13 @@ Navigation Algorithm & Service that guides you to avoid dangerous area
 
 ## Result of This Project
 
-Video
+### Video
 
 [Application Activation Video](https://youtu.be/Z5gqHrr86ao)
 
-Image
+### Image
 
-![resultApp](https://user-images.githubusercontent.com/74031620/208217084-8373ec6c-0d0b-4eaf-be46-bde740060fe5.png)
+![overview](https://user-images.githubusercontent.com/74031620/208305111-8af3da1a-50a7-4ec4-a537-3d21107b6092.png)
 
 ## Goal of Rabbit
 
@@ -70,11 +70,14 @@ JDK(Java): 11
 ffi
 ```
 
-<summary>First setting</summary>
+<details>
+<summary>
+⚙ Front-end manual
+</summary>
 
-[Official Document] (https://reactative.dev/)
+- First setting <br> [Official Document](https://reactnative.dev/)
 
-1. Initial setting: [must follow] (https://reactative.dev/docs/environment-setup)
+1. Initial setting: [must follow](https://reactnative.dev/docs/environment-setup)
 2. java 17 version should not be installed (11 version should be installed), and environmental variables should be set well (JAVA_HOME)
 3. Must have Android SDK 30. Receive virtual machines with Nexus 5
 4. [adb](https://developer.android.com/studio/releases/platform-tools) install
@@ -128,9 +131,7 @@ android:value="Google Map API Key"
 [GMSServices provideAPIKey:@"Google Map API Key"]
 ```
 
-<summary>
-Folder Structure
-</summary>
+- Folder Structure
 
 1. android: android native folder
 2. ios: ios native folder
@@ -142,9 +143,8 @@ Folder Structure
 8. tscconfig.json: TypeScript settings
 9. Android/app/src/main/java/com/fooddeliveryapp/mainActivity.java: Android activity to execute react code via js engine + bridge
 
-<summary>
-React Native Folder Structure
-</summary>
+
+- React Native Folder Structure
 
 1. src/assets: images, fonts, etc
 2. src/pages: components per page
@@ -155,15 +155,16 @@ React Native Folder Structure
 7. src/slices: redux slice
 8. types:type definition
 
-<summary>
-After load an application
-</summary>
+
+- After load an application
 
 1. Reloading with cmd + R
 2. Debug menu with cmd + D
 3. Developer tools available with Debugging with Chrome
 4. Configure Bundler allows you to change the metro server port
 5. Show Perf Monitor lets you measure frames
+</details>
+
 
 ## Back-end
 
