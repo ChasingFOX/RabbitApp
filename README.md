@@ -1,6 +1,6 @@
 # Project Rabbit
 
-The application that recommends a safe route for pedestrian by predicting the riskiness of the roads. 
+The application that recommends a safe route for pedestrian by predicting the riskiness of the roads.
 
 ## Team ChasingFox
 
@@ -83,13 +83,13 @@ ffi
 2. java 17 version should not be installed (11 version should be installed), and environmental variables should be set well (JAVA_HOME)
 3. Must have Android SDK 30. Receive virtual machines with Nexus 5
 4. [adb](https://developer.android.com/studio/releases/platform-tools) install
-5. [m1 mac setting](https://qnrjs42.blog/react-native/m1-arm64-setting)
+5. [m1 mac setting](https://dev.to/leofolive/setup-macbook-m1-for-react-native-development-4ca7)
 
 If the following error occurs during installation
 
 ```
 error Error: Failed to install CocoaPods dependencies for iOS project, which is required by this template.
-Please try again manually: "cd ./FoodDeliveryApp/ios && pod install".
+Please try again manually: "cd ./RabbitApp/RabbitFront/ios && pod install".
 ```
 
 You have to enter the command below.
@@ -114,11 +114,12 @@ npm start
 ```
 
 To protect API address values and Google Maps API key values, you must create a '.env' file in the 'RabbitFront' folder.
+[Google Map API](https://console.cloud.google.com/welcome?project=velvety-pagoda-363113)
 
 ```shell
 # ./RabbitApp/RabbitFront/.env
 API_URL='API_URL_VALUE'
-DIRECTION_API_URL='API_URL_VALUE'
+DIRECTION_API_URL='DIRECTION_API_URL_VALUE'
 GOOGLE_API_URL='GOOGLE_MAP_API_URL_VALUE'
 ```
 
@@ -139,58 +140,80 @@ android:value="Google Map API Key"
 ├───📄babel.config
 ├───📄index.js
 ├───📄App.tsx
+├───📄AppInner.tsx
+├───📄app.json
 ├───📄metro.config.js
 ├───📄tscconfig.json
+├───📄package.json
+├───📄package-lock.json
+├───📄.gitignore
+├───📄.env🔐
 ├───📂.bundle
 ├───📂.expo
 ├───📂android
 │   ├───📂app
 │   │   └───📂src
 │   │       ├───📂debug
-│   │       │   └───📂java
-│   │       │       └───📂com
-│   │       │           └───📂rabbitfront
 │   │       └───📂main
 │   │           ├───📂java
 │   │           │   └───📂com
 │   │           │       └───📂rabbitfront
 │   │           │           └───📄MainActivity.java
 │   │           │           └───📂newarchitecture
-│   │           │               ├───📂components
-│   │           │               └───📂modules
 │   │           ├───📂jni
 │   │           └───📂res
-│   │               ├───📂drawable
-│   │               ├───📂layout
-│   │               ├───📂mipmap-hdpi
-│   │               ├───📂mipmap-mdpi
-│   │               ├───📂mipmap-xhdpi
-│   │               ├───📂mipmap-xxhdpi
-│   │               ├───📂mipmap-xxxhdpi
-│   │               └───📂values
 │   └───📂gradle
 │       └───📂wrapper
 ├───📂ios
+│   ├───📂build
+│   │   └───📂src
+│   ├───📂Pods
 │   ├───📂RabbitFront
-│   │   └───📂Images.xcassets
-│   │       ├───📂AppIcon.appiconset
-│   │       └───📂Image.imageset
 │   ├───📂RabbitFront.xcodeproj
-│   │   ├───📂project.xcworkspace
-│   │   │   └───📂xcshareddata
-│   │   └───📂xcshareddata
-│   │       └───📂xcschemes
 │   ├───📂RabbitFront.xcworkspace
-│   │   └───📂xcshareddata
-│   └───📂RabbitFrontTests
+│   ├───📂RabbitFrontTests
+│   ├───📄Podfile.lock
+│   └───📄Podfile
 ├───📂src
 │   ├───📂assets
-│   │   └───📂dataPage
+│   │   ├───📂dataPage
+│   │   ├───📄dataBar.png
+│   │   ├───📄direction.png
+│   │   ├───📄email.png
+│   │   ├───📄foxProfile.png
+│   │   ├───📄logo.png
+│   │   ├───📄line.png
+│   │   ├───📄logoIcon.png
+│   │   ├───📄naviCOlor.png
+│   │   ├───📄navigation.png
+│   │   ├───📄profile.png
+│   │   ├───📄riskiness.png
+│   │   ├───📄search.png
+│   │   ├───📄spectrum.png
+│   │   └───📄warning.png
 │   ├───📂components
+│   │   ├───📄DirectionSheet.tsx
+│   │   └───📄SearchSheet.png
 │   ├───📂constants
+│   │   ├───📄chicagoBondary.json
+│   │   └───📄chicagoCrimeBoundary.json
 │   ├───📂pages
+│   │   ├───📄DataAnalysis.tsx
+│   │   ├───📄Direction.tsx
+│   │   ├───📄Navi.tsx
+│   │   ├───📄NaviPage.tsx
+│   │   ├───📄Profile.tsx
+│   │   ├───📄ProfileEdit.tsx
+│   │   ├───📄ProfilePage.tsx
+│   │   ├───📄SignIn.tsx
+│   │   └───📄SignUp.tsx
 │   ├───📂slices
+│   │   ├───📄directionSlice.ts
+│   │   ├───📄waypointSlice.ts
+│   │   └───📄userSlice.ts
 │   └───📂store
+│   │   ├───📄index.ts
+│   │   └───📄reducer.ts
 └───📂__tests__
 </pre>
 
@@ -206,7 +229,6 @@ android:value="Google Map API Key"
 8. tscconfig.json: TypeScript settings
 9. Android/app/src/main/java/com/rabbitfront/MainActivity.java: Android activity to execute react code via js engine + bridge
 
-
 - React Native Folder Structure
 
 1. src/assets: images, fonts, etc
@@ -218,7 +240,6 @@ android:value="Google Map API Key"
 7. src/slices: redux slice
 8. types:type definition
 
-
 - After load an application
 
 1. Reloading with cmd + R
@@ -227,7 +248,6 @@ android:value="Google Map API Key"
 4. Configure Bundler allows you to change the metro server port
 5. Show Perf Monitor lets you measure frames
 </details>
-
 
 ## Back-end
 
