@@ -276,7 +276,7 @@ Before you run the code, Java 1.8 and IntelliJ are required. And the database is
 1. Install Java 8
    You can download Java 8 here (https://www.oracle.com/java/technologies/downloads/).
 
-2. git clone https://github.com/ChasingFOX/RabbitApp.git
+2. git clone https://github.com/MINJILEE-PURDUE/KSW_2022_Fall_Program.git
 
 3. Open IntelliJ
    You can download IntelliJ here (https://www.jetbrains.com/idea/download/#section=mac).
