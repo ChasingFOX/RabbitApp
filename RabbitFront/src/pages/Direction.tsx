@@ -3,7 +3,7 @@
 import * as React from 'react';
 import {Text, View, StyleSheet, ScrollView} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {useCallback, useState, useRef} from 'react';
+import {useCallback, useState, useRef, useEffect} from 'react';
 import MapView, {
   PROVIDER_GOOGLE,
   Marker,
@@ -14,6 +14,7 @@ import MapViewDirections from 'react-native-maps-directions';
 import {LoggedInParamList} from '../../AppInner';
 import {BottomSheetModal, BottomSheetModalProvider} from '@gorhom/bottom-sheet';
 import DirectionSheet from '../components/DirectionSheet';
+import Geolocation from '@react-native-community/geolocation';
 import {useSelector} from 'react-redux';
 import {RootState} from '../store/reducer';
 import Config from 'react-native-config';
@@ -28,6 +29,14 @@ export type Object = {
 // The main function of Direction page
 function Direction({navigation}: NaviScreenProps) {
   // Codes to store status values
+  const [latitude, setLatitude] = useState(Number);
+  const [longitude, setLogitude] = useState(Number);
+  const [currentLatitude, setCurrentLatitude] = useState(Number);
+  const [currentLongitude, setCurrentLongitude] = useState(Number);
+  const [destinationCoordinates, setDestinationCoordinates] = useState([
+    {latitude: latitude, longitude: longitude},
+  ]);
+
   const [polygonCoordinates, setPolygonCoordinates] = useState(
     JSON.parse(String(polygonData)).Assualt,
   );
@@ -58,6 +67,23 @@ function Direction({navigation}: NaviScreenProps) {
     {id: 10, type: 'Stalking'},
     {id: 11, type: 'Weapon'},
   ];
+
+  useEffect(() => {
+    Geolocation.getCurrentPosition(
+      position => {
+        const latitude = JSON.stringify(position.coords.latitude);
+        const longitude = JSON.stringify(position.coords.longitude);
+        setLatitude(Number(latitude));
+        setLogitude(Number(longitude));
+        setCurrentLatitude(Number(latitude));
+        setCurrentLongitude(Number(longitude));
+      },
+      error => {
+        console.log(error.code, error.message);
+      },
+      {enableHighAccuracy: true, timeout: 50000, maximumAge: 10000},
+    );
+  }, []);
 
   const bottomSheetRef = useRef<BottomSheetModal>(null);
 
