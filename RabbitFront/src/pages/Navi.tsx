@@ -1,104 +1,43 @@
-// Navigation Tab Code
+// The Main Tab Code
 
 import * as React from 'react';
-import {
-  Text,
-  TouchableHighlight,
-  View,
-  TouchableOpacity,
-  Platform,
-  StyleSheet,
-  Linking,
-  Image,
-  Alert,
-} from 'react-native';
+import {Text, View, StyleSheet, Image, Alert} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {useCallback, useState, useEffect, useRef} from 'react';
 import Geolocation from '@react-native-community/geolocation';
 import MapView, {
   PROVIDER_GOOGLE,
-  PROVIDER_DEFAULT,
   Marker,
   Polygon,
   LatLng,
 } from 'react-native-maps';
-import MapViewDirections from 'react-native-maps-directions';
 import {NaviPageParamList} from './NaviPage';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 import {BottomSheetModal, BottomSheetModalProvider} from '@gorhom/bottom-sheet';
 import SearchSheet from '../components/SearchSheet';
 import {useAppDispatch} from '../store';
 import directionSlice from '../slices/directionSlice';
-import polygonData from '../constants/crime_polygon_vector_dict4.json';
+import polygonData from '../constants/chicagoCrimeBoundary.json';
 import {ScrollView} from 'react-native-gesture-handler';
 import Config from 'react-native-config';
 import chicagoPolygonData from '../constants/chicagoBoundary.json';
 
 type SearchScreenProps = NativeStackScreenProps<NaviPageParamList, 'Search'>;
 
+// The main function of Main page
 function Search({navigation}: SearchScreenProps) {
+  // Codes to store status values
   const [latitude, setLatitude] = useState(Number);
   const [longitude, setLongitude] = useState(Number);
-  const [currentLatitude, setCurrentLatitude] = useState(Number);
-  const [currentLongitude, setCurrentLongitude] = useState(Number);
-  const [arrivalCoordinates, setArrivalCoordinates] = useState([
-    {latitude: 0, longitude: 0},
-  ]);
+  const [destinationName, setDestinationName] = useState<string>('');
   const [destinationCoordinates, setDestinationCoordinates] = useState([
     {latitude: 0, longitude: 0},
   ]);
-  // Mandatory coordinates to get a safery route
-  const [directionCoordinates, setDirectionCoordinates] = useState([
-    {
-      latitude: 40.423999345292046,
-      longitude: -86.91371893175639,
-    },
-    {
-      latitude: 40.42119341508705,
-      longitude: -86.91781885879092,
-    },
-    {
-      latitude: 40.42119341508705,
-      longitude: -86.91781885879092,
-    },
-    {
-      latitude: 40.42732532443506,
-      longitude: -86.92463136381483,
-    },
-    {
-      latitude: 40.43249524031551,
-      longitude: -86.9269298077754,
-    },
-    {
-      latitude: 40.446337675508566,
-      longitude: -86.92821177376851,
-    },
-    {
-      latitude: 40.45851363603605,
-      longitude: -86.93213657343334,
-    },
-    {latitude: 40.47381839642305, longitude: -86.94624699630066},
-  ]);
-
+  // Mandatory coordinates to get a safety route
   const [polygonCoordinates, setPolygonCoordinates] = useState(
     JSON.parse(String(polygonData)).Assualt,
   );
-
   const [delta, setDelta] = useState(0.7);
-
-  const crimetype = [
-    {id: 1, type: 'Assualt'},
-    {id: 2, type: 'Battery'},
-    {id: 3, type: 'Homicide'},
-    {id: 4, type: 'Human Tracking'},
-    {id: 5, type: 'Kidnapping'},
-    {id: 6, type: 'Narcotics'},
-    {id: 7, type: 'Public Indecency'},
-    {id: 8, type: 'Robbery'},
-    {id: 9, type: 'Sexual'},
-    {id: 10, type: 'Stalking'},
-    {id: 11, type: 'Weapon'},
-  ];
   const [polygonButton, setPolygonButton] = useState([
     true,
     false,
@@ -113,40 +52,53 @@ function Search({navigation}: SearchScreenProps) {
     false,
   ]);
 
+  const crimetype = [
+    {id: 1, type: 'Assualt'},
+    {id: 2, type: 'Battery'},
+    {id: 3, type: 'Homicide'},
+    {id: 4, type: 'Human Tracking'},
+    {id: 5, type: 'Kidnapping'},
+    {id: 6, type: 'Narcotics'},
+    {id: 7, type: 'Public Indecency'},
+    {id: 8, type: 'Robbery'},
+    {id: 9, type: 'Sexual'},
+    {id: 10, type: 'Stalking'},
+    {id: 11, type: 'Weapon'},
+  ];
+
   const bottomSheetRef = useRef<BottomSheetModal>(null);
 
+  // Code to communicate with global repository(Redux)
   const dispatch = useAppDispatch();
-  // callbacks
+
+  // The callbacks function that tells you if the bottom sheet is loaded.
   const handleSheetChanges = useCallback((index: number) => {
-    console.log('handleSheetChanges', index);
     if (index == -1) {
       Alert.alert('Please re-enter your Departure and Destination');
       setData();
     }
   }, []);
-  // Code to get current location
 
+  // Code that is called only once when the direction page is loaded.
   useEffect(() => {
     setData();
   }, []);
 
   const setData = useCallback(() => {
+    // Code to get current location using Geolocation library.
     Geolocation.getCurrentPosition(
       position => {
         const latitude = JSON.stringify(position.coords.latitude);
         const longitude = JSON.stringify(position.coords.longitude);
         setLatitude(Number(latitude));
         setLongitude(Number(longitude));
-        // 해결해야됨 왜 무한 렌더링이 되지?
-
-        // setCurrentLatitude(Number(latitude));
-        // setCurrentLongitude(Number(longitude));
         setDestinationCoordinates([
           {
             latitude: 41.860204751890926,
             longitude: -87.6715530335327,
           },
         ]);
+        // Code Store your current location in a global storage
         dispatch(
           directionSlice.actions.setDeparturePosition({
             departurePosition: {
@@ -156,15 +108,12 @@ function Search({navigation}: SearchScreenProps) {
           }),
         );
       },
-      error => {
-        console.log(error.code, error.message);
-      },
+      error => {},
       {enableHighAccuracy: true, timeout: 50000, maximumAge: 10000},
     );
   }, [latitude, longitude, destinationCoordinates]);
 
-  const [destinationName, setDestinationName] = useState<string>('');
-
+  // The function to draw a crime risk polygon when user clicks the polygon button.
   const onPolygon = (crimeType: string) => {
     switch (crimeType) {
       case 'Assualt':
@@ -203,6 +152,7 @@ function Search({navigation}: SearchScreenProps) {
     }
   };
 
+  // Code to change the polygon button color when user clicks the polygon button.
   const polygonButtonClick = useCallback(
     (idx: Number) => {
       setPolygonButton(prev =>
@@ -210,7 +160,6 @@ function Search({navigation}: SearchScreenProps) {
           return index === idx ? !element : false;
         }),
       );
-      console.log('polygonButton', polygonButton);
     },
     [polygonButton],
   );
@@ -218,6 +167,7 @@ function Search({navigation}: SearchScreenProps) {
   return (
     <BottomSheetModalProvider>
       <View style={{height: '100%', flex: 1, justifyContent: 'flex-start'}}>
+        {/* Bottom seat modal that appears when the origin and destination are entered */}
         <BottomSheetModal
           ref={bottomSheetRef}
           index={1}
@@ -234,6 +184,8 @@ function Search({navigation}: SearchScreenProps) {
             shadowOpacity: 1,
             shadowRadius: 7,
           }}>
+          {/* Components drawn within the bottom sheet modal.
+           The destination name and coordinates of the destination are Transferred to Props. */}
           <SearchSheet
             destination={destinationName}
             destinationCoordinate={destinationCoordinates}
@@ -245,10 +197,7 @@ function Search({navigation}: SearchScreenProps) {
           showsMyLocationButton={true}
           showsUserLocation={true}
           followsUserLocation
-          provider={
-            // Platform.OS === 'android' ? PROVIDER_GOOGLE : PROVIDER_DEFAULT
-            PROVIDER_GOOGLE
-          }
+          provider={PROVIDER_GOOGLE}
           region={{
             latitude: destinationCoordinates[0].latitude,
             longitude: destinationCoordinates[0].longitude,
@@ -256,16 +205,15 @@ function Search({navigation}: SearchScreenProps) {
             longitudeDelta: delta,
           }}
           onRegionChangeComplete={() => {}}>
-          {}
-
           <Marker coordinate={destinationCoordinates[0]} />
-
+          {/* Code to draw polygons all over Chicago */}
           <Polygon
             coordinates={chicagoPolygonData}
             strokeColor="black" // fallback for when `strokeColors` is not supported by the map-provider
             fillColor="rgba(0, 0, 0, 0.05)"
             strokeWidth={1}
           />
+          {/* Code for navigating the coordinates of the Chicago area range using a repeat statement */}
           {polygonCoordinates.map((item: LatLng[], index: number) => {
             return (
               <Polygon
@@ -278,13 +226,14 @@ function Search({navigation}: SearchScreenProps) {
             );
           })}
         </MapView>
-        {/* Code to search direction location */}
-        <View style={styles.test}>
+        {/* Code to search departure coordinate */}
+        <View style={styles.container}>
           <View style={styles.searchBox}>
             <Image
               source={require('../assets/search.png')}
               style={styles.searchIcon}
             />
+            {/* Code to search for locations using GooglePlacesAutocomplete library */}
             <GooglePlacesAutocomplete
               GooglePlacesDetailsQuery={{fields: 'geometry'}}
               fetchDetails={true}
@@ -302,13 +251,9 @@ function Search({navigation}: SearchScreenProps) {
                     longitude: Number(details?.geometry?.location.lng),
                   },
                 ];
-
                 setDelta(0.005);
-
-                //출발지 테스트
-
                 setDestinationCoordinates(destinationLocation);
-
+                // Code Store departure coordinate in a global storage
                 dispatch(
                   directionSlice.actions.setDeparturePosition({
                     departurePosition: {
@@ -317,13 +262,12 @@ function Search({navigation}: SearchScreenProps) {
                     },
                   }),
                 );
+                // Code Store departure name in a global storage
                 dispatch(
                   directionSlice.actions.setDepartureName({
                     departureName: data.structured_formatting.main_text,
                   }),
                 );
-                // console.log('----', details?.geometry?.location.lat);
-                // console.log('----', details?.geometry?.location.lng);
               }}
               styles={{
                 textInputContainer: {
@@ -343,29 +287,30 @@ function Search({navigation}: SearchScreenProps) {
               }}
             />
           </View>
+          {/* Code to search destination coordinate */}
           <View style={styles.searchBox}>
             <Image
               source={require('../assets/search.png')}
               style={styles.searchIcon}
             />
+            {/* Code to search for locations using GooglePlacesAutocomplete library */}
             <GooglePlacesAutocomplete
               GooglePlacesDetailsQuery={{fields: 'geometry'}}
               fetchDetails={true}
               placeholder="Search your place of Arrival"
               enablePoweredByContainer={false}
               onPress={(data, desDetails = null) => {
+                // Use current location and destination data for each page and store it in the reader's repository
                 const destinationLocation = [
                   {
                     latitude: Number(desDetails?.geometry?.location.lat),
                     longitude: Number(desDetails?.geometry?.location.lng),
                   },
                 ];
-
                 setDestinationCoordinates(destinationLocation);
                 setDestinationName(data.description);
                 setDelta(0.005);
-
-                // Use current location and destination data for each page and store it in the reader's repository
+                // Code Store destination coordinate in a global storage
                 dispatch(
                   directionSlice.actions.setArrivalPosition({
                     arrivalPosition: {
@@ -379,7 +324,7 @@ function Search({navigation}: SearchScreenProps) {
                     arrivalName: data.structured_formatting.main_text,
                   }),
                 );
-
+                // Code that shows Bottom seat modal when destination is entered
                 bottomSheetRef.current?.present();
               }}
               query={{
@@ -395,7 +340,6 @@ function Search({navigation}: SearchScreenProps) {
                 },
                 textInput: {
                   height: 38,
-
                   color: '#5d5d5d',
                   fontSize: 16,
                 },
@@ -405,6 +349,7 @@ function Search({navigation}: SearchScreenProps) {
               }}
             />
           </View>
+          {/* Code for displaying polygon buttons */}
           <ScrollView horizontal={true} style={styles.polygonContainer}>
             {crimetype.map((item, index) => {
               return (
@@ -447,7 +392,7 @@ const styles = StyleSheet.create({
   map: {
     ...StyleSheet.absoluteFillObject,
   },
-  test: {
+  container: {
     display: 'flex',
   },
   searchBox: {

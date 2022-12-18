@@ -1,3 +1,5 @@
+// Code to initialize global storage of wayPoint information
+
 import {createSlice} from '@reduxjs/toolkit';
 
 const data = [

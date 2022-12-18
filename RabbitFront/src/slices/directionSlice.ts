@@ -1,3 +1,5 @@
+// Code to initialize global storage
+
 import {createSlice} from '@reduxjs/toolkit';
 
 const initialState = {

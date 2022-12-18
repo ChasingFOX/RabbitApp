@@ -1,5 +1,4 @@
 import {combineReducers} from 'redux';
-
 import userSlice from '../slices/userSlice';
 import directionSlice from '../slices/directionSlice';
 import waypointSlice from '../slices/waypointSlice';

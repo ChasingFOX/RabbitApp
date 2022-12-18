@@ -1,12 +1,7 @@
+// The Profile Tab Code
+
 import * as React from 'react';
-import {
-  Text,
-  TouchableHighlight,
-  View,
-  StyleSheet,
-  ScrollView,
-  Image,
-} from 'react-native';
+import {Text, View, StyleSheet, Image, Alert} from 'react-native';
 import {useCallback, useState, useEffect} from 'react';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {ProfilePageParamList} from './ProfilePage';
@@ -20,21 +15,9 @@ type ProfileMainParamList = NativeStackScreenProps<
   'ProfileMain'
 >;
 
+// The main function of Profile page
 function Profile({navigation}: ProfileMainParamList) {
-  const crimetype = [
-    {id: 1, type: 'Assualt'},
-    {id: 2, type: 'Battery'},
-    {id: 3, type: 'Homicide'},
-    {id: 4, type: 'Human Tracking'},
-    {id: 5, type: 'Kidnapping'},
-    {id: 6, type: 'Narcotics'},
-    {id: 7, type: 'Public Indecency'},
-    {id: 8, type: 'Robbery'},
-    {id: 9, type: 'Sexual'},
-    {id: 10, type: 'Stalking'},
-    {id: 11, type: 'Weapon'},
-  ];
-
+  // Codes to store status values
   const [crime, setCrime] = useState<String>('');
   const [isClicked, setIsClicked] = useState([
     false,
@@ -49,54 +32,68 @@ function Profile({navigation}: ProfileMainParamList) {
     false,
     false,
   ]);
-
   const [nickName, setNickName] = useState<String>('');
   const [email, setEmail] = useState([]);
 
+  const crimetype = [
+    {id: 1, type: 'Assualt'},
+    {id: 2, type: 'Battery'},
+    {id: 3, type: 'Homicide'},
+    {id: 4, type: 'Human Tracking'},
+    {id: 5, type: 'Kidnapping'},
+    {id: 6, type: 'Narcotics'},
+    {id: 7, type: 'Public Indecency'},
+    {id: 8, type: 'Robbery'},
+    {id: 9, type: 'Sexual'},
+    {id: 10, type: 'Stalking'},
+    {id: 11, type: 'Weapon'},
+  ];
+
+  // Code to determine whether the page is currently loaded or not
   const isFocused = useIsFocused();
 
+  // Code to get the user's information from DB each time the page is loaded
   useEffect(() => {
     getUserInfo();
   }, [isFocused]);
-
-  // const [crime, setCrime] = useState([]);
-
-  const onEdit = useCallback(async () => {
-    navigation.navigate('ProfileEdit');
-    const userId = await EncryptedStorage.getItem('id');
-    console.log(userId);
-  }, [navigation]);
-
-  const getUserInfo = useCallback(async () => {
-    const userId = await EncryptedStorage.getItem('id');
-    try {
-      {
-        const response = await axios.get(
-          `${Config.API_URL}/api/user/${userId}`,
-        );
-        setEmail(response.data.email);
-        setNickName(response.data.nickname);
-        setCrime(response.data.crime);
-      }
-    } catch (error) {
-      const errorResponse = (error as AxiosError).response;
-      console.log('error', errorResponse);
-      if (errorResponse) {
-      }
-    } finally {
-    }
-  }, [email, nickName, isClicked]);
 
   useEffect(() => {
     let newArr = [...isClicked];
     if (crime !== '') {
       crime.split(',').map((item: String) => {
         newArr[Number(item)] = true;
-        console.log('newArr', newArr);
       }, []);
     }
     setIsClicked(newArr);
   }, [crime]);
+
+  // The function that moves the screen when user clicks the Profile Edit button
+  const onEdit = useCallback(async () => {
+    navigation.navigate('ProfileEdit');
+  }, [navigation]);
+
+  // The function that get the user's information from DB and stores it in the state value.
+  const getUserInfo = useCallback(async () => {
+    const userId = await EncryptedStorage.getItem('id');
+    // Code that uses axios to communicate with the server to get user information
+    try {
+      {
+        const response = await axios.get(
+          `${Config.API_URL}/api/user/${userId}`,
+        );
+        // Code that stores it in the state value
+        setEmail(response.data.email);
+        setNickName(response.data.nickname);
+        setCrime(response.data.crime);
+      }
+    } catch (error) {
+      const errorResponse = (error as AxiosError).response;
+      Alert.alert('error');
+      if (errorResponse) {
+      }
+    } finally {
+    }
+  }, [email, nickName, isClicked]);
 
   getUserInfo();
 
@@ -119,6 +116,7 @@ function Profile({navigation}: ProfileMainParamList) {
           </View>
         </View>
         <Text style={styles.profileHead}>| Crimes you want to avoid</Text>
+        {/* Code to generate a button in the Crime Container */}
         <View style={styles.crimeContainer}>
           {crimetype.map((item, index) => {
             return (
@@ -158,6 +156,7 @@ function Profile({navigation}: ProfileMainParamList) {
   );
 }
 
+//  Css apply Code
 const styles = StyleSheet.create({
   container: {
     backgroundColor: 'white',
@@ -188,7 +187,7 @@ const styles = StyleSheet.create({
     flexWrap: 'nowrap',
   },
   crimeContainer: {
-    width: '90%',
+    width: '100%',
     height: 250,
     display: 'flex',
     backgroundColor: 'white',
@@ -307,9 +306,6 @@ const styles = StyleSheet.create({
     borderColor: 'grey',
     borderWidth: 1,
     shadowOffset: {width: 1, height: 3},
-    // shadowColor: 'black',
-    // shadowRadius: 2,
-    // shadowOpacity: 0.6,
   },
   editButtonText: {
     color: 'white',
