@@ -114,7 +114,7 @@ npm start
 ```
 
 To protect API address values and Google Maps API key values, you must create a '.env' file in the 'RabbitFront' folder.
-[Google Map API](https://console.cloud.google.com/welcome?project=velvety-pagoda-363113)
+You should get Google Map API key here [Google Map API](https://console.cloud.google.com/welcome?project=velvety-pagoda-363113)
 
 ```shell
 # ./RabbitApp/RabbitFront/.env
