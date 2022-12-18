@@ -107,6 +107,24 @@ If the Metro server is turned off, open another terminal.
 npm start
 ```
 
+To protect API address values and Google Maps API key values, you must create a '.env' file in the 'RabbitFront' folder.
+
+````shell
+# ./RabbitApp/RabbitFront/.env
+API_URL='API_URL_VALUE'
+DIRECTION_API_URL='API_URL_VALUE'
+GOOGLE_API_URL='GOOGLE_MAP_API_URL_VALUE'
+
+In order to display Google Maps, you must enter GOOGLE MAP API KEY in the file below.
+``` shell
+# ./RabbitApp/RabbitFront/android/app/src/main/AndroidManifest.xml
+...
+android:value="Google Map API Key"
+...
+# ./RabbitApp/RabbitFront/ios/RabbitFront/AppDelegate.mm
+[GMSServices provideAPIKey:@"Google Map API Key"]
+````
+
 <summary>
 Folder Structure
 </summary>
