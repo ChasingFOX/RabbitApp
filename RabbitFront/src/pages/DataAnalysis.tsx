@@ -1,12 +1,10 @@
-// Data Tab Code
+// TheData Page Code
 
 import * as React from 'react';
-import {Text, TouchableHighlight, View, Image, StyleSheet} from 'react-native';
+import {Text, View, Image, StyleSheet} from 'react-native';
 import {useCallback, useState} from 'react';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {LoggedInParamList} from '../../AppInner';
-import Config from 'react-native-config';
-import axios, {AxiosError} from 'axios';
 import {Dropdown} from 'react-native-element-dropdown';
 import {ScrollView} from 'react-native-gesture-handler';
 
@@ -30,10 +28,12 @@ const data = [
   {label: 'Tree Trimes Request', value: 'Tree_Trimes_Request'},
 ];
 
+//  The main function of Data Analysis Page
 function Data({navigation}: SearchScreenProps) {
   const [value, setValue] = useState('Abandoned_Building');
   const [isFocus, setIsFocus] = useState(false);
 
+  // Callback function to draw an image on the screen according to the prop
   const onImage = useCallback(() => {
     switch (value) {
       case 'Abandoned_Building':
@@ -144,12 +144,6 @@ function Data({navigation}: SearchScreenProps) {
     }
   }, [value]);
 
-  const renderLabel = () => {
-    if (value || isFocus) {
-      return <Text style={[styles.label, isFocus && {color: 'blue'}]}></Text>;
-    }
-    return null;
-  };
   return (
     <View style={styles.container}>
       <View>
@@ -157,7 +151,7 @@ function Data({navigation}: SearchScreenProps) {
           2018 crime density with urban factor data, which is used to predict
           2019 crime density
         </Text>
-
+        {/* Draw component to select Urban factor */}
         <Dropdown
           style={[styles.dropdown, isFocus && {borderColor: 'blue'}]}
           placeholderStyle={styles.placeholderStyle}
@@ -175,18 +169,17 @@ function Data({navigation}: SearchScreenProps) {
           onFocus={() => setIsFocus(true)}
           onBlur={() => setIsFocus(false)}
           onChange={item => {
-            console.log('item', item);
             setValue(item.value);
             setIsFocus(false);
           }}
         />
       </View>
-
       <ScrollView>{onImage()}</ScrollView>
     </View>
   );
 }
 
+// CSS Code
 const styles = StyleSheet.create({
   container: {
     width: '100%',

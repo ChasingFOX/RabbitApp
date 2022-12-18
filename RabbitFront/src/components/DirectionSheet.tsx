@@ -1,3 +1,5 @@
+// The Direction sheet component code of bottom sheet modal
+
 import * as React from 'react';
 import {Image, StyleSheet, Text, View, Linking, Alert} from 'react-native';
 import {useCallback} from 'react';
@@ -9,9 +11,11 @@ export interface DircetionSheetProps {
   route: string;
 }
 
+//  The main function of Direction sheet Page
 const DirectionSheet = ({route}: DircetionSheetProps) => {
+  // Code to communicate with global repository(Redux)
   const dispatch = useAppDispatch();
-
+  // Code that changes the value of the global repository each time a path is selected
   const handleWaypoint = (type: string) => {
     if (type == 'Safe') {
       dispatch(
@@ -43,26 +47,22 @@ const DirectionSheet = ({route}: DircetionSheetProps) => {
     }
   };
 
+  // Code to load values from global storage
   const waypointChecked = useSelector(
     (state: RootState) => state.waypoint.wayPointChecked,
   );
-
   const arrivalName = useSelector(
     (state: RootState) => state.direction.arrivalName,
   );
-
   const arrivalPosition = useSelector(
     (state: RootState) => state.direction.arrivalPosition,
   );
-
   const departureName = useSelector(
     (state: RootState) => state.direction.departureName,
   );
-
   const departurePosition = useSelector(
     (state: RootState) => state.direction.departurePosition,
   );
-
   const safeWaypoint = useSelector(
     (state: RootState) => state.waypoint.safeWaypoint,
   );
@@ -88,14 +88,15 @@ const DirectionSheet = ({route}: DircetionSheetProps) => {
     (state: RootState) => state.waypoint.shortestWaypointRiskiness,
   );
 
+  // The function executed when the navigation button is clicked
   const onNavigation = useCallback(routeType => {
+    // Code to preprocess Waypoint values and forward them to Google Map App
     let naviWaypoint: (string | number)[] = [];
     routeType.map((item: {latitude: number; longitude: number}) => {
       naviWaypoint.push(item.latitude);
       naviWaypoint.push(item.longitude);
       naviWaypoint.push('%7C');
     });
-
     Linking.openURL(
       `https://www.google.com/maps/dir/?api=1&origin=${
         departurePosition.latitude
@@ -373,6 +374,7 @@ const DirectionSheet = ({route}: DircetionSheetProps) => {
   );
 };
 
+// Css apply Code
 const styles = StyleSheet.create({
   container: {
     flex: 1,

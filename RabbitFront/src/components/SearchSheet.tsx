@@ -1,3 +1,5 @@
+// The Search sheet component code of bottom sheet modal
+
 import * as React from 'react';
 import {
   Image,
@@ -5,15 +7,13 @@ import {
   Text,
   TouchableHighlight,
   View,
-  Linking,
   Alert,
   ActivityIndicator,
 } from 'react-native';
 import {useCallback, useState} from 'react';
-import Geolocation from '@react-native-community/geolocation';
 import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {NaviPageParamList} from '../pages/NaviPage';
-import axios, {AxiosError, AxiosResponse} from 'axios';
+import axios, {AxiosError} from 'axios';
 import Config from 'react-native-config';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import {useSelector} from 'react-redux';
@@ -26,12 +26,15 @@ export interface SearchSheetProps {
   destinationCoordinate: {};
 }
 
+//  The main function of Search sheet Page
 const SearchSheet = (
   {destination}: SearchSheetProps,
   {destinationCoordinate}: SearchSheetProps,
 ) => {
   const navigation = useNavigation<NavigationProp<NaviPageParamList>>();
+  // Codes to store status values
   const [loading, setLoading] = useState(false);
+  // Code to load values from global storage
   const departurePosition = useSelector(
     (state: RootState) => state.direction.departurePosition,
   );
@@ -39,8 +42,10 @@ const SearchSheet = (
     (state: RootState) => state.direction.arrivalPosition,
   );
 
+  // Code to communicate with global repository(Redux)
   const dispatch = useAppDispatch();
 
+  // The function that stores the coordinate values of the recommendation route received from the server in the global repository
   const dispatchWaypont = useCallback(response => {
     dispatch(
       waypointSlice.actions.setWaypoint({
@@ -77,13 +82,14 @@ const SearchSheet = (
     );
   }, []);
 
+  // Code executed when the Direction request button is clicked
   const onDirection = useCallback(async () => {
+    // Code to load UserId stored in local store
     const userId = await EncryptedStorage.getItem('id');
+    // Code that uses axios to communicate with the server to post route coordinate
     try {
       {
         setLoading(true);
-        console.log('search-dep', departurePosition);
-        console.log('search-arr', arrivalPosition);
         const response = await axios.post(
           `${Config.DIRECTION_API_URL}/api/navi`,
           {
@@ -99,29 +105,16 @@ const SearchSheet = (
           },
         );
 
-        console.log('response', response);
-        console.log('response.data.short.waypoint', response.data);
-        console.log(
-          'response.data.shortest.waypoint',
-          response.data.shortest.waypoint,
-        );
-        console.log('response.data.safe.waypoint', response.data.safe.waypoint);
-        console.log(
-          'response.data.safetest.waypoint',
-          response.data.safetest.waypoint,
-        );
-
         dispatchWaypont(response);
         setLoading(false);
 
+        // Code to go to the path recommendation page at the end of communication with the server
         navigation.navigate('Direction');
       }
     } catch (error) {
       const errorResponse = (error as AxiosError).response;
-      console.log('error');
 
       if (errorResponse) {
-        console.log('error', errorResponse);
         Alert.alert('error', errorResponse.data);
       }
       setLoading(false);
@@ -162,6 +155,7 @@ const SearchSheet = (
   );
 };
 
+// Css apply Code
 const styles = StyleSheet.create({
   container: {
     flex: 1,
