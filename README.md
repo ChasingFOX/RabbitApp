@@ -37,14 +37,13 @@ Public safety is one of the most significant concerns in the United States since
 (3) The personal risk perception to the type of crime was considered to define the road riskiness score. This can make application to recommend the personal safety route. It was applied in the direction(or route) recommendation service of the application.
 
 ## Dataset Collection
-1 types of crime data : Crimes_-_2001_to_Present
+1 type of crime data : Crimes_-_2001_to_Present
 
 6 types of city facility data : Fire Station, Library, Police Station, Public School, Support Service Delegate Agency, CTA Bus Stop
 
-10 types of service request data : Abandoned Building, Graffiti Removal, Street Light All Out, Rodent Baiting, Garbage Cart, Shot Spotter Alert, Sanitation code, Complaint, Tree Trim, Tree Debris Removal, Abandoned Vehicles.
+10 types of service request data : Abandoned Building, Graffiti Removal, Street Light All Out, Rodent Baiting, Garbage Cart, Shot Spotter Alert, Sanitation code, Complaint, Tree Trim, Tree Debris Removal, and Abandoned Vehicles.
 
-
-These datasets were collected from [Chicago Data Portal](https://data.cityofchicago.org/)
+These datasets were collected from Chicago Data Portal.
 
 Download available : https://drive.google.com/drive/folders/1VEhmGzupucOjdKmRzAhPLKAKvzF--_CF?usp=share_link
 
