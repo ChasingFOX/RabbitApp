@@ -427,5 +427,9 @@ You should follow the below instructions.
 
 ## Tutorial
 Tutorials are provided for code validation in the 'code/DataAnalysis/tutorial' folder.
+
 The tutorial covers receiving users' risk perception, data analysis, algorithm implementation, and recommending four routes.
+
 An Additional detail to run the code is described in that folder's readme. 
+
+
