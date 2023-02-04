@@ -19,12 +19,14 @@ import os
 from sklearn.preprocessing import RobustScaler
 
 # To connect with MySQL DB
+import secret # GIT IGNORE
+
 app = Flask(__name__)
 
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = '1234'
-app.config['MYSQL_HOST'] = '192.168.2.117'
-app.config['MYSQL_DB'] = 'rabbit'
+app.config['MYSQL_USER'] = secret.mysql_inf['USER_ID']
+app.config['MYSQL_PASSWORD'] = secret.mysql_inf['USER_PW']
+app.config['MYSQL_HOST'] = secret.mysql_inf['HOST_ADDRESS']
+app.config['MYSQL_DB'] = secret.mysql_inf['DB_NAME']
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
 mysql = MySQL(app)

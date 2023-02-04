@@ -192,4 +192,7 @@ cache/
 *.pickle
 *.pkl
 
+### For secret informations ###
+secret.py
+
 # End of https://www.toptal.com/developers/gitignore/api/venv
