@@ -63,7 +63,7 @@ Download available : https://drive.google.com/drive/folders/1VEhmGzupucOjdKmRzAh
 
 ## Database ERD
 
-<img align="center" width="400" src="https://user-images.githubusercontent.com/74031620/208148714-40b624bf-4ec7-45c1-8e94-6c407df79236.png">
+<img align="center" width="400" src="https://user-images.githubusercontent.com/74031620/216758391-e11978cb-ea9d-4b82-ae08-6eb0bde3f4ae.png">
 
 ## Front-end
 
